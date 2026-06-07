@@ -168,6 +168,7 @@
           <button onclick="copyAsImage(this)">Copy</button>
           <button onclick="downloadPNG(this)">PNG</button>
           <button onclick="downloadPDF(this)">PDF</button>
+          <button onclick="downloadDrawio(this)">Draw.io</button>
         </div>
         <button class="toolbar-toggle" onclick="this.parentElement.classList.toggle('expanded')" title="Export options" aria-label="Export options">Export</button>
       </div>
@@ -184,40 +185,40 @@
         </defs>
         <rect width="1000" height="620" rx="18" fill="#FAF9F5"/>
 
-        <rect x="210" y="95" width="740" height="365" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
+        <rect data-drawio-type="boundary" data-drawio-id="application-boundary" data-drawio-label="Application Boundary" data-drawio-label-color="#6F6C65" data-drawio-label-size="13" data-drawio-label-weight="600" x="210" y="95" width="740" height="365" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
         <text x="232" y="126" fill="#6F6C65" font-size="13" font-weight="600">Application Boundary</text>
 
-        <line x1="150" y1="282" x2="238" y2="282" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <line data-drawio-type="edge" data-drawio-id="users-to-frontend" data-drawio-label="HTTPS" x1="150" y1="282" x2="238" y2="282" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
         <text x="194" y="267" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">HTTPS</text>
-        <line x1="390" y1="282" x2="468" y2="282" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <line data-drawio-type="edge" data-drawio-id="frontend-to-api" data-drawio-label="REST" x1="390" y1="282" x2="468" y2="282" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
         <text x="429" y="267" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">REST</text>
-        <line x1="630" y1="282" x2="708" y2="230" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <line data-drawio-type="edge" data-drawio-id="api-to-postgres" data-drawio-label="SQL" x1="630" y1="282" x2="708" y2="230" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
         <text x="666" y="240" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">SQL</text>
-        <path d="M 630 310 C 675 375, 710 390, 760 390" fill="none" stroke="#76B985" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+        <path data-drawio-type="edge" data-drawio-id="api-to-redis" data-drawio-label="cache" d="M 630 310 C 675 375, 710 390, 760 390" fill="none" stroke="#76B985" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
         <text x="690" y="366" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">cache</text>
 
-        <rect x="40" y="232" width="110" height="100" rx="14" fill="#EDEAE3" stroke="#9A9991" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="users" x="40" y="232" width="110" height="100" rx="14" fill="#EDEAE3" stroke="#9A9991" stroke-width="2"/>
         <text x="95" y="273" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Users</text>
         <text x="95" y="296" fill="#6F6C65" font-size="12" text-anchor="middle">Browser</text>
 
-        <rect x="240" y="210" width="150" height="145" rx="16" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="frontend" x="240" y="210" width="150" height="145" rx="16" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
         <text x="315" y="255" fill="#3D3C38" font-size="16" font-weight="600" text-anchor="middle">Frontend</text>
         <text x="315" y="278" fill="#6F6C65" font-size="12" text-anchor="middle">React + TypeScript</text>
         <text x="315" y="299" fill="#6F6C65" font-size="12" text-anchor="middle">Tailwind UI</text>
         <text x="315" y="326" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">:3000</text>
 
-        <rect x="470" y="210" width="160" height="145" rx="16" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="api-server" x="470" y="210" width="160" height="145" rx="16" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
         <text x="550" y="255" fill="#3D3C38" font-size="16" font-weight="600" text-anchor="middle">API Server</text>
         <text x="550" y="278" fill="#6F6C65" font-size="12" text-anchor="middle">Node.js + Express</text>
         <text x="550" y="299" fill="#6F6C65" font-size="12" text-anchor="middle">JWT sessions</text>
         <text x="550" y="326" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">:8080</text>
 
-        <rect x="710" y="162" width="140" height="115" rx="16" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="postgresql" x="710" y="162" width="140" height="115" rx="16" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
         <text x="780" y="205" fill="#3D3C38" font-size="16" font-weight="600" text-anchor="middle">PostgreSQL</text>
         <text x="780" y="229" fill="#6F6C65" font-size="12" text-anchor="middle">Primary data</text>
         <text x="780" y="252" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">:5432</text>
 
-        <rect x="760" y="350" width="120" height="78" rx="16" fill="#E6D7B4" stroke="#BFA777" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="redis" x="760" y="350" width="120" height="78" rx="16" fill="#E6D7B4" stroke="#BFA777" stroke-width="2"/>
         <text x="820" y="382" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Redis</text>
         <text x="820" y="404" fill="#6F6C65" font-size="12" text-anchor="middle">Cache</text>
 
@@ -326,6 +327,258 @@
         pdf.save(document.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.pdf');
         btn.textContent = 'Done';
       } catch (e) {
+        btn.textContent = 'Failed';
+      }
+      setTimeout(() => btn.textContent = orig, 2000);
+    }
+    function xmlEscape(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    }
+
+    function directChildren(el, tagName) {
+      return Array.from(el.children).filter((child) => child.tagName.toLowerCase() === tagName);
+    }
+
+    function directTag(el) {
+      return el.tagName.toLowerCase();
+    }
+
+    function attrNumber(el, name, fallback = 0) {
+      const value = Number.parseFloat(el.getAttribute(name));
+      return Number.isFinite(value) ? value : fallback;
+    }
+
+    function drawioId(el, index) {
+      const raw = el.dataset.drawioId || `${el.dataset.drawioType || 'cell'}-${index}`;
+      return raw.replace(/[^a-zA-Z0-9_-]/g, '-');
+    }
+
+    function cellStyle(parts) {
+      return parts.filter(Boolean).join(';') + ';';
+    }
+
+    function drawioLabelRowsFromData(el) {
+      if (!el.dataset.drawioLabel) return null;
+      const rows = [{
+        label: el.dataset.drawioLabel,
+        color: el.dataset.drawioLabelColor || '#3D3C38',
+        fontSize: el.dataset.drawioLabelSize || '15',
+        fontWeight: el.dataset.drawioLabelWeight || '600'
+      }];
+      if (el.dataset.drawioSublabel) {
+        rows.push({
+          label: el.dataset.drawioSublabel,
+          color: el.dataset.drawioSublabelColor || '#6F6C65',
+          fontSize: el.dataset.drawioSublabelSize || '12',
+          fontWeight: el.dataset.drawioSublabelWeight || '400'
+        });
+      }
+      return rows;
+    }
+
+    function drawioLabelRowsFromTexts(texts) {
+      return texts.map((text, index) => ({
+        label: text.textContent.trim(),
+        color: text.getAttribute('fill') || (index === 0 ? '#3D3C38' : '#6F6C65'),
+        fontSize: text.getAttribute('font-size') || (index === 0 ? '15' : '12'),
+        fontWeight: text.getAttribute('font-weight') || (index === 0 ? '600' : '400')
+      }));
+    }
+
+    function textsInsideRect(svg, rect, type) {
+      const x = attrNumber(rect, 'x');
+      const y = attrNumber(rect, 'y');
+      const width = attrNumber(rect, 'width');
+      const height = attrNumber(rect, 'height');
+      const bottom = type === 'boundary' ? y + Math.min(54, height) : y + height;
+      return Array.from(svg.querySelectorAll('text'))
+        .filter((text) => {
+          const tx = attrNumber(text, 'x');
+          const ty = attrNumber(text, 'y');
+          return tx >= x && tx <= x + width && ty >= y && ty <= bottom;
+        })
+        .sort((a, b) => attrNumber(a, 'y') - attrNumber(b, 'y'));
+    }
+
+    function drawioLabelFromRows(rows) {
+      if (!rows.length) return '';
+      const htmlRows = rows.map((row) => {
+        const label = xmlEscape(row.label);
+        return `<div style="font-size:${row.fontSize}px;color:${row.color};font-weight:${row.fontWeight};line-height:1.25;">${label}</div>`;
+      });
+      return htmlRows.join('');
+    }
+
+    function drawioLabelForBox(el, rect) {
+      const rowsFromData = drawioLabelRowsFromData(el);
+      if (rowsFromData) return drawioLabelFromRows(rowsFromData);
+
+      const textChildren = directChildren(el, 'text');
+      if (textChildren.length) return drawioLabelFromRows(drawioLabelRowsFromTexts(textChildren));
+
+      const svg = el.ownerSVGElement || el.closest('svg');
+      const textRows = svg ? drawioLabelRowsFromTexts(textsInsideRect(svg, rect, el.dataset.drawioType)) : [];
+      return drawioLabelFromRows(textRows);
+    }
+
+    function firstDrawioShape(el, tagNames) {
+      if (tagNames.includes(directTag(el))) return el;
+      for (const tagName of tagNames) {
+        const child = directChildren(el, tagName)[0];
+        if (child) return child;
+      }
+      return null;
+    }
+
+    function buildBoxCell(el, index) {
+      const rect = firstDrawioShape(el, ['rect']);
+      if (!rect) return '';
+
+      const type = el.dataset.drawioType;
+      const fill = rect.getAttribute('fill') || 'none';
+      const stroke = rect.getAttribute('stroke') || '#9A9991';
+      const strokeWidth = rect.getAttribute('stroke-width') || '1.5';
+      const dashed = rect.hasAttribute('stroke-dasharray');
+      const rx = attrNumber(rect, 'rx', 0);
+      const label = drawioLabelForBox(el, rect);
+      const baseStyle = [
+        'rounded=1',
+        'whiteSpace=wrap',
+        'html=1',
+        'shadow=0',
+        'fontFamily=Montserrat',
+        'absoluteArcSize=1',
+        `arcSize=${Math.max(6, Math.round(rx))}`,
+        `fillColor=${fill}`,
+        `strokeColor=${stroke}`,
+        `strokeWidth=${strokeWidth}`,
+        dashed ? 'dashed=1' : '',
+        dashed ? `dashPattern=${rect.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+      ];
+
+      const typeStyle = type === 'boundary'
+        ? ['container=1', 'collapsible=0', 'recursiveResize=0', 'align=left', 'verticalAlign=top', 'spacingLeft=18', 'spacingTop=10', 'fontColor=#6F6C65', 'fontSize=13', 'fontStyle=1']
+        : ['align=center', 'verticalAlign=middle', 'spacing=8', 'fontColor=#3D3C38', 'fontSize=15'];
+
+      const id = drawioId(el, index);
+      const style = cellStyle([...baseStyle, ...typeStyle]);
+      const x = attrNumber(rect, 'x');
+      const y = attrNumber(rect, 'y');
+      const width = attrNumber(rect, 'width');
+      const height = attrNumber(rect, 'height');
+
+      return `<mxCell id="${xmlEscape(id)}" value="${xmlEscape(label)}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${x}" y="${y}" width="${width}" height="${height}" as="geometry"/></mxCell>`;
+    }
+
+    function pointsFromShape(shape) {
+      const tag = directTag(shape);
+      if (tag === 'line') {
+        return [
+          { x: attrNumber(shape, 'x1'), y: attrNumber(shape, 'y1') },
+          { x: attrNumber(shape, 'x2'), y: attrNumber(shape, 'y2') }
+        ];
+      }
+
+      if (tag === 'polyline') {
+        return (shape.getAttribute('points') || '')
+          .trim()
+          .split(/\s+/)
+          .map((pair) => pair.split(',').map(Number))
+          .filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y))
+          .map(([x, y]) => ({ x, y }));
+      }
+
+      const numbers = (shape.getAttribute('d') || '').match(/-?\d+(?:\.\d+)?/g) || [];
+      const points = [];
+      for (let i = 0; i < numbers.length - 1; i += 2) {
+        points.push({ x: Number(numbers[i]), y: Number(numbers[i + 1]) });
+      }
+      return points;
+    }
+
+    function buildEdgeCell(el, index) {
+      const shape = firstDrawioShape(el, ['line', 'path', 'polyline']);
+      if (!shape) return '';
+
+      const points = pointsFromShape(shape);
+      if (points.length < 2) return '';
+
+      const labelText = el.dataset.drawioLabel || directChildren(el, 'text')[0]?.textContent.trim() || '';
+      const label = xmlEscape(labelText);
+      const stroke = shape.getAttribute('stroke') || '#9A9991';
+      const strokeWidth = shape.getAttribute('stroke-width') || '1.6';
+      const dashed = shape.hasAttribute('stroke-dasharray');
+      const id = drawioId(el, index);
+      const start = points[0];
+      const end = points[points.length - 1];
+      const waypoints = points.slice(1, -1)
+        .map((point) => `<mxPoint x="${point.x}" y="${point.y}"/>`)
+        .join('');
+      const waypointXml = waypoints ? `<Array as="points">${waypoints}</Array>` : '';
+      const style = cellStyle([
+        'edgeStyle=none',
+        'rounded=0',
+        'html=1',
+        'endArrow=open',
+        'endFill=0',
+        'fontFamily=Montserrat',
+        'fontSize=11',
+        'fontColor=#6F6C65',
+        `strokeColor=${stroke}`,
+        `strokeWidth=${strokeWidth}`,
+        dashed ? 'dashed=1' : '',
+        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+      ]);
+
+      return `<mxCell id="${xmlEscape(id)}" value="${label}" style="${xmlEscape(style)}" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="${start.x}" y="${start.y}" as="sourcePoint"/><mxPoint x="${end.x}" y="${end.y}" as="targetPoint"/>${waypointXml}</mxGeometry></mxCell>`;
+    }
+
+    function buildDrawioFromSvg(svg) {
+      const title = svg.querySelector('title')?.textContent.trim() || document.title || 'Diagram';
+      const viewBox = svg.getAttribute('viewBox') || '0 0 1000 620';
+      const [, , width = '1000', height = '620'] = viewBox.split(/\s+/);
+      const cells = ['<mxCell id="0"/>', '<mxCell id="1" parent="0"/>'];
+
+      Array.from(svg.querySelectorAll('[data-drawio-type]')).forEach((group, index) => {
+        if (group.dataset.drawioType === 'edge') {
+          cells.push(buildEdgeCell(group, index + 2));
+          return;
+        }
+
+        if (group.dataset.drawioType === 'component' || group.dataset.drawioType === 'boundary') {
+          cells.push(buildBoxCell(group, index + 2));
+        }
+      });
+
+      const model = `<mxGraphModel dx="${xmlEscape(width)}" dy="${xmlEscape(height)}" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="${xmlEscape(width)}" pageHeight="${xmlEscape(height)}" math="0" shadow="0"><root>${cells.filter(Boolean).join('')}</root></mxGraphModel>`;
+      return `<?xml version="1.0" encoding="UTF-8"?><mxfile host="app.diagrams.net" agent="Cloudy Tech Diagrams" modified="${new Date().toISOString()}" type="device"><diagram id="cloudy-tech-diagram" name="${xmlEscape(title)}">${model}</diagram></mxfile>`;
+    }
+
+    function downloadTextFile(filename, content, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.download = filename;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadDrawio(btn) {
+      const orig = btn.textContent;
+      btn.textContent = 'Preparing';
+      try {
+        const svg = document.querySelector('.diagram-container svg');
+        const mxfile = buildDrawioFromSvg(svg);
+        downloadTextFile('diagram.drawio', mxfile, 'application/xml');
+        btn.textContent = 'Done';
+      } catch (e) {
+        console.warn('Draw.io export failed', e);
         btn.textContent = 'Failed';
       }
       setTimeout(() => btn.textContent = orig, 2000);

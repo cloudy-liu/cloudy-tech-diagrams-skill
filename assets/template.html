@@ -487,6 +487,10 @@
       return Array.from(el.children).filter((child) => child.tagName.toLowerCase() === tagName);
     }
 
+    function directTag(el) {
+      return el.tagName.toLowerCase();
+    }
+
     function attrNumber(el, name, fallback = 0) {
       const value = Number.parseFloat(el.getAttribute(name));
       return Number.isFinite(value) ? value : fallback;
@@ -501,30 +505,90 @@
       return parts.filter(Boolean).join(';') + ';';
     }
 
-    function drawioLabelFromTexts(texts) {
-      if (!texts.length) return '';
-      const rows = texts.map((text, index) => {
-        const color = text.getAttribute('fill') || (index === 0 ? '#3D3C38' : '#6F6C65');
-        const fontSize = text.getAttribute('font-size') || (index === 0 ? '15' : '12');
-        const fontWeight = text.getAttribute('font-weight') || (index === 0 ? '600' : '400');
-        const label = xmlEscape(text.textContent.trim());
-        return `<div style="font-size:${fontSize}px;color:${color};font-weight:${fontWeight};line-height:1.25;">${label}</div>`;
-      });
-      return rows.join('');
+    function drawioLabelRowsFromData(el) {
+      if (!el.dataset.drawioLabel) return null;
+      const rows = [{
+        label: el.dataset.drawioLabel,
+        color: el.dataset.drawioLabelColor || '#3D3C38',
+        fontSize: el.dataset.drawioLabelSize || '15',
+        fontWeight: el.dataset.drawioLabelWeight || '600'
+      }];
+      if (el.dataset.drawioSublabel) {
+        rows.push({
+          label: el.dataset.drawioSublabel,
+          color: el.dataset.drawioSublabelColor || '#6F6C65',
+          fontSize: el.dataset.drawioSublabelSize || '12',
+          fontWeight: el.dataset.drawioSublabelWeight || '400'
+        });
+      }
+      return rows;
     }
 
-    function buildBoxCell(group, index) {
-      const rect = directChildren(group, 'rect')[0];
+    function drawioLabelRowsFromTexts(texts) {
+      return texts.map((text, index) => ({
+        label: text.textContent.trim(),
+        color: text.getAttribute('fill') || (index === 0 ? '#3D3C38' : '#6F6C65'),
+        fontSize: text.getAttribute('font-size') || (index === 0 ? '15' : '12'),
+        fontWeight: text.getAttribute('font-weight') || (index === 0 ? '600' : '400')
+      }));
+    }
+
+    function textsInsideRect(svg, rect, type) {
+      const x = attrNumber(rect, 'x');
+      const y = attrNumber(rect, 'y');
+      const width = attrNumber(rect, 'width');
+      const height = attrNumber(rect, 'height');
+      const bottom = type === 'boundary' ? y + Math.min(54, height) : y + height;
+      return Array.from(svg.querySelectorAll('text'))
+        .filter((text) => {
+          const tx = attrNumber(text, 'x');
+          const ty = attrNumber(text, 'y');
+          return tx >= x && tx <= x + width && ty >= y && ty <= bottom;
+        })
+        .sort((a, b) => attrNumber(a, 'y') - attrNumber(b, 'y'));
+    }
+
+    function drawioLabelFromRows(rows) {
+      if (!rows.length) return '';
+      const htmlRows = rows.map((row) => {
+        const label = xmlEscape(row.label);
+        return `<div style="font-size:${row.fontSize}px;color:${row.color};font-weight:${row.fontWeight};line-height:1.25;">${label}</div>`;
+      });
+      return htmlRows.join('');
+    }
+
+    function drawioLabelForBox(el, rect) {
+      const rowsFromData = drawioLabelRowsFromData(el);
+      if (rowsFromData) return drawioLabelFromRows(rowsFromData);
+
+      const textChildren = directChildren(el, 'text');
+      if (textChildren.length) return drawioLabelFromRows(drawioLabelRowsFromTexts(textChildren));
+
+      const svg = el.ownerSVGElement || el.closest('svg');
+      const textRows = svg ? drawioLabelRowsFromTexts(textsInsideRect(svg, rect, el.dataset.drawioType)) : [];
+      return drawioLabelFromRows(textRows);
+    }
+
+    function firstDrawioShape(el, tagNames) {
+      if (tagNames.includes(directTag(el))) return el;
+      for (const tagName of tagNames) {
+        const child = directChildren(el, tagName)[0];
+        if (child) return child;
+      }
+      return null;
+    }
+
+    function buildBoxCell(el, index) {
+      const rect = firstDrawioShape(el, ['rect']);
       if (!rect) return '';
 
-      const type = group.dataset.drawioType;
-      const texts = directChildren(group, 'text');
+      const type = el.dataset.drawioType;
       const fill = rect.getAttribute('fill') || 'none';
       const stroke = rect.getAttribute('stroke') || '#9A9991';
       const strokeWidth = rect.getAttribute('stroke-width') || '1.5';
       const dashed = rect.hasAttribute('stroke-dasharray');
       const rx = attrNumber(rect, 'rx', 0);
-      const label = drawioLabelFromTexts(texts);
+      const label = drawioLabelForBox(el, rect);
       const baseStyle = [
         'rounded=1',
         'whiteSpace=wrap',
@@ -544,7 +608,7 @@
         ? ['container=1', 'collapsible=0', 'recursiveResize=0', 'align=left', 'verticalAlign=top', 'spacingLeft=18', 'spacingTop=10', 'fontColor=#6F6C65', 'fontSize=13', 'fontStyle=1']
         : ['align=center', 'verticalAlign=middle', 'spacing=8', 'fontColor=#3D3C38', 'fontSize=15'];
 
-      const id = drawioId(group, index);
+      const id = drawioId(el, index);
       const style = cellStyle([...baseStyle, ...typeStyle]);
       const x = attrNumber(rect, 'x');
       const y = attrNumber(rect, 'y');
@@ -555,7 +619,7 @@
     }
 
     function pointsFromShape(shape) {
-      const tag = shape.tagName.toLowerCase();
+      const tag = directTag(shape);
       if (tag === 'line') {
         return [
           { x: attrNumber(shape, 'x1'), y: attrNumber(shape, 'y1') },
@@ -580,19 +644,19 @@
       return points;
     }
 
-    function buildEdgeCell(group, index) {
-      const shape = directChildren(group, 'line')[0] || directChildren(group, 'path')[0] || directChildren(group, 'polyline')[0];
+    function buildEdgeCell(el, index) {
+      const shape = firstDrawioShape(el, ['line', 'path', 'polyline']);
       if (!shape) return '';
 
       const points = pointsFromShape(shape);
       if (points.length < 2) return '';
 
-      const labelText = group.dataset.drawioLabel || directChildren(group, 'text')[0]?.textContent.trim() || '';
+      const labelText = el.dataset.drawioLabel || directChildren(el, 'text')[0]?.textContent.trim() || '';
       const label = xmlEscape(labelText);
       const stroke = shape.getAttribute('stroke') || '#9A9991';
       const strokeWidth = shape.getAttribute('stroke-width') || '1.6';
       const dashed = shape.hasAttribute('stroke-dasharray');
-      const id = drawioId(group, index);
+      const id = drawioId(el, index);
       const start = points[0];
       const end = points[points.length - 1];
       const waypoints = points.slice(1, -1)
