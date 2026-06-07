@@ -170,6 +170,33 @@ Use this HTML structure:
 
 Do not create a marketing landing page. The first screen should be the diagram itself.
 
+## Draw.io Editable Export
+
+Every generated HTML diagram should include Draw.io export by default. The HTML file remains the only generated artifact; the Draw.io button downloads a `.drawio` file for the main SVG diagram only.
+
+Browser visual fidelity is primary. Do not simplify or degrade the rendered HTML/SVG just to make Draw.io export easier. When draw.io cannot reproduce a local visual detail exactly, export the closest editable draw.io-native approximation and keep the browser visual intact.
+
+Use Draw.io semantic annotations on SVG groups so the exporter does not infer diagram intent from visual-only markup:
+
+```svg
+<g data-drawio-type="component" data-drawio-id="api-service">
+  <rect x="420" y="220" width="150" height="72" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+  <text x="495" y="248" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">API Service</text>
+  <text x="495" y="268" fill="#6F6C65" font-size="12" text-anchor="middle">FastAPI :8000</text>
+</g>
+```
+
+Supported default annotations:
+
+- `data-drawio-type="component"` for component-level boxes, pills, stores, services, clients, and similar editable units.
+- `data-drawio-type="boundary"` for region, cluster, trust-boundary, or security boundary boxes.
+- `data-drawio-type="edge"` for connector groups. Add `data-drawio-label` when the edge has a label.
+- `data-drawio-id` for stable draw.io cell IDs.
+
+Use component-level export granularity. A component group should export as one draw.io vertex with the main and secondary SVG text folded into its label, rather than separate rectangle and text cells. Edges should export as draw.io edge cells with editable labels. Non-core decorative elements may be approximated or omitted when draw.io cannot express them cleanly.
+
+Do not use a whole-diagram raster or SVG background reference layer as the default Draw.io export path. The primary export must stand on editable draw.io-native objects.
+
 ## Export Toolbar
 
 Every generated diagram should keep the built-in export toolbar unless the user asks to remove it.
@@ -181,7 +208,7 @@ Keep these intact:
   - `https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js`
   - `https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js`
 - `.toolbar` markup and CSS.
-- `copyAsImage()`, `downloadPNG()`, and `downloadPDF()` before `</body>`.
+- `copyAsImage()`, `downloadPNG()`, `downloadPDF()`, and `downloadDrawio()` before `</body>`.
 - `ignoreElements: (e) => e.classList && e.classList.contains('toolbar')` during capture.
 - `backgroundColor: '#E8E6DD'` in html2canvas calls.
 
@@ -196,8 +223,8 @@ Key customization points:
 1. Update `<title>`, `h1`, subtitle, and footer metadata.
 2. Adjust SVG `viewBox` dimensions to fit the diagram.
 3. Replace sample components with the user's technical components, steps, regions, or flows.
-4. Draw boundaries first, then arrows, then nodes, then legends.
-5. Update summary cards only when they add useful context.
+4. Wrap meaningful SVG components, boundaries, and connectors in Draw.io semantic annotation groups.
+5. Draw boundaries first, then arrows, then nodes, then legends.
 6. Keep labels short. Prefer `API Service` plus `FastAPI :8000` over long sentences.
 
 ## Output
@@ -207,7 +234,8 @@ Always produce a single self-contained `.html` file with:
 - Embedded CSS.
 - Inline SVG.
 - No external images.
-- CDN JavaScript only for export.
+- CDN JavaScript only for Copy, PNG, and PDF export.
+- Built-in JavaScript for Draw.io editable export.
 - Warm editorial visual design.
 
 The file must render correctly when opened directly in any modern browser.
@@ -235,6 +263,9 @@ Before finalizing a generated diagram, verify diagram expression quality: the re
 - [ ] Connectors do not cross through unrelated labels, legends, node titles, or dense component interiors.
 - [ ] Legend is outside every boundary box.
 - [ ] Export toolbar still works and is excluded from captures.
+- [ ] Draw.io export button is present by default and downloads a `.drawio` file for the main SVG diagram.
+- [ ] Main SVG components, boundaries, and connectors use Draw.io semantic annotations where they should export as editable draw.io-native objects.
+- [ ] Draw.io export does not rely on a whole-diagram raster or SVG image as the primary export path.
 - [ ] SVG is plain shapes and text; avoid `foreignObject`.
 
 ### Type-Specific Diagram Expression Rules

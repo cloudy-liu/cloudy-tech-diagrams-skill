@@ -1,0 +1,5 @@
+# HTML-first diagrams with Draw.io editable export
+
+Cloudy Tech Diagrams keeps **HTML Diagram Output** as the single generated artifact, with the browser-rendered **Main SVG Diagram** as the primary visual experience. Every output includes **Draw.io Editable Export** by default, derived from the **Main SVG Diagram** through **Draw.io Semantic Annotations** plus SVG geometry and style, so users can open the generated HTML first and then export a `.drawio` file for continued manual editing.
+
+This chooses HTML-first generation over draw.io-first generation, a separate diagram JSON model, blind SVG-to-drawio conversion, or embedding the whole diagram as one non-editable image. The draw.io export should produce component-level draw.io-native objects, preserve visual equivalence as closely as practical, and never degrade **Browser Visual Fidelity** or existing Copy, PNG, and PDF export behavior. When exact draw.io reproduction conflicts with the browser visual, the browser visual wins and draw.io uses the closest editable native approximation.

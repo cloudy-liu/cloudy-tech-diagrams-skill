@@ -244,6 +244,7 @@
           <button onclick="copyAsImage(this)">Copy</button>
           <button onclick="downloadPNG(this)">PNG</button>
           <button onclick="downloadPDF(this)">PDF</button>
+          <button onclick="downloadDrawio(this)">Draw.io</button>
         </div>
         <button class="toolbar-toggle" onclick="this.parentElement.classList.toggle('expanded')" title="Export options" aria-label="Export options">Export</button>
       </div>
@@ -263,65 +264,95 @@
         <rect width="1000" height="620" rx="18" fill="#FAF9F5"/>
 
         <!-- Boundaries are drawn before arrows so soft panel fills do not hide flows. -->
-        <rect x="210" y="82" width="740" height="430" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
-        <text x="232" y="112" fill="#6F6C65" font-size="13" font-weight="600">Cloud Region / Product Boundary</text>
+        <g data-drawio-type="boundary" data-drawio-id="cloud-region">
+          <rect x="210" y="82" width="740" height="430" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
+          <text x="232" y="112" fill="#6F6C65" font-size="13" font-weight="600">Cloud Region / Product Boundary</text>
+        </g>
 
-        <rect x="395" y="155" width="190" height="230" rx="18" fill="none" stroke="#C88E6A" stroke-width="1.5" stroke-dasharray="6 6"/>
-        <text x="414" y="181" fill="#8B6B55" font-size="12" font-weight="600">identity and policy</text>
+        <g data-drawio-type="boundary" data-drawio-id="identity-policy">
+          <rect x="395" y="155" width="190" height="230" rx="18" fill="none" stroke="#C88E6A" stroke-width="1.5" stroke-dasharray="6 6"/>
+          <text x="414" y="181" fill="#8B6B55" font-size="12" font-weight="600">identity and policy</text>
+        </g>
 
         <!-- Arrows are drawn before nodes so nodes stay visually dominant. -->
-        <line x1="150" y1="315" x2="238" y2="315" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
-        <text x="194" y="300" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">HTTPS</text>
+        <g data-drawio-type="edge" data-drawio-id="clients-to-edge" data-drawio-label="HTTPS">
+          <line x1="150" y1="315" x2="238" y2="315" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+          <text x="194" y="300" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">HTTPS</text>
+        </g>
 
-        <line x1="370" y1="315" x2="418" y2="315" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
-        <text x="394" y="300" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">edge</text>
+        <g data-drawio-type="edge" data-drawio-id="edge-to-gateway" data-drawio-label="edge">
+          <line x1="370" y1="315" x2="418" y2="315" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+          <text x="394" y="300" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">edge</text>
+        </g>
 
-        <path d="M 555 285 C 590 235, 620 210, 675 205" fill="none" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
-        <text x="628" y="246" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">REST</text>
+        <g data-drawio-type="edge" data-drawio-id="gateway-to-api" data-drawio-label="REST">
+          <path d="M 555 285 C 590 235, 620 210, 675 205" fill="none" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+          <text x="628" y="246" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">REST</text>
+        </g>
 
-        <path d="M 555 345 C 590 395, 620 420, 675 425" fill="none" stroke="#BFA777" stroke-width="1.6" stroke-dasharray="5 5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
-        <text x="612" y="397" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">events</text>
+        <g data-drawio-type="edge" data-drawio-id="gateway-to-worker" data-drawio-label="events">
+          <path d="M 555 345 C 590 395, 620 420, 675 425" fill="none" stroke="#BFA777" stroke-width="1.6" stroke-dasharray="5 5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+          <text x="612" y="397" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">events</text>
+        </g>
 
-        <line x1="805" y1="205" x2="848" y2="205" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
-        <text x="826" y="190" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">SQL</text>
+        <g data-drawio-type="edge" data-drawio-id="api-to-db" data-drawio-label="SQL">
+          <line x1="805" y1="205" x2="848" y2="205" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+          <text x="826" y="190" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">SQL</text>
+        </g>
 
-        <path d="M 735 392 C 735 345, 735 295, 735 250" fill="none" stroke="#76B985" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
-        <text x="764" y="324" fill="#6F6C65" font-size="11" font-weight="500">consume</text>
+        <g data-drawio-type="edge" data-drawio-id="worker-to-api" data-drawio-label="consume">
+          <path d="M 735 392 C 735 345, 735 295, 735 250" fill="none" stroke="#76B985" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+          <text x="764" y="324" fill="#6F6C65" font-size="11" font-weight="500">consume</text>
+        </g>
 
         <!-- External clients -->
-        <rect x="40" y="270" width="110" height="90" rx="14" fill="#EDEAE3" stroke="#9A9991" stroke-width="2"/>
-        <text x="95" y="307" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Clients</text>
-        <text x="95" y="329" fill="#6F6C65" font-size="12" text-anchor="middle">Web / Mobile</text>
+        <g data-drawio-type="component" data-drawio-id="clients">
+          <rect x="40" y="270" width="110" height="90" rx="14" fill="#EDEAE3" stroke="#9A9991" stroke-width="2"/>
+          <text x="95" y="307" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Clients</text>
+          <text x="95" y="329" fill="#6F6C65" font-size="12" text-anchor="middle">Web / Mobile</text>
+        </g>
 
         <!-- Cloud edge -->
-        <rect x="240" y="275" width="130" height="80" rx="14" fill="#F0DED7" stroke="#D87858" stroke-width="2"/>
-        <text x="305" y="307" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">CloudFront</text>
-        <text x="305" y="329" fill="#6F6C65" font-size="12" text-anchor="middle">CDN edge</text>
+        <g data-drawio-type="component" data-drawio-id="cloudfront">
+          <rect x="240" y="275" width="130" height="80" rx="14" fill="#F0DED7" stroke="#D87858" stroke-width="2"/>
+          <text x="305" y="307" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">CloudFront</text>
+          <text x="305" y="329" fill="#6F6C65" font-size="12" text-anchor="middle">CDN edge</text>
+        </g>
 
         <!-- Security gateway -->
-        <rect x="420" y="255" width="135" height="120" rx="14" fill="#F3E4DA" stroke="#C88E6A" stroke-width="2"/>
-        <text x="487.5" y="297" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">API Gateway</text>
-        <text x="487.5" y="319" fill="#6F6C65" font-size="12" text-anchor="middle">Auth / routing</text>
-        <text x="487.5" y="343" fill="#8B6B55" font-size="11" font-weight="600" text-anchor="middle">HTTPS :443</text>
+        <g data-drawio-type="component" data-drawio-id="api-gateway">
+          <rect x="420" y="255" width="135" height="120" rx="14" fill="#F3E4DA" stroke="#C88E6A" stroke-width="2"/>
+          <text x="487.5" y="297" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">API Gateway</text>
+          <text x="487.5" y="319" fill="#6F6C65" font-size="12" text-anchor="middle">Auth / routing</text>
+          <text x="487.5" y="343" fill="#8B6B55" font-size="11" font-weight="600" text-anchor="middle">HTTPS :443</text>
+        </g>
 
         <!-- Backend service -->
-        <rect x="675" y="165" width="130" height="80" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
-        <text x="740" y="197" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">API Service</text>
-        <text x="740" y="219" fill="#6F6C65" font-size="12" text-anchor="middle">FastAPI :8000</text>
+        <g data-drawio-type="component" data-drawio-id="api-service">
+          <rect x="675" y="165" width="130" height="80" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+          <text x="740" y="197" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">API Service</text>
+          <text x="740" y="219" fill="#6F6C65" font-size="12" text-anchor="middle">FastAPI :8000</text>
+        </g>
 
         <!-- Event worker -->
-        <rect x="675" y="390" width="130" height="70" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
-        <text x="740" y="419" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Worker</text>
-        <text x="740" y="440" fill="#6F6C65" font-size="12" text-anchor="middle">Async jobs</text>
+        <g data-drawio-type="component" data-drawio-id="worker">
+          <rect x="675" y="390" width="130" height="70" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+          <text x="740" y="419" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Worker</text>
+          <text x="740" y="440" fill="#6F6C65" font-size="12" text-anchor="middle">Async jobs</text>
+        </g>
 
         <!-- Data store -->
-        <rect x="850" y="165" width="110" height="80" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
-        <text x="905" y="197" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Postgres</text>
-        <text x="905" y="219" fill="#6F6C65" font-size="12" text-anchor="middle">Primary DB</text>
+        <g data-drawio-type="component" data-drawio-id="postgres">
+          <rect x="850" y="165" width="110" height="80" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
+          <text x="905" y="197" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Postgres</text>
+          <text x="905" y="219" fill="#6F6C65" font-size="12" text-anchor="middle">Primary DB</text>
+        </g>
 
         <!-- Message bus: keep pills centered on the event-flow axis. For vertical event flows, split connector lines above and below the pill instead of drawing through the label. -->
-        <rect x="680" y="322" width="120" height="28" rx="14" fill="#E6D7B4" stroke="#BFA777" stroke-width="1.5"/>
-        <text x="740" y="341" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">Event Bus</text>
+        <g data-drawio-type="component" data-drawio-id="event-bus">
+          <rect x="680" y="322" width="120" height="28" rx="14" fill="#E6D7B4" stroke="#BFA777" stroke-width="1.5"/>
+          <text x="740" y="341" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">Event Bus</text>
+        </g>
 
         <!-- Legend, placed outside the region boundary. -->
         <text x="230" y="558" fill="#3D3C38" font-size="13" font-weight="700">Legend</text>
@@ -438,6 +469,195 @@
         pdf.save('diagram.pdf');
         btn.textContent = 'Done';
       } catch (e) {
+        btn.textContent = 'Failed';
+      }
+      setTimeout(() => btn.textContent = orig, 2000);
+    }
+
+    function xmlEscape(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    }
+
+    function directChildren(el, tagName) {
+      return Array.from(el.children).filter((child) => child.tagName.toLowerCase() === tagName);
+    }
+
+    function attrNumber(el, name, fallback = 0) {
+      const value = Number.parseFloat(el.getAttribute(name));
+      return Number.isFinite(value) ? value : fallback;
+    }
+
+    function drawioId(el, index) {
+      const raw = el.dataset.drawioId || `${el.dataset.drawioType || 'cell'}-${index}`;
+      return raw.replace(/[^a-zA-Z0-9_-]/g, '-');
+    }
+
+    function cellStyle(parts) {
+      return parts.filter(Boolean).join(';') + ';';
+    }
+
+    function drawioLabelFromTexts(texts) {
+      if (!texts.length) return '';
+      const rows = texts.map((text, index) => {
+        const color = text.getAttribute('fill') || (index === 0 ? '#3D3C38' : '#6F6C65');
+        const fontSize = text.getAttribute('font-size') || (index === 0 ? '15' : '12');
+        const fontWeight = text.getAttribute('font-weight') || (index === 0 ? '600' : '400');
+        const label = xmlEscape(text.textContent.trim());
+        return `<div style="font-size:${fontSize}px;color:${color};font-weight:${fontWeight};line-height:1.25;">${label}</div>`;
+      });
+      return rows.join('');
+    }
+
+    function buildBoxCell(group, index) {
+      const rect = directChildren(group, 'rect')[0];
+      if (!rect) return '';
+
+      const type = group.dataset.drawioType;
+      const texts = directChildren(group, 'text');
+      const fill = rect.getAttribute('fill') || 'none';
+      const stroke = rect.getAttribute('stroke') || '#9A9991';
+      const strokeWidth = rect.getAttribute('stroke-width') || '1.5';
+      const dashed = rect.hasAttribute('stroke-dasharray');
+      const rx = attrNumber(rect, 'rx', 0);
+      const label = drawioLabelFromTexts(texts);
+      const baseStyle = [
+        'rounded=1',
+        'whiteSpace=wrap',
+        'html=1',
+        'shadow=0',
+        'fontFamily=Montserrat',
+        'absoluteArcSize=1',
+        `arcSize=${Math.max(6, Math.round(rx))}`,
+        `fillColor=${fill}`,
+        `strokeColor=${stroke}`,
+        `strokeWidth=${strokeWidth}`,
+        dashed ? 'dashed=1' : '',
+        dashed ? `dashPattern=${rect.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+      ];
+
+      const typeStyle = type === 'boundary'
+        ? ['container=1', 'collapsible=0', 'recursiveResize=0', 'align=left', 'verticalAlign=top', 'spacingLeft=18', 'spacingTop=10', 'fontColor=#6F6C65', 'fontSize=13', 'fontStyle=1']
+        : ['align=center', 'verticalAlign=middle', 'spacing=8', 'fontColor=#3D3C38', 'fontSize=15'];
+
+      const id = drawioId(group, index);
+      const style = cellStyle([...baseStyle, ...typeStyle]);
+      const x = attrNumber(rect, 'x');
+      const y = attrNumber(rect, 'y');
+      const width = attrNumber(rect, 'width');
+      const height = attrNumber(rect, 'height');
+
+      return `<mxCell id="${xmlEscape(id)}" value="${xmlEscape(label)}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${x}" y="${y}" width="${width}" height="${height}" as="geometry"/></mxCell>`;
+    }
+
+    function pointsFromShape(shape) {
+      const tag = shape.tagName.toLowerCase();
+      if (tag === 'line') {
+        return [
+          { x: attrNumber(shape, 'x1'), y: attrNumber(shape, 'y1') },
+          { x: attrNumber(shape, 'x2'), y: attrNumber(shape, 'y2') }
+        ];
+      }
+
+      if (tag === 'polyline') {
+        return (shape.getAttribute('points') || '')
+          .trim()
+          .split(/\s+/)
+          .map((pair) => pair.split(',').map(Number))
+          .filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y))
+          .map(([x, y]) => ({ x, y }));
+      }
+
+      const numbers = (shape.getAttribute('d') || '').match(/-?\d+(?:\.\d+)?/g) || [];
+      const points = [];
+      for (let i = 0; i < numbers.length - 1; i += 2) {
+        points.push({ x: Number(numbers[i]), y: Number(numbers[i + 1]) });
+      }
+      return points;
+    }
+
+    function buildEdgeCell(group, index) {
+      const shape = directChildren(group, 'line')[0] || directChildren(group, 'path')[0] || directChildren(group, 'polyline')[0];
+      if (!shape) return '';
+
+      const points = pointsFromShape(shape);
+      if (points.length < 2) return '';
+
+      const labelText = group.dataset.drawioLabel || directChildren(group, 'text')[0]?.textContent.trim() || '';
+      const label = xmlEscape(labelText);
+      const stroke = shape.getAttribute('stroke') || '#9A9991';
+      const strokeWidth = shape.getAttribute('stroke-width') || '1.6';
+      const dashed = shape.hasAttribute('stroke-dasharray');
+      const id = drawioId(group, index);
+      const start = points[0];
+      const end = points[points.length - 1];
+      const waypoints = points.slice(1, -1)
+        .map((point) => `<mxPoint x="${point.x}" y="${point.y}"/>`)
+        .join('');
+      const waypointXml = waypoints ? `<Array as="points">${waypoints}</Array>` : '';
+      const style = cellStyle([
+        'edgeStyle=none',
+        'rounded=0',
+        'html=1',
+        'endArrow=open',
+        'endFill=0',
+        'fontFamily=Montserrat',
+        'fontSize=11',
+        'fontColor=#6F6C65',
+        `strokeColor=${stroke}`,
+        `strokeWidth=${strokeWidth}`,
+        dashed ? 'dashed=1' : '',
+        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+      ]);
+
+      return `<mxCell id="${xmlEscape(id)}" value="${label}" style="${xmlEscape(style)}" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="${start.x}" y="${start.y}" as="sourcePoint"/><mxPoint x="${end.x}" y="${end.y}" as="targetPoint"/>${waypointXml}</mxGeometry></mxCell>`;
+    }
+
+    function buildDrawioFromSvg(svg) {
+      const title = svg.querySelector('title')?.textContent.trim() || document.title || 'Diagram';
+      const viewBox = svg.getAttribute('viewBox') || '0 0 1000 620';
+      const [, , width = '1000', height = '620'] = viewBox.split(/\s+/);
+      const cells = ['<mxCell id="0"/>', '<mxCell id="1" parent="0"/>'];
+
+      Array.from(svg.querySelectorAll('[data-drawio-type]')).forEach((group, index) => {
+        if (group.dataset.drawioType === 'edge') {
+          cells.push(buildEdgeCell(group, index + 2));
+          return;
+        }
+
+        if (group.dataset.drawioType === 'component' || group.dataset.drawioType === 'boundary') {
+          cells.push(buildBoxCell(group, index + 2));
+        }
+      });
+
+      const model = `<mxGraphModel dx="${xmlEscape(width)}" dy="${xmlEscape(height)}" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="${xmlEscape(width)}" pageHeight="${xmlEscape(height)}" math="0" shadow="0"><root>${cells.filter(Boolean).join('')}</root></mxGraphModel>`;
+      return `<?xml version="1.0" encoding="UTF-8"?><mxfile host="app.diagrams.net" agent="Cloudy Tech Diagrams" modified="${new Date().toISOString()}" type="device"><diagram id="cloudy-tech-diagram" name="${xmlEscape(title)}">${model}</diagram></mxfile>`;
+    }
+
+    function downloadTextFile(filename, content, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.download = filename;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadDrawio(btn) {
+      const orig = btn.textContent;
+      btn.textContent = 'Preparing';
+      try {
+        const svg = document.querySelector('.diagram-container svg');
+        const mxfile = buildDrawioFromSvg(svg);
+        downloadTextFile('diagram.drawio', mxfile, 'application/xml');
+        btn.textContent = 'Done';
+      } catch (e) {
+        console.warn('Draw.io export failed', e);
         btn.textContent = 'Failed';
       }
       setTimeout(() => btn.textContent = orig, 2000);
