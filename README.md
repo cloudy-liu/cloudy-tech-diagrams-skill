@@ -11,7 +11,7 @@ Cloudy Tech Diagrams Skill 是一个给 AI agent 使用的通用技术图绘制 
 - 每次让 agent 画架构图都要重复说明风格、格式、导出方式和检查标准
 - 生成的图经常只像草稿：箭头落点不清楚、文字溢出、节点层级混乱、导出不稳定
 - Mermaid / Graphviz 很适合快速表达结构，但在视觉控制、文档嵌入和精细排版上不够灵活
-- 技术文档、方案评审和技术分享需要一份能打开、能导出、能继续手工调整的 drawio 图、PNG、PDF
+- 技术文档、方案评审和技术分享需要一份能打开、能导出到 Draw.io 继续手工调整，也能导出为 PNG/PDF 的图
 - 提供了 cloude 官网一致的视觉设计，有统一的视觉风格和质量底线
 
 ## 🧩 适合画什么
@@ -173,7 +173,7 @@ git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git .claude/s
 阅读这份文档，识别它的核心项目架构，然后使用 cloudy-tech-diagrams 生成一份可在浏览器打开的 HTML 架构图。图的重点放在项目架构，不要展开到过细的实现细节。
 ```
 
-生成结果通常是一份 `.html` 文件。直接用浏览器打开即可查看，并可使用页面顶部的 Copy / PNG / PDF 按钮导出。
+生成结果通常是一份 `.html` 文件。直接用浏览器打开即可查看，并可使用页面顶部的 Copy / PNG / PDF / Draw.io 按钮导出。
 
 ## 📦 输出结果是什么
 
@@ -182,10 +182,13 @@ git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git .claude/s
 - 内嵌 CSS。
 - 使用内联 SVG 绘制图形。
 - 不依赖外部图片。
-- 只为导出功能使用 CDN JavaScript。
-- 默认保留 Copy / PNG / PDF 导出工具栏。
+- 只为 Copy、PNG、PDF 导出使用 CDN JavaScript。
+- 内置针对主 SVG 图的 Draw.io 导出。
+- 默认保留 Copy / PNG / PDF / Draw.io 导出工具栏。
 - 可以直接在现代浏览器中打开。
 - 适合放进技术文档、方案评审材料、README、issue 或分享稿中继续使用。
+
+Draw.io 导出坚持 HTML-first：浏览器中打开的 HTML 仍然是主要产物，`.drawio` 文件只覆盖主 SVG 图，不导出完整页面包装、summary cards、footer 或 toolbar。它追求 draw.io 原生对象的可编辑的视觉等价，而不是精确像素克隆，也不是把整张图作为一张图片塞进 draw.io。
 
 ## 🖼️ 示例
 
