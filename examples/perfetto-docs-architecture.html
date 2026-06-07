@@ -244,6 +244,7 @@
           <button onclick="copyAsImage(this)">Copy</button>
           <button onclick="downloadPNG(this)">PNG</button>
           <button onclick="downloadPDF(this)">PDF</button>
+          <button onclick="downloadDrawio(this)">Draw.io</button>
         </div>
         <button class="toolbar-toggle" onclick="this.parentElement.classList.toggle('expanded')" title="Export options" aria-label="Export options">Export</button>
       </div>
@@ -274,9 +275,9 @@
         <text x="48" y="42" fill="#141413" font-size="18" font-weight="700">Project stack map</text>
         <text x="48" y="64" fill="#6F6C65" font-size="12" font-weight="500">Modeled after the official homepage stack: record traces, analyze traces, and visualize traces.</text>
 
-        <rect x="34" y="92" width="630" height="530" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
-        <rect x="686" y="92" width="220" height="530" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
-        <rect x="930" y="92" width="216" height="530" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
+        <rect data-drawio-type="boundary" data-drawio-id="record-traces-boundary" data-drawio-label="Record traces" data-drawio-label-color="#3D3C38" data-drawio-label-size="22" data-drawio-label-weight="700" x="34" y="92" width="630" height="530" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
+        <rect data-drawio-type="boundary" data-drawio-id="analyze-traces-boundary" data-drawio-label="Analyze traces" data-drawio-label-color="#3D3C38" data-drawio-label-size="22" data-drawio-label-weight="700" x="686" y="92" width="220" height="530" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
+        <rect data-drawio-type="boundary" data-drawio-id="visualize-traces-boundary" data-drawio-label="Visualize traces" data-drawio-label-color="#3D3C38" data-drawio-label-size="22" data-drawio-label-weight="700" x="930" y="92" width="216" height="530" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
 
         <circle cx="350" cy="124" r="18" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
         <rect x="341" y="116" width="18" height="16" rx="3" fill="#76B985"/>
@@ -301,17 +302,17 @@
         <text x="340" y="198" fill="#5F5A54" font-size="14" font-weight="700" text-anchor="middle">Chrome tracing</text>
         <text x="526" y="198" fill="#5F5A54" font-size="14" font-weight="700" text-anchor="middle">In-app tracing</text>
 
-        <path d="M 146 370 C 146 392, 146 404, 146 425" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
-        <path d="M 340 336 C 340 346, 354 350, 386 350" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
-        <path d="M 526 336 C 526 346, 512 350, 480 350" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
-        <path d="M 340 410 C 340 424, 340 436, 340 452" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
-        <path d="M 526 410 C 526 424, 526 436, 526 452" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
-        <path d="M 336 516 C 336 526, 330 534, 314 538" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
-        <path d="M 526 516 C 526 526, 500 534, 430 538" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
-        <path d="M 568 571 C 626 568, 662 520, 704 357" fill="none" stroke="#BFA777" stroke-width="1.6" stroke-dasharray="5 5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-event)"/>
+        <path data-drawio-type="edge" data-drawio-id="data-sources-to-daemon" d="M 146 370 C 146 392, 146 404, 146 425" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path data-drawio-type="edge" data-drawio-id="chrome-sources-to-track-event" d="M 340 336 C 340 346, 354 350, 386 350" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path data-drawio-type="edge" data-drawio-id="app-sources-to-track-event" d="M 526 336 C 526 346, 512 350, 480 350" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path data-drawio-type="edge" data-drawio-id="track-event-to-tracing-service" d="M 340 410 C 340 424, 340 436, 340 452" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path data-drawio-type="edge" data-drawio-id="track-event-to-inprocess-service" d="M 526 410 C 526 424, 526 436, 526 452" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path data-drawio-type="edge" data-drawio-id="tracing-service-to-library" d="M 336 516 C 336 526, 330 534, 314 538" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path data-drawio-type="edge" data-drawio-id="inprocess-service-to-library" d="M 526 516 C 526 526, 500 534, 430 538" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path data-drawio-type="edge" data-drawio-id="trace-file-to-importers" data-drawio-label="trace artifact" d="M 568 571 C 626 568, 662 520, 704 357" fill="none" stroke="#BFA777" stroke-width="1.6" stroke-dasharray="5 5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-event)"/>
         <text x="646" y="446" fill="#6F6C65" font-size="11" font-weight="500">trace artifact</text>
 
-        <rect x="72" y="220" width="148" height="150" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="data-sources" x="72" y="220" width="148" height="150" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
         <text x="146" y="248" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Data Sources</text>
         <rect x="92" y="268" width="108" height="24" rx="12" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1"/>
         <text x="146" y="285" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">Linux ftrace</text>
@@ -320,74 +321,74 @@
         <rect x="92" y="336" width="108" height="24" rx="12" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1"/>
         <text x="146" y="353" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">Heap profilers</text>
 
-        <rect x="72" y="426" width="148" height="60" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="tracing-daemon" x="72" y="426" width="148" height="60" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
         <text x="146" y="451" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Tracing daemon</text>
         <text x="146" y="471" fill="#6F6C65" font-size="12" text-anchor="middle">UNIX socket</text>
 
-        <rect x="266" y="220" width="148" height="116" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="chrome-data-sources" x="266" y="220" width="148" height="116" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
         <text x="340" y="266" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Chrome-specific</text>
         <text x="340" y="286" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">data sources</text>
 
-        <rect x="452" y="220" width="148" height="116" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="app-data-sources" x="452" y="220" width="148" height="116" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
         <text x="526" y="266" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">App-specific</text>
         <text x="526" y="286" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">data sources</text>
 
-        <rect x="266" y="354" width="334" height="56" rx="14" fill="#E6D7B4" stroke="#BFA777" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="track-event-library" x="266" y="354" width="334" height="56" rx="14" fill="#E6D7B4" stroke="#BFA777" stroke-width="2"/>
         <text x="433" y="379" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Track event library</text>
         <text x="433" y="397" fill="#6F6C65" font-size="12" text-anchor="middle">TRACE_EVENT(...)</text>
 
-        <rect x="266" y="456" width="148" height="60" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="tracing-service" x="266" y="456" width="148" height="60" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
         <text x="340" y="481" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Tracing service</text>
         <text x="340" y="501" fill="#6F6C65" font-size="12" text-anchor="middle">Mojo</text>
 
-        <rect x="452" y="456" width="148" height="60" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="inprocess-service-thread" x="452" y="456" width="148" height="60" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
         <text x="526" y="481" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">In-process</text>
         <text x="526" y="501" fill="#6F6C65" font-size="12" text-anchor="middle">service thread</text>
 
-        <rect x="72" y="540" width="356" height="62" rx="14" fill="#E6D7B4" stroke="#BFA777" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="tracing-cpp-library" x="72" y="540" width="356" height="62" rx="14" fill="#E6D7B4" stroke="#BFA777" stroke-width="2"/>
         <text x="250" y="566" fill="#3D3C38" font-size="16" font-weight="700" text-anchor="middle">Tracing C++ Library</text>
         <text x="250" y="586" fill="#6F6C65" font-size="12" text-anchor="middle">Android / Linux / macOS / Windows</text>
 
-        <rect x="464" y="540" width="104" height="62" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="trace-file" x="464" y="540" width="104" height="62" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
         <text x="516" y="565" fill="#3D3C38" font-size="13" font-weight="700" text-anchor="middle">Trace file</text>
         <text x="516" y="585" fill="#6F6C65" font-size="11" text-anchor="middle">protobuf</text>
 
-        <path d="M 780 322 C 780 298, 780 286, 780 266" fill="none" stroke="#D87858" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-primary)"/>
-        <path d="M 780 266 C 780 312, 780 350, 780 392" fill="none" stroke="#D87858" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-primary)"/>
-        <path d="M 780 462 C 780 478, 780 486, 780 496" fill="none" stroke="#D87858" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-primary)"/>
-        <path d="M 872 212 C 900 212, 920 212, 954 212" fill="none" stroke="#8585DD" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrow-ui)"/>
+        <path data-drawio-type="edge" data-drawio-id="importers-to-processor" d="M 780 322 C 780 298, 780 286, 780 266" fill="none" stroke="#D87858" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-primary)"/>
+        <path data-drawio-type="edge" data-drawio-id="processor-to-importers" d="M 780 266 C 780 312, 780 350, 780 392" fill="none" stroke="#D87858" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-primary)"/>
+        <path data-drawio-type="edge" data-drawio-id="sql-to-metrics" d="M 780 462 C 780 478, 780 486, 780 496" fill="none" stroke="#D87858" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-primary)"/>
+        <path data-drawio-type="edge" data-drawio-id="processor-to-ui" data-drawio-label="render" d="M 872 212 C 900 212, 920 212, 954 212" fill="none" stroke="#8585DD" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrow-ui)"/>
         <text x="914" y="198" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">render</text>
-        <path d="M 1038 252 C 1038 272, 1038 282, 1038 300" fill="none" stroke="#8585DD" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-ui)"/>
+        <path data-drawio-type="edge" data-drawio-id="ui-to-wasm" d="M 1038 252 C 1038 272, 1038 282, 1038 300" fill="none" stroke="#8585DD" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-ui)"/>
 
-        <rect x="710" y="210" width="172" height="56" rx="14" fill="#F0DED7" stroke="#D87858" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="trace-processor" x="710" y="210" width="172" height="56" rx="14" fill="#F0DED7" stroke="#D87858" stroke-width="2"/>
         <text x="796" y="233" fill="#3D3C38" font-size="15" font-weight="700" text-anchor="middle">Trace Processor</text>
         <text x="796" y="252" fill="#6F6C65" font-size="12" text-anchor="middle">C++ engine</text>
 
-        <rect x="710" y="322" width="172" height="70" rx="14" fill="#F0DED7" stroke="#D87858" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="trace-importers" x="710" y="322" width="172" height="70" rx="14" fill="#F0DED7" stroke="#D87858" stroke-width="2"/>
         <text x="796" y="350" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Trace importers</text>
         <text x="796" y="370" fill="#6F6C65" font-size="12" text-anchor="middle">Protobuf, JSON, systrace</text>
 
-        <rect x="710" y="422" width="172" height="70" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="sql-query-engine" x="710" y="422" width="172" height="70" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
         <text x="796" y="450" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">SQL query engine</text>
         <text x="796" y="470" fill="#6F6C65" font-size="12" text-anchor="middle">based on SQLite</text>
 
-        <rect x="710" y="522" width="172" height="56" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="trace-metrics" x="710" y="522" width="172" height="56" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
         <text x="796" y="545" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Trace metrics</text>
         <text x="796" y="564" fill="#6F6C65" font-size="12" text-anchor="middle">JSON / protobuf / CSV</text>
 
-        <rect x="954" y="190" width="168" height="62" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="perfetto-ui" x="954" y="190" width="168" height="62" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
         <text x="1038" y="216" fill="#3D3C38" font-size="16" font-weight="700" text-anchor="middle">Perfetto UI</text>
         <text x="1038" y="236" fill="#6F6C65" font-size="12" text-anchor="middle">HTML / JS</text>
 
-        <rect x="966" y="300" width="144" height="62" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="trace-processor-wasm" x="966" y="300" width="144" height="62" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
         <text x="1038" y="325" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Trace Processor</text>
         <text x="1038" y="345" fill="#6F6C65" font-size="12" text-anchor="middle">WebAssembly</text>
 
-        <rect x="966" y="410" width="144" height="62" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="adb-webusb" x="966" y="410" width="144" height="62" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
         <text x="1038" y="435" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">ADB over WebUSB</text>
         <text x="1038" y="455" fill="#6F6C65" font-size="12" text-anchor="middle">Android capture</text>
 
-        <rect x="966" y="520" width="144" height="56" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
+        <rect data-drawio-type="component" data-drawio-id="offline-ui" x="966" y="520" width="144" height="56" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
         <text x="1038" y="543" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Works offline</text>
         <text x="1038" y="562" fill="#6F6C65" font-size="12" text-anchor="middle">after first visit</text>
 
@@ -510,6 +511,258 @@
         pdf.save('perfetto-project-architecture.pdf');
         btn.textContent = 'Done';
       } catch (e) {
+        btn.textContent = 'Failed';
+      }
+      setTimeout(() => btn.textContent = orig, 2000);
+    }
+    function xmlEscape(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    }
+
+    function directChildren(el, tagName) {
+      return Array.from(el.children).filter((child) => child.tagName.toLowerCase() === tagName);
+    }
+
+    function directTag(el) {
+      return el.tagName.toLowerCase();
+    }
+
+    function attrNumber(el, name, fallback = 0) {
+      const value = Number.parseFloat(el.getAttribute(name));
+      return Number.isFinite(value) ? value : fallback;
+    }
+
+    function drawioId(el, index) {
+      const raw = el.dataset.drawioId || `${el.dataset.drawioType || 'cell'}-${index}`;
+      return raw.replace(/[^a-zA-Z0-9_-]/g, '-');
+    }
+
+    function cellStyle(parts) {
+      return parts.filter(Boolean).join(';') + ';';
+    }
+
+    function drawioLabelRowsFromData(el) {
+      if (!el.dataset.drawioLabel) return null;
+      const rows = [{
+        label: el.dataset.drawioLabel,
+        color: el.dataset.drawioLabelColor || '#3D3C38',
+        fontSize: el.dataset.drawioLabelSize || '15',
+        fontWeight: el.dataset.drawioLabelWeight || '600'
+      }];
+      if (el.dataset.drawioSublabel) {
+        rows.push({
+          label: el.dataset.drawioSublabel,
+          color: el.dataset.drawioSublabelColor || '#6F6C65',
+          fontSize: el.dataset.drawioSublabelSize || '12',
+          fontWeight: el.dataset.drawioSublabelWeight || '400'
+        });
+      }
+      return rows;
+    }
+
+    function drawioLabelRowsFromTexts(texts) {
+      return texts.map((text, index) => ({
+        label: text.textContent.trim(),
+        color: text.getAttribute('fill') || (index === 0 ? '#3D3C38' : '#6F6C65'),
+        fontSize: text.getAttribute('font-size') || (index === 0 ? '15' : '12'),
+        fontWeight: text.getAttribute('font-weight') || (index === 0 ? '600' : '400')
+      }));
+    }
+
+    function textsInsideRect(svg, rect, type) {
+      const x = attrNumber(rect, 'x');
+      const y = attrNumber(rect, 'y');
+      const width = attrNumber(rect, 'width');
+      const height = attrNumber(rect, 'height');
+      const bottom = type === 'boundary' ? y + Math.min(54, height) : y + height;
+      return Array.from(svg.querySelectorAll('text'))
+        .filter((text) => {
+          const tx = attrNumber(text, 'x');
+          const ty = attrNumber(text, 'y');
+          return tx >= x && tx <= x + width && ty >= y && ty <= bottom;
+        })
+        .sort((a, b) => attrNumber(a, 'y') - attrNumber(b, 'y'));
+    }
+
+    function drawioLabelFromRows(rows) {
+      if (!rows.length) return '';
+      const htmlRows = rows.map((row) => {
+        const label = xmlEscape(row.label);
+        return `<div style="font-size:${row.fontSize}px;color:${row.color};font-weight:${row.fontWeight};line-height:1.25;">${label}</div>`;
+      });
+      return htmlRows.join('');
+    }
+
+    function drawioLabelForBox(el, rect) {
+      const rowsFromData = drawioLabelRowsFromData(el);
+      if (rowsFromData) return drawioLabelFromRows(rowsFromData);
+
+      const textChildren = directChildren(el, 'text');
+      if (textChildren.length) return drawioLabelFromRows(drawioLabelRowsFromTexts(textChildren));
+
+      const svg = el.ownerSVGElement || el.closest('svg');
+      const textRows = svg ? drawioLabelRowsFromTexts(textsInsideRect(svg, rect, el.dataset.drawioType)) : [];
+      return drawioLabelFromRows(textRows);
+    }
+
+    function firstDrawioShape(el, tagNames) {
+      if (tagNames.includes(directTag(el))) return el;
+      for (const tagName of tagNames) {
+        const child = directChildren(el, tagName)[0];
+        if (child) return child;
+      }
+      return null;
+    }
+
+    function buildBoxCell(el, index) {
+      const rect = firstDrawioShape(el, ['rect']);
+      if (!rect) return '';
+
+      const type = el.dataset.drawioType;
+      const fill = rect.getAttribute('fill') || 'none';
+      const stroke = rect.getAttribute('stroke') || '#9A9991';
+      const strokeWidth = rect.getAttribute('stroke-width') || '1.5';
+      const dashed = rect.hasAttribute('stroke-dasharray');
+      const rx = attrNumber(rect, 'rx', 0);
+      const label = drawioLabelForBox(el, rect);
+      const baseStyle = [
+        'rounded=1',
+        'whiteSpace=wrap',
+        'html=1',
+        'shadow=0',
+        'fontFamily=Montserrat',
+        'absoluteArcSize=1',
+        `arcSize=${Math.max(6, Math.round(rx))}`,
+        `fillColor=${fill}`,
+        `strokeColor=${stroke}`,
+        `strokeWidth=${strokeWidth}`,
+        dashed ? 'dashed=1' : '',
+        dashed ? `dashPattern=${rect.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+      ];
+
+      const typeStyle = type === 'boundary'
+        ? ['container=1', 'collapsible=0', 'recursiveResize=0', 'align=left', 'verticalAlign=top', 'spacingLeft=18', 'spacingTop=10', 'fontColor=#6F6C65', 'fontSize=13', 'fontStyle=1']
+        : ['align=center', 'verticalAlign=middle', 'spacing=8', 'fontColor=#3D3C38', 'fontSize=15'];
+
+      const id = drawioId(el, index);
+      const style = cellStyle([...baseStyle, ...typeStyle]);
+      const x = attrNumber(rect, 'x');
+      const y = attrNumber(rect, 'y');
+      const width = attrNumber(rect, 'width');
+      const height = attrNumber(rect, 'height');
+
+      return `<mxCell id="${xmlEscape(id)}" value="${xmlEscape(label)}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${x}" y="${y}" width="${width}" height="${height}" as="geometry"/></mxCell>`;
+    }
+
+    function pointsFromShape(shape) {
+      const tag = directTag(shape);
+      if (tag === 'line') {
+        return [
+          { x: attrNumber(shape, 'x1'), y: attrNumber(shape, 'y1') },
+          { x: attrNumber(shape, 'x2'), y: attrNumber(shape, 'y2') }
+        ];
+      }
+
+      if (tag === 'polyline') {
+        return (shape.getAttribute('points') || '')
+          .trim()
+          .split(/\s+/)
+          .map((pair) => pair.split(',').map(Number))
+          .filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y))
+          .map(([x, y]) => ({ x, y }));
+      }
+
+      const numbers = (shape.getAttribute('d') || '').match(/-?\d+(?:\.\d+)?/g) || [];
+      const points = [];
+      for (let i = 0; i < numbers.length - 1; i += 2) {
+        points.push({ x: Number(numbers[i]), y: Number(numbers[i + 1]) });
+      }
+      return points;
+    }
+
+    function buildEdgeCell(el, index) {
+      const shape = firstDrawioShape(el, ['line', 'path', 'polyline']);
+      if (!shape) return '';
+
+      const points = pointsFromShape(shape);
+      if (points.length < 2) return '';
+
+      const labelText = el.dataset.drawioLabel || directChildren(el, 'text')[0]?.textContent.trim() || '';
+      const label = xmlEscape(labelText);
+      const stroke = shape.getAttribute('stroke') || '#9A9991';
+      const strokeWidth = shape.getAttribute('stroke-width') || '1.6';
+      const dashed = shape.hasAttribute('stroke-dasharray');
+      const id = drawioId(el, index);
+      const start = points[0];
+      const end = points[points.length - 1];
+      const waypoints = points.slice(1, -1)
+        .map((point) => `<mxPoint x="${point.x}" y="${point.y}"/>`)
+        .join('');
+      const waypointXml = waypoints ? `<Array as="points">${waypoints}</Array>` : '';
+      const style = cellStyle([
+        'edgeStyle=none',
+        'rounded=0',
+        'html=1',
+        'endArrow=open',
+        'endFill=0',
+        'fontFamily=Montserrat',
+        'fontSize=11',
+        'fontColor=#6F6C65',
+        `strokeColor=${stroke}`,
+        `strokeWidth=${strokeWidth}`,
+        dashed ? 'dashed=1' : '',
+        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+      ]);
+
+      return `<mxCell id="${xmlEscape(id)}" value="${label}" style="${xmlEscape(style)}" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="${start.x}" y="${start.y}" as="sourcePoint"/><mxPoint x="${end.x}" y="${end.y}" as="targetPoint"/>${waypointXml}</mxGeometry></mxCell>`;
+    }
+
+    function buildDrawioFromSvg(svg) {
+      const title = svg.querySelector('title')?.textContent.trim() || document.title || 'Diagram';
+      const viewBox = svg.getAttribute('viewBox') || '0 0 1000 620';
+      const [, , width = '1000', height = '620'] = viewBox.split(/\s+/);
+      const cells = ['<mxCell id="0"/>', '<mxCell id="1" parent="0"/>'];
+
+      Array.from(svg.querySelectorAll('[data-drawio-type]')).forEach((group, index) => {
+        if (group.dataset.drawioType === 'edge') {
+          cells.push(buildEdgeCell(group, index + 2));
+          return;
+        }
+
+        if (group.dataset.drawioType === 'component' || group.dataset.drawioType === 'boundary') {
+          cells.push(buildBoxCell(group, index + 2));
+        }
+      });
+
+      const model = `<mxGraphModel dx="${xmlEscape(width)}" dy="${xmlEscape(height)}" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="${xmlEscape(width)}" pageHeight="${xmlEscape(height)}" math="0" shadow="0"><root>${cells.filter(Boolean).join('')}</root></mxGraphModel>`;
+      return `<?xml version="1.0" encoding="UTF-8"?><mxfile host="app.diagrams.net" agent="Cloudy Tech Diagrams" modified="${new Date().toISOString()}" type="device"><diagram id="cloudy-tech-diagram" name="${xmlEscape(title)}">${model}</diagram></mxfile>`;
+    }
+
+    function downloadTextFile(filename, content, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.download = filename;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadDrawio(btn) {
+      const orig = btn.textContent;
+      btn.textContent = 'Preparing';
+      try {
+        const svg = document.querySelector('.diagram-container svg');
+        const mxfile = buildDrawioFromSvg(svg);
+        downloadTextFile('diagram.drawio', mxfile, 'application/xml');
+        btn.textContent = 'Done';
+      } catch (e) {
+        console.warn('Draw.io export failed', e);
         btn.textContent = 'Failed';
       }
       setTimeout(() => btn.textContent = orig, 2000);
