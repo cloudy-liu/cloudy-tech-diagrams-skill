@@ -1,0 +1,26 @@
+changelog:
+  categories:
+    - title: Added
+      labels:
+        - feature
+        - enhancement
+    - title: Changed
+      labels:
+        - changed
+        - refactor
+    - title: Fixed
+      labels:
+        - bug
+        - fix
+    - title: Documentation
+      labels:
+        - documentation
+        - docs
+    - title: Internal
+      labels:
+        - ci
+        - chore
+        - maintenance
+    - title: Other Changes
+      labels:
+        - "*"

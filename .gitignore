@@ -1,0 +1,9 @@
+CONTEXT.md
+skill-implementation-reading.md
+.local-debug/
+.tmp-chrome-profile/
+dist-audit/
+.DS_Store
+*.DS_Store
+*.zip
+dist/

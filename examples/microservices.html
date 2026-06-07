@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microservices Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js" integrity="sha384-en/ztfPSRkGfME4KIm05joYXynqzUgbsG5nMrj/xEFAHXkeZfO3yMK8QQ+mP7p1/" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --canvas: #E8E6DD;
+      --paper: #FAF9F5;
+      --paper-soft: #F6F3EC;
+      --ink: #141413;
+      --text: #3D3C38;
+      --muted: #6F6C65;
+      --line: #9A9991;
+      --line-soft: #C9C3B8;
+      --neutral-fill: #EDEAE3;
+      --neutral-stroke: #9A9991;
+      --frontend-fill: #E0E0F0;
+      --frontend-stroke: #8585DD;
+      --backend-fill: #D8E8D8;
+      --backend-stroke: #76B985;
+      --data-fill: #E4EEF4;
+      --data-stroke: #6A9BCC;
+      --cloud-fill: #F0DED7;
+      --cloud-stroke: #D87858;
+      --security-fill: #F3E4DA;
+      --security-stroke: #C88E6A;
+      --event-fill: #E6D7B4;
+      --event-stroke: #BFA777;
+      --font-laper: Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans SC", "PingFang SC", sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      padding: 32px;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: var(--font-laper);
+      letter-spacing: 0;
+    }
+
+    .container { max-width: 1180px; margin: 0 auto; }
+
+    .header { position: relative; margin-bottom: 24px; text-align: center; }
+
+    .header h1 {
+      color: var(--ink);
+      font-size: 42px;
+      line-height: 1.08;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin: 10px auto 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+
+    .toolbar {
+      position: absolute;
+      top: 4px;
+      right: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toolbar-actions { display: none; gap: 8px; }
+    .toolbar.expanded .toolbar-actions { display: flex; }
+
+    .toolbar-toggle,
+    .toolbar-actions button {
+      border: 1px solid var(--line-soft);
+      border-radius: 999px;
+      background: var(--paper);
+      color: var(--muted);
+      font: inherit;
+      font-size: 12px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .toolbar-toggle { padding: 9px 13px; }
+    .toolbar-actions button { padding: 9px 12px; white-space: nowrap; }
+
+    .toolbar-toggle:hover,
+    .toolbar-actions button:hover {
+      border-color: var(--line);
+      color: var(--ink);
+      background: #FFFFFF;
+    }
+
+    .diagram-container {
+      overflow-x: auto;
+      padding: 24px;
+      border: 1px solid var(--line-soft);
+      border-radius: 28px;
+      background: var(--paper);
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      min-width: 920px;
+      font-family: var(--font-laper);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .card {
+      padding: 18px;
+      border: 1px solid var(--line-soft);
+      border-radius: 18px;
+      background: var(--paper);
+    }
+
+    .card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .card-dot { width: 9px; height: 9px; border-radius: 50%; }
+    .card-dot.frontend { background: var(--frontend-stroke); }
+    .card-dot.backend { background: var(--backend-stroke); }
+    .card-dot.data { background: var(--data-stroke); }
+    .card-dot.cloud { background: var(--cloud-stroke); }
+    .card-dot.security { background: var(--security-stroke); }
+    .card-dot.event { background: var(--event-stroke); }
+
+    .card h3 { color: var(--text); font-size: 14px; font-weight: 700; letter-spacing: 0; }
+    .card ul { list-style: none; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .card li { margin-bottom: 4px; }
+    .footer { margin-top: 18px; color: var(--muted); font-size: 12px; text-align: center; }
+
+    @media (max-width: 760px) {
+      body { padding: 18px; }
+      .header { padding-top: 48px; }
+      .header h1 { font-size: 30px; }
+      .toolbar { top: 0; left: 0; right: auto; }
+      .diagram-container { padding: 16px; border-radius: 22px; }
+    }
+
+    @media print {
+      body { background: var(--canvas); padding: 16px; }
+      .toolbar { display: none !important; }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container" id="report-container">
+    <header class="header">
+      <h1>Microservices Architecture</h1>
+      <p class="subtitle">Kubernetes-orchestrated services behind one gateway with per-service data stores</p>
+      <div class="toolbar">
+        <div class="toolbar-actions">
+          <button onclick="copyAsImage(this)">Copy</button>
+          <button onclick="downloadPNG(this)">PNG</button>
+          <button onclick="downloadPDF(this)">PDF</button>
+        </div>
+        <button class="toolbar-toggle" onclick="this.parentElement.classList.toggle('expanded')" title="Export options" aria-label="Export options">Export</button>
+      </div>
+    </header>
+
+    <main class="diagram-container">
+      <svg viewBox="0 0 1000 620" role="img" aria-labelledby="diagram-title diagram-desc">
+        <title id="diagram-title">Microservices Architecture</title>
+        <desc id="diagram-desc">Warm editorial diagram for a microservices architecture.</desc>
+        <defs>
+          <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M 1 1 L 7 3 L 1 5" fill="none" stroke="#9A9991" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <rect width="1000" height="620" rx="18" fill="#FAF9F5"/>
+
+        <rect x="255" y="70" width="700" height="450" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
+        <text x="277" y="101" fill="#6F6C65" font-size="13" font-weight="600">Kubernetes Cluster</text>
+
+        <line x1="132" y1="190" x2="188" y2="245" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <line x1="132" y1="405" x2="188" y2="325" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <path d="M 370 285 C 405 210, 430 165, 485 150" fill="none" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <line x1="370" y1="285" x2="485" y2="285" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <path d="M 370 285 C 405 360, 430 405, 485 420" fill="none" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <line x1="625" y1="150" x2="720" y2="150" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <line x1="625" y1="285" x2="720" y2="285" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <line x1="625" y1="420" x2="720" y2="420" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <line x1="555" y1="194" x2="555" y2="202" stroke="#BFA777" stroke-width="1.6" stroke-dasharray="5 5" stroke-linecap="round"/>
+        <line x1="555" y1="238" x2="555" y2="246" stroke="#BFA777" stroke-width="1.6" stroke-dasharray="5 5" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <line x1="555" y1="329" x2="555" y2="337" stroke="#BFA777" stroke-width="1.6" stroke-dasharray="5 5" stroke-linecap="round"/>
+        <line x1="555" y1="373" x2="555" y2="381" stroke="#BFA777" stroke-width="1.6" stroke-dasharray="5 5" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+
+        <rect x="30" y="138" width="110" height="90" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
+        <text x="85" y="176" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Web App</text>
+        <text x="85" y="199" fill="#6F6C65" font-size="12" text-anchor="middle">React SPA</text>
+
+        <rect x="30" y="360" width="110" height="90" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
+        <text x="85" y="398" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Mobile App</text>
+        <text x="85" y="421" fill="#6F6C65" font-size="12" text-anchor="middle">iOS / Android</text>
+
+        <rect x="190" y="228" width="180" height="114" rx="16" fill="#F3E4DA" stroke="#C88E6A" stroke-width="2"/>
+        <text x="280" y="266" fill="#3D3C38" font-size="16" font-weight="600" text-anchor="middle">API Gateway</text>
+        <text x="280" y="289" fill="#6F6C65" font-size="12" text-anchor="middle">Kong / Nginx</text>
+        <text x="280" y="315" fill="#8B6B55" font-size="11" font-weight="600" text-anchor="middle">Auth + routing</text>
+
+        <rect x="485" y="115" width="140" height="70" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <text x="555" y="144" fill="#3D3C38" font-size="14" font-weight="600" text-anchor="middle">User Service</text>
+        <text x="555" y="165" fill="#6F6C65" font-size="12" text-anchor="middle">Go :8081</text>
+
+        <rect x="485" y="250" width="140" height="70" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <text x="555" y="279" fill="#3D3C38" font-size="14" font-weight="600" text-anchor="middle">Order Service</text>
+        <text x="555" y="300" fill="#6F6C65" font-size="12" text-anchor="middle">Java :8082</text>
+
+        <rect x="485" y="385" width="140" height="70" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <text x="555" y="414" fill="#3D3C38" font-size="14" font-weight="600" text-anchor="middle">Product Svc</text>
+        <text x="555" y="435" fill="#6F6C65" font-size="12" text-anchor="middle">Python :8083</text>
+
+        <rect x="490" y="206" width="130" height="28" rx="14" fill="#E6D7B4" stroke="#BFA777" stroke-width="1.5"/>
+        <text x="555" y="225" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">Event Bus</text>
+        <rect x="490" y="341" width="130" height="28" rx="14" fill="#E6D7B4" stroke="#BFA777" stroke-width="1.5"/>
+        <text x="555" y="360" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">Kafka</text>
+
+        <rect x="720" y="115" width="132" height="70" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
+        <text x="786" y="144" fill="#3D3C38" font-size="14" font-weight="600" text-anchor="middle">PostgreSQL</text>
+        <text x="786" y="165" fill="#6F6C65" font-size="12" text-anchor="middle">Users DB</text>
+        <rect x="720" y="250" width="132" height="70" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
+        <text x="786" y="279" fill="#3D3C38" font-size="14" font-weight="600" text-anchor="middle">MongoDB</text>
+        <text x="786" y="300" fill="#6F6C65" font-size="12" text-anchor="middle">Orders DB</text>
+        <rect x="720" y="385" width="132" height="70" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
+        <text x="786" y="414" fill="#3D3C38" font-size="14" font-weight="600" text-anchor="middle">Search</text>
+        <text x="786" y="435" fill="#6F6C65" font-size="12" text-anchor="middle">Elasticsearch</text>
+
+        <text x="275" y="562" fill="#3D3C38" font-size="13" font-weight="700">Legend</text>
+        <rect x="275" y="578" width="18" height="11" rx="3" fill="#D8E8D8" stroke="#76B985" stroke-width="1"/><text x="301" y="587" fill="#6F6C65" font-size="11">Service</text>
+        <rect x="370" y="578" width="18" height="11" rx="3" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="1"/><text x="396" y="587" fill="#6F6C65" font-size="11">Database</text>
+        <rect x="475" y="578" width="18" height="11" rx="3" fill="#E6D7B4" stroke="#BFA777" stroke-width="1"/><text x="501" y="587" fill="#6F6C65" font-size="11">Event bus</text>
+      </svg>
+    </main>
+
+    <section class="cards">
+      <article class="card">
+        <div class="card-header">
+          <div class="card-dot frontend"></div>
+          <h3>Client Applications</h3>
+        </div>
+        <ul>
+          <li>React web app and mobile apps</li>
+          <li>Single public API surface</li>
+          <li>JWT-based access flow</li>
+        </ul>
+      </article>
+      <article class="card">
+        <div class="card-header">
+          <div class="card-dot backend"></div>
+          <h3>Microservices</h3>
+        </div>
+        <ul>
+          <li>Independent service ownership</li>
+          <li>Go, Java, and Python runtimes</li>
+          <li>Event bus for asynchronous coordination</li>
+        </ul>
+      </article>
+      <article class="card">
+        <div class="card-header">
+          <div class="card-dot data"></div>
+          <h3>Data Stores</h3>
+        </div>
+        <ul>
+          <li>Database per service</li>
+          <li>Search index for product discovery</li>
+          <li>Cluster boundary keeps ownership visible</li>
+        </ul>
+      </article>
+    </section>
+
+    <p class="footer">Microservices Architecture - Domain-driven service boundaries</p>
+  </div>
+
+  <script>
+    async function captureReport() {
+      const el = document.getElementById('report-container');
+      const r = el.getBoundingClientRect();
+      const pad = 32;
+      return html2canvas(document.body, {
+        backgroundColor: '#E8E6DD',
+        scale: 2,
+        useCORS: true,
+        ignoreElements: (e) => e.classList && e.classList.contains('toolbar'),
+        x: r.left + window.scrollX - pad,
+        y: r.top + window.scrollY - pad,
+        width: r.width + pad * 2,
+        height: r.height + pad * 2
+      });
+    }
+
+    async function copyAsImage(btn) {
+      const orig = btn.textContent;
+      try {
+        const canvas = await captureReport();
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+        btn.textContent = 'Copied';
+      } catch (e) {
+        btn.textContent = 'Failed';
+      }
+      setTimeout(() => btn.textContent = orig, 2000);
+    }
+
+    async function downloadPNG(btn) {
+      const orig = btn.textContent;
+      btn.textContent = 'Preparing';
+      try {
+        const canvas = await captureReport();
+        const link = document.createElement('a');
+        link.download = document.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        btn.textContent = 'Done';
+      } catch (e) {
+        btn.textContent = 'Failed';
+      }
+      setTimeout(() => btn.textContent = orig, 2000);
+    }
+
+    async function downloadPDF(btn) {
+      const orig = btn.textContent;
+      btn.textContent = 'Preparing';
+      try {
+        const canvas = await captureReport();
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const orientation = canvas.width > canvas.height ? 'landscape' : 'portrait';
+        const pdf = new jsPDF({ orientation, unit: 'px', format: [canvas.width, canvas.height], hotfixes: ['px_scaling'] });
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+        pdf.save(document.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.pdf');
+        btn.textContent = 'Done';
+      } catch (e) {
+        btn.textContent = 'Failed';
+      }
+      setTimeout(() => btn.textContent = orig, 2000);
+    }
+  </script>
+</body>
+</html>

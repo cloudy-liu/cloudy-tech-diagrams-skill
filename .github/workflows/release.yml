@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish skill zip
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate release tag
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Release tags must look like v1.2.3 or v1.2.3-beta.1"
+            exit 1
+          fi
+
+      - name: Build release skill zip
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          skill_dir="cloudy-tech-diagrams"
+          dist_dir="dist"
+          zip_name="cloudy-tech-diagrams-skill-${VERSION}.zip"
+
+          rm -rf "$dist_dir"
+          mkdir -p "$dist_dir/$skill_dir"
+
+          cp SKILL.md "$dist_dir/$skill_dir/"
+          cp LICENSE "$dist_dir/$skill_dir/"
+          printf '%s\n' "$VERSION" > "$dist_dir/$skill_dir/VERSION"
+          cp -R assets "$dist_dir/$skill_dir/"
+          cp -R references "$dist_dir/$skill_dir/"
+
+          (
+            cd "$dist_dir"
+            zip -r "$zip_name" "$skill_dir"
+          )
+
+          unzip -l "$dist_dir/$zip_name"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          zip_path="dist/cloudy-tech-diagrams-skill-${VERSION}.zip"
+
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            gh release upload "$VERSION" "$zip_path" --clobber
+          else
+            gh release create "$VERSION" "$zip_path" \
+              --title "$VERSION" \
+              --generate-notes
+          fi

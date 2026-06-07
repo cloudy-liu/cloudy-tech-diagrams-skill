@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfetto Project Architecture Diagram</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js" integrity="sha384-en/ztfPSRkGfME4KIm05joYXynqzUgbsG5nMrj/xEFAHXkeZfO3yMK8QQ+mP7p1/" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --canvas: #E8E6DD;
+      --paper: #FAF9F5;
+      --paper-soft: #F6F3EC;
+      --ink: #141413;
+      --text: #3D3C38;
+      --muted: #6F6C65;
+      --line: #9A9991;
+      --line-soft: #C9C3B8;
+      --neutral-fill: #EDEAE3;
+      --neutral-stroke: #9A9991;
+      --frontend-fill: #E0E0F0;
+      --frontend-stroke: #8585DD;
+      --backend-fill: #D8E8D8;
+      --backend-stroke: #76B985;
+      --data-fill: #E4EEF4;
+      --data-stroke: #6A9BCC;
+      --cloud-fill: #F0DED7;
+      --cloud-stroke: #D87858;
+      --security-fill: #F3E4DA;
+      --security-stroke: #C88E6A;
+      --event-fill: #E6D7B4;
+      --event-stroke: #BFA777;
+      --font-paper: Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans SC", "PingFang SC", sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      padding: 32px;
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: var(--font-paper);
+      letter-spacing: 0;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    .header {
+      position: relative;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .header h1 {
+      color: var(--ink);
+      font-size: 42px;
+      line-height: 1.08;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 840px;
+      margin: 10px auto 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+
+    .toolbar {
+      position: absolute;
+      top: 4px;
+      right: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toolbar-actions {
+      display: none;
+      gap: 8px;
+    }
+
+    .toolbar.expanded .toolbar-actions {
+      display: flex;
+    }
+
+    .toolbar-toggle,
+    .toolbar-actions button {
+      border: 1px solid var(--line-soft);
+      border-radius: 999px;
+      background: var(--paper);
+      color: var(--muted);
+      font: inherit;
+      font-size: 12px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .toolbar-toggle {
+      padding: 9px 13px;
+    }
+
+    .toolbar-actions button {
+      padding: 9px 12px;
+      white-space: nowrap;
+    }
+
+    .toolbar-toggle:hover,
+    .toolbar-actions button:hover {
+      border-color: var(--line);
+      color: var(--ink);
+      background: #FFFFFF;
+    }
+
+    .diagram-container {
+      overflow-x: auto;
+      padding: 24px;
+      border: 1px solid var(--line-soft);
+      border-radius: 28px;
+      background: var(--paper);
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      min-width: 1120px;
+      font-family: var(--font-paper);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .card {
+      padding: 18px;
+      border: 1px solid var(--line-soft);
+      border-radius: 18px;
+      background: var(--paper);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .card-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .card-dot.frontend { background: var(--frontend-stroke); }
+    .card-dot.backend { background: var(--backend-stroke); }
+    .card-dot.data { background: var(--data-stroke); }
+    .card-dot.cloud { background: var(--cloud-stroke); }
+    .card-dot.security { background: var(--security-stroke); }
+    .card-dot.event { background: var(--event-stroke); }
+
+    .card h3 {
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .card ul {
+      list-style: none;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .card li {
+      margin-bottom: 4px;
+    }
+
+    .footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 18px;
+      }
+
+      .header {
+        padding-top: 48px;
+      }
+
+      .header h1 {
+        font-size: 30px;
+      }
+
+      .toolbar {
+        top: 0;
+        left: 0;
+        right: auto;
+      }
+
+      .diagram-container {
+        padding: 16px;
+        border-radius: 22px;
+      }
+    }
+
+    @media print {
+      body {
+        background: var(--canvas);
+        padding: 16px;
+      }
+
+      .toolbar {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="report-container">
+    <header class="header">
+      <h1>Perfetto Project Architecture</h1>
+      <p class="subtitle">A homepage-style stack view of Perfetto's recording, analysis, and visualization capabilities, with a compact trace artifact flow across the three domains.</p>
+      <div class="toolbar">
+        <div class="toolbar-actions">
+          <button onclick="copyAsImage(this)">Copy</button>
+          <button onclick="downloadPNG(this)">PNG</button>
+          <button onclick="downloadPDF(this)">PDF</button>
+        </div>
+        <button class="toolbar-toggle" onclick="this.parentElement.classList.toggle('expanded')" title="Export options" aria-label="Export options">Export</button>
+      </div>
+    </header>
+
+    <main class="diagram-container">
+      <svg viewBox="0 0 1180 760" role="img" aria-labelledby="diagram-title diagram-desc">
+        <title id="diagram-title">Perfetto project architecture stack</title>
+        <desc id="diagram-desc">Warm editorial technical diagram showing Perfetto record traces, analyze traces, and visualize traces domains with trace artifact flow between them.</desc>
+
+        <defs>
+          <marker id="arrow-primary" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M 1 1 L 7 3 L 1 5" fill="none" stroke="#9A9991" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="arrow-context" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M 1 1 L 7 3 L 1 5" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="arrow-event" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M 1 1 L 7 3 L 1 5" fill="none" stroke="#BFA777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="arrow-ui" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M 1 1 L 7 3 L 1 5" fill="none" stroke="#8585DD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <rect width="1180" height="760" rx="18" fill="#FAF9F5"/>
+
+        <text x="48" y="42" fill="#141413" font-size="18" font-weight="700">Project stack map</text>
+        <text x="48" y="64" fill="#6F6C65" font-size="12" font-weight="500">Modeled after the official homepage stack: record traces, analyze traces, and visualize traces.</text>
+
+        <rect x="34" y="92" width="630" height="530" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
+        <rect x="686" y="92" width="220" height="530" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
+        <rect x="930" y="92" width="216" height="530" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
+
+        <circle cx="350" cy="124" r="18" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <rect x="341" y="116" width="18" height="16" rx="3" fill="#76B985"/>
+        <rect x="344" y="112" width="12" height="4" rx="1" fill="#76B985"/>
+        <text x="350" y="164" fill="#3D3C38" font-size="22" font-weight="700" text-anchor="middle">Record traces</text>
+
+        <circle cx="796" cy="124" r="18" fill="#F0DED7" stroke="#D87858" stroke-width="2"/>
+        <rect x="786" y="133" width="4" height="8" rx="2" fill="#D87858"/>
+        <rect x="794" y="124" width="4" height="17" rx="2" fill="#D87858"/>
+        <rect x="802" y="116" width="4" height="25" rx="2" fill="#D87858"/>
+        <text x="796" y="164" fill="#3D3C38" font-size="22" font-weight="700" text-anchor="middle">Analyze traces</text>
+
+        <circle cx="1038" cy="124" r="18" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
+        <rect x="1026" y="116" width="24" height="17" rx="3" fill="#8585DD"/>
+        <line x1="1030" y1="137" x2="1046" y2="137" stroke="#8585DD" stroke-width="3" stroke-linecap="round"/>
+        <text x="1038" y="164" fill="#3D3C38" font-size="22" font-weight="700" text-anchor="middle">Visualize traces</text>
+
+        <line x1="248" y1="186" x2="248" y2="505" stroke="#C9C3B8" stroke-width="1.2" stroke-dasharray="5 5"/>
+        <line x1="432" y1="186" x2="432" y2="505" stroke="#C9C3B8" stroke-width="1.2" stroke-dasharray="5 5"/>
+
+        <text x="146" y="198" fill="#5F5A54" font-size="14" font-weight="700" text-anchor="middle">System tracing</text>
+        <text x="340" y="198" fill="#5F5A54" font-size="14" font-weight="700" text-anchor="middle">Chrome tracing</text>
+        <text x="526" y="198" fill="#5F5A54" font-size="14" font-weight="700" text-anchor="middle">In-app tracing</text>
+
+        <path d="M 146 370 C 146 392, 146 404, 146 425" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path d="M 340 336 C 340 346, 354 350, 386 350" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path d="M 526 336 C 526 346, 512 350, 480 350" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path d="M 340 410 C 340 424, 340 436, 340 452" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path d="M 526 410 C 526 424, 526 436, 526 452" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path d="M 336 516 C 336 526, 330 534, 314 538" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path d="M 526 516 C 526 526, 500 534, 430 538" fill="none" stroke="#76B985" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-context)"/>
+        <path d="M 568 571 C 626 568, 662 520, 704 357" fill="none" stroke="#BFA777" stroke-width="1.6" stroke-dasharray="5 5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-event)"/>
+        <text x="646" y="446" fill="#6F6C65" font-size="11" font-weight="500">trace artifact</text>
+
+        <rect x="72" y="220" width="148" height="150" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <text x="146" y="248" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Data Sources</text>
+        <rect x="92" y="268" width="108" height="24" rx="12" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1"/>
+        <text x="146" y="285" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">Linux ftrace</text>
+        <rect x="92" y="302" width="108" height="24" rx="12" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1"/>
+        <text x="146" y="319" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">/proc pollers</text>
+        <rect x="92" y="336" width="108" height="24" rx="12" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1"/>
+        <text x="146" y="353" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">Heap profilers</text>
+
+        <rect x="72" y="426" width="148" height="60" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <text x="146" y="451" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Tracing daemon</text>
+        <text x="146" y="471" fill="#6F6C65" font-size="12" text-anchor="middle">UNIX socket</text>
+
+        <rect x="266" y="220" width="148" height="116" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <text x="340" y="266" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Chrome-specific</text>
+        <text x="340" y="286" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">data sources</text>
+
+        <rect x="452" y="220" width="148" height="116" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <text x="526" y="266" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">App-specific</text>
+        <text x="526" y="286" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">data sources</text>
+
+        <rect x="266" y="354" width="334" height="56" rx="14" fill="#E6D7B4" stroke="#BFA777" stroke-width="2"/>
+        <text x="433" y="379" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Track event library</text>
+        <text x="433" y="397" fill="#6F6C65" font-size="12" text-anchor="middle">TRACE_EVENT(...)</text>
+
+        <rect x="266" y="456" width="148" height="60" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <text x="340" y="481" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Tracing service</text>
+        <text x="340" y="501" fill="#6F6C65" font-size="12" text-anchor="middle">Mojo</text>
+
+        <rect x="452" y="456" width="148" height="60" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+        <text x="526" y="481" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">In-process</text>
+        <text x="526" y="501" fill="#6F6C65" font-size="12" text-anchor="middle">service thread</text>
+
+        <rect x="72" y="540" width="356" height="62" rx="14" fill="#E6D7B4" stroke="#BFA777" stroke-width="2"/>
+        <text x="250" y="566" fill="#3D3C38" font-size="16" font-weight="700" text-anchor="middle">Tracing C++ Library</text>
+        <text x="250" y="586" fill="#6F6C65" font-size="12" text-anchor="middle">Android / Linux / macOS / Windows</text>
+
+        <rect x="464" y="540" width="104" height="62" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
+        <text x="516" y="565" fill="#3D3C38" font-size="13" font-weight="700" text-anchor="middle">Trace file</text>
+        <text x="516" y="585" fill="#6F6C65" font-size="11" text-anchor="middle">protobuf</text>
+
+        <path d="M 780 322 C 780 298, 780 286, 780 266" fill="none" stroke="#D87858" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-primary)"/>
+        <path d="M 780 266 C 780 312, 780 350, 780 392" fill="none" stroke="#D87858" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-primary)"/>
+        <path d="M 780 462 C 780 478, 780 486, 780 496" fill="none" stroke="#D87858" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-primary)"/>
+        <path d="M 872 212 C 900 212, 920 212, 954 212" fill="none" stroke="#8585DD" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrow-ui)"/>
+        <text x="914" y="198" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">render</text>
+        <path d="M 1038 252 C 1038 272, 1038 282, 1038 300" fill="none" stroke="#8585DD" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-ui)"/>
+
+        <rect x="710" y="210" width="172" height="56" rx="14" fill="#F0DED7" stroke="#D87858" stroke-width="2"/>
+        <text x="796" y="233" fill="#3D3C38" font-size="15" font-weight="700" text-anchor="middle">Trace Processor</text>
+        <text x="796" y="252" fill="#6F6C65" font-size="12" text-anchor="middle">C++ engine</text>
+
+        <rect x="710" y="322" width="172" height="70" rx="14" fill="#F0DED7" stroke="#D87858" stroke-width="2"/>
+        <text x="796" y="350" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Trace importers</text>
+        <text x="796" y="370" fill="#6F6C65" font-size="12" text-anchor="middle">Protobuf, JSON, systrace</text>
+
+        <rect x="710" y="422" width="172" height="70" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
+        <text x="796" y="450" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">SQL query engine</text>
+        <text x="796" y="470" fill="#6F6C65" font-size="12" text-anchor="middle">based on SQLite</text>
+
+        <rect x="710" y="522" width="172" height="56" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
+        <text x="796" y="545" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Trace metrics</text>
+        <text x="796" y="564" fill="#6F6C65" font-size="12" text-anchor="middle">JSON / protobuf / CSV</text>
+
+        <rect x="954" y="190" width="168" height="62" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
+        <text x="1038" y="216" fill="#3D3C38" font-size="16" font-weight="700" text-anchor="middle">Perfetto UI</text>
+        <text x="1038" y="236" fill="#6F6C65" font-size="12" text-anchor="middle">HTML / JS</text>
+
+        <rect x="966" y="300" width="144" height="62" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
+        <text x="1038" y="325" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Trace Processor</text>
+        <text x="1038" y="345" fill="#6F6C65" font-size="12" text-anchor="middle">WebAssembly</text>
+
+        <rect x="966" y="410" width="144" height="62" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
+        <text x="1038" y="435" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">ADB over WebUSB</text>
+        <text x="1038" y="455" fill="#6F6C65" font-size="12" text-anchor="middle">Android capture</text>
+
+        <rect x="966" y="520" width="144" height="56" rx="14" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
+        <text x="1038" y="543" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Works offline</text>
+        <text x="1038" y="562" fill="#6F6C65" font-size="12" text-anchor="middle">after first visit</text>
+
+        <text x="54" y="660" fill="#3D3C38" font-size="13" font-weight="700">Legend</text>
+        <rect x="54" y="678" width="18" height="11" rx="3" fill="#D8E8D8" stroke="#76B985" stroke-width="1"/>
+        <text x="80" y="687" fill="#6F6C65" font-size="11">recording components</text>
+        <rect x="232" y="678" width="18" height="11" rx="3" fill="#F0DED7" stroke="#D87858" stroke-width="1"/>
+        <text x="258" y="687" fill="#6F6C65" font-size="11">analysis components</text>
+        <rect x="402" y="678" width="18" height="11" rx="3" fill="#E0E0F0" stroke="#8585DD" stroke-width="1"/>
+        <text x="428" y="687" fill="#6F6C65" font-size="11">visualization components</text>
+        <rect x="590" y="678" width="18" height="11" rx="3" fill="#E6D7B4" stroke="#BFA777" stroke-width="1"/>
+        <text x="616" y="687" fill="#6F6C65" font-size="11">shared recording library</text>
+        <line x1="794" y1="683" x2="830" y2="683" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrow-primary)"/>
+        <text x="840" y="687" fill="#6F6C65" font-size="11">trace flow</text>
+        <line x1="930" y1="683" x2="966" y2="683" stroke="#BFA777" stroke-width="1.6" stroke-dasharray="5 5" stroke-linecap="round" marker-end="url(#arrow-event)"/>
+        <text x="976" y="687" fill="#6F6C65" font-size="11">artifact handoff</text>
+
+        <rect x="54" y="718" width="1072" height="28" rx="12" fill="#F6F3EC" stroke="#C9C3B8" stroke-width="1"/>
+        <text x="70" y="737" fill="#6F6C65" font-size="11" font-weight="500">Scope: this is a project architecture map. Detailed shared-memory and central-buffer mechanics belong in a separate runtime dataflow diagram.</text>
+      </svg>
+    </main>
+
+    <section class="cards">
+      <article class="card">
+        <div class="card-header">
+          <div class="card-dot backend"></div>
+          <h3>Record Traces</h3>
+        </div>
+        <ul>
+          <li>System, Chrome, and in-app tracing are shown as separate entry points.</li>
+          <li>The Track Event library and Tracing C++ library are shared recording foundations.</li>
+          <li>The output is a Perfetto protobuf trace artifact.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <div class="card-dot cloud"></div>
+          <h3>Analyze Traces</h3>
+        </div>
+        <ul>
+          <li>Trace Processor is the central analysis engine.</li>
+          <li>Importers normalize protobuf, JSON, systrace, and related formats.</li>
+          <li>SQL and metrics expose queryable analysis outputs.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <div class="card-dot frontend"></div>
+          <h3>Visualize Traces</h3>
+        </div>
+        <ul>
+          <li>Perfetto UI is the browser-based timeline surface.</li>
+          <li>Trace Processor WebAssembly supports local browser analysis.</li>
+          <li>WebUSB capture and offline use are first-class UI capabilities.</li>
+        </ul>
+      </article>
+    </section>
+
+    <p class="footer">Adapted from Perfetto documentation concepts and homepage stack diagram, licensed under CC BY 4.0. Generated with Cloudy Tech Diagrams Skill.</p>
+  </div>
+
+  <script>
+    async function captureReport() {
+      const el = document.getElementById('report-container');
+      const r = el.getBoundingClientRect();
+      const pad = 32;
+      return html2canvas(document.body, {
+        backgroundColor: '#E8E6DD',
+        scale: 2,
+        useCORS: true,
+        ignoreElements: (e) => e.classList && e.classList.contains('toolbar'),
+        x: r.left + window.scrollX - pad,
+        y: r.top + window.scrollY - pad,
+        width: r.width + pad * 2,
+        height: r.height + pad * 2
+      });
+    }
+
+    async function copyAsImage(btn) {
+      const orig = btn.textContent;
+      try {
+        const canvas = await captureReport();
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+        btn.textContent = 'Copied';
+      } catch (e) {
+        btn.textContent = 'Failed';
+      }
+      setTimeout(() => btn.textContent = orig, 2000);
+    }
+
+    async function downloadPNG(btn) {
+      const orig = btn.textContent;
+      btn.textContent = 'Preparing';
+      try {
+        const canvas = await captureReport();
+        const link = document.createElement('a');
+        link.download = 'perfetto-project-architecture.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        btn.textContent = 'Done';
+      } catch (e) {
+        btn.textContent = 'Failed';
+      }
+      setTimeout(() => btn.textContent = orig, 2000);
+    }
+
+    async function downloadPDF(btn) {
+      const orig = btn.textContent;
+      btn.textContent = 'Preparing';
+      try {
+        const canvas = await captureReport();
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const orientation = canvas.width > canvas.height ? 'landscape' : 'portrait';
+        const pdf = new jsPDF({ orientation, unit: 'px', format: [canvas.width, canvas.height], hotfixes: ['px_scaling'] });
+        pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+        pdf.save('perfetto-project-architecture.pdf');
+        btn.textContent = 'Done';
+      } catch (e) {
+        btn.textContent = 'Failed';
+      }
+      setTimeout(() => btn.textContent = orig, 2000);
+    }
+  </script>
+</body>
+</html>

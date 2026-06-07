@@ -1,0 +1,261 @@
+---
+name: cloudy-tech-diagrams
+description: Use when creating polished technical diagrams as self-contained HTML+SVG files for software architecture, system design, process flows, cloud infrastructure, security boundaries, network topology, runtime mechanics, data flow, deployment views, or technical presentation visuals.
+---
+
+# Cloudy Tech Diagrams
+
+Create polished technical diagrams as standalone HTML files with inline SVG, embedded CSS, and a warm editorial visual style.
+
+Use this skill for diagrams that explain technical systems. Do not use it for marketing posters, brand visuals, generic slide decks, dashboards, non-technical illustrations, or landing pages.
+
+## Implementation Model
+
+Copy and customize `assets/template.html`, then replace the sample SVG components with the user's system, process, topology, or mechanism. Keep the template structure, export toolbar, and capture scripts unless the user explicitly asks to remove export.
+
+The output is instruction-driven. Build the diagram directly in HTML and SVG; do not depend on external diagram renderers, image generators, Mermaid, Graphviz, or canvas libraries unless the user explicitly asks for a different format.
+
+## Diagram Types
+
+Choose the diagram shape based on the user's description:
+
+- **Architecture view**: clients, edge, APIs, services, data stores, queues, and external integrations.
+- **Process flow**: ordered steps, decision points, handoffs, automation stages, approvals, and runbooks.
+- **Cloud or deployment view**: regions, networks, gateways, compute, storage, managed services, and boundaries.
+- **Security view**: identity, policy, trust boundaries, secrets, network controls, and audit paths.
+- **Network topology**: zones, routers, firewalls, subnets, links, protocols, and ingress/egress.
+- **Runtime mechanics**: request lifecycle, event propagation, model/tool execution, background jobs, and state transitions.
+- **Technical presentation visual**: one focused explanatory diagram for a technical talk, doc, proposal, or incident review.
+
+## Design System
+
+### Core Principles
+
+- Use a warm paper canvas, not a dark dashboard background.
+- Prefer calm editorial diagrams over neon infrastructure maps.
+- Let spacing and typography carry hierarchy.
+- Use semantic colors sparingly; most of the diagram should stay neutral.
+- Use flat fills, thin strokes, and no shadows or gradients.
+- Keep the main idea readable within three seconds: clear groups, direct flows, short labels.
+- Use visual density appropriate to technical documentation: enough detail to be useful, not a decorative infographic.
+
+### Color Palette
+
+Use these semantic colors for component types:
+
+| Component Type | Fill | Stroke | Use For |
+| --- | --- | --- | --- |
+| External / Generic | `#EDEAE3` | `#9A9991` | Users, browsers, third-party systems |
+| Frontend / Client | `#E0E0F0` | `#8585DD` | Web apps, mobile apps, UI surfaces |
+| Backend / Compute | `#D8E8D8` | `#76B985` | APIs, services, workers, model execution |
+| Data / Storage | `#E4EEF4` | `#6A9BCC` | Databases, caches, object storage, search indexes |
+| Cloud / Infrastructure | `#F0DED7` | `#D87858` | Cloud services, edge, gateways, hosting |
+| Security / Identity | `#F3E4DA` | `#C88E6A` | Auth, IAM, security groups, policy controls |
+| Message Bus / Events | `#E6D7B4` | `#BFA777` | Queues, streams, event buses |
+| Neutral Panel | `#FAF9F5` | `#B8B3AA` | Regions, clusters, bounded contexts |
+
+Page and text colors:
+
+| Token | Color | Use For |
+| --- | --- | --- |
+| Canvas | `#E8E6DD` | Full page background |
+| Paper | `#FAF9F5` | Diagram container and cards |
+| Soft Paper | `#F6F3EC` | Region fills and secondary panels |
+| Ink | `#141413` | Main title and primary labels |
+| Body Text | `#3D3C38` | Component labels |
+| Muted Text | `#6F6C65` | Sublabels, captions, edge labels |
+| Line | `#9A9991` | Main arrows and dividers |
+| Soft Line | `#C9C3B8` | Panel borders and low-priority structure |
+
+### Typography
+
+Use Montserrat for Latin text and Noto Sans SC for Simplified Chinese, with system fallbacks for offline or restricted environments.
+
+```css
+font-family: Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans SC", "PingFang SC", sans-serif;
+```
+
+When producing a browser-rendered HTML diagram, include a Google Fonts stylesheet for Montserrat and Noto Sans SC:
+
+```html
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+```
+
+Use these sizes in SVG:
+
+| Text Role | Size | Weight |
+| --- | --- | --- |
+| Component name | 15px | 600 |
+| Component sublabel | 12px | 400 |
+| Boundary label | 13px | 600 |
+| Edge label | 11px | 500 |
+| Legend text | 11px | 500 |
+
+Avoid monospace text unless the diagram specifically labels code, commands, ports, payloads, or protocols.
+
+### Visual Elements
+
+**Background:** warm canvas `#E8E6DD`. Do not use dark slate backgrounds.
+
+**Diagram container:** off-white paper `#FAF9F5`, large rounded corners, subtle warm border.
+
+**Component boxes:** rounded rectangles with solid warm fills, 2px strokes, no opacity hacks, no duplicated opaque masks.
+
+```svg
+<rect x="X" y="Y" width="W" height="H" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+<text x="CENTER_X" y="Y+28" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">API Service</text>
+<text x="CENTER_X" y="Y+48" fill="#6F6C65" font-size="12" text-anchor="middle">FastAPI :8000</text>
+```
+
+**Region boundaries:** use a soft filled panel with a dashed warm-gray stroke.
+
+```svg
+<rect x="X" y="Y" width="W" height="H" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
+<text x="X+18" y="Y+26" fill="#6F6C65" font-size="13" font-weight="600">AWS Region</text>
+```
+
+**Security groups:** dashed warm orange boundary, transparent or very soft fill.
+
+```svg
+<rect x="X" y="Y" width="W" height="H" rx="18" fill="none" stroke="#C88E6A" stroke-width="1.5" stroke-dasharray="6 6"/>
+```
+
+**Message buses:** slim rounded pills placed in the gap between components. For vertical event flows, center the pill on the same axis as the event line. Do not draw a connector line through the pill; split the event connector into a segment above the pill and an arrow segment below it.
+
+```svg
+<rect x="X" y="Y" width="W" height="26" rx="13" fill="#E6D7B4" stroke="#BFA777" stroke-width="1.5"/>
+<text x="CENTER_X" y="Y+17" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">Event Bus</text>
+```
+
+### Arrows
+
+All arrows use open chevron arrowheads. Never use filled triangular arrowheads.
+
+```svg
+<marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+  <path d="M 1 1 L 7 3 L 1 5" fill="none" stroke="#9A9991" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+```
+
+Draw soft region and security boundaries first, then arrows, then component nodes, then legends. This keeps arrows visible above panel fills while component boxes remain visually dominant.
+
+| Flow Type | Stroke | Width | Pattern |
+| --- | --- | --- | --- |
+| Primary data flow | `#9A9991` | 1.6 | Solid |
+| Context/support flow | `#76B985` | 1.6 | Solid |
+| Auth/security flow | `#C88E6A` | 1.6 | Dashed `6 6` |
+| Event flow | `#BFA777` | 1.6 | Dashed `5 5` |
+| Error/blocked flow | `#D87858` | 1.6 | Dashed `6 6` |
+
+### Spacing Rules
+
+- Canvas padding inside SVG: at least 32px.
+- Large region boundaries: at least 18px inner label padding.
+- Standard component size: 130-170px wide, 68-92px high.
+- Minimum horizontal gap between adjacent components: 48px.
+- Minimum vertical gap between stacked components: 36px.
+- Message bus pills belong in the gap between components, not overlapping either box.
+- In stacked event flows, message bus pills must sit on the exact centerline of the connected components.
+- Keep the number of accent colors to four or fewer per diagram.
+- Keep legends outside all region and cluster boundaries.
+
+### Layout Structure
+
+Use this HTML structure:
+
+1. Header with centered title, subtitle, and unobtrusive export toolbar.
+2. Main SVG diagram inside one warm paper container.
+3. Optional summary cards below the diagram.
+4. Muted footer metadata.
+
+Do not create a marketing landing page. The first screen should be the diagram itself.
+
+## Export Toolbar
+
+Every generated diagram should keep the built-in export toolbar unless the user asks to remove it.
+
+Keep these intact:
+
+- `id="report-container"` on the outer `.container`.
+- The two CDN scripts in `<head>`:
+  - `https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js`
+  - `https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js`
+- `.toolbar` markup and CSS.
+- `copyAsImage()`, `downloadPNG()`, and `downloadPDF()` before `</body>`.
+- `ignoreElements: (e) => e.classList && e.classList.contains('toolbar')` during capture.
+- `backgroundColor: '#E8E6DD'` in html2canvas calls.
+
+Clipboard export requires a user gesture and a secure context. PNG and PDF download work in ordinary modern browsers.
+
+## Template
+
+Copy and customize `assets/template.html`.
+
+Key customization points:
+
+1. Update `<title>`, `h1`, subtitle, and footer metadata.
+2. Adjust SVG `viewBox` dimensions to fit the diagram.
+3. Replace sample components with the user's technical components, steps, regions, or flows.
+4. Draw boundaries first, then arrows, then nodes, then legends.
+5. Update summary cards only when they add useful context.
+6. Keep labels short. Prefer `API Service` plus `FastAPI :8000` over long sentences.
+
+## Output
+
+Always produce a single self-contained `.html` file with:
+
+- Embedded CSS.
+- Inline SVG.
+- No external images.
+- CDN JavaScript only for export.
+- Warm editorial visual design.
+
+The file must render correctly when opened directly in any modern browser.
+
+## Quality Checklist
+
+Before finalizing a generated diagram, verify diagram expression quality: the rendered artifact must be visually clear, internally coherent, and free of SVG layering mistakes. Do not use this checklist to encode product, project, source-document, or domain-specific correctness rules; those belong in task reasoning and user review.
+
+### Universal Diagram Expression Rules
+
+- [ ] The requested diagram type is inside the technical diagram scope.
+- [ ] Page background is warm `#E8E6DD`, not dark slate.
+- [ ] Diagram container uses paper `#FAF9F5`.
+- [ ] No neon colors, glows, shadows, or gradients.
+- [ ] Inspect the rendered HTML/SVG at the target viewport when tooling is available; do not rely only on source coordinates for connectors, labels, or layering.
+- [ ] Component colors match semantic meaning within the diagram's own legend or visual system.
+- [ ] Main idea and primary reading direction are obvious within three seconds.
+- [ ] Text labels fit inside boxes, pills, headers, and legends without clipping or overlap.
+- [ ] Every connector can be read as a clear source-to-target relationship.
+- [ ] Every arrowhead uses an open chevron and is visible in the rendered diagram.
+- [ ] Every arrowhead terminates at a target boundary or an explicitly labeled handoff point.
+- [ ] No connector points into unlabeled empty space.
+- [ ] Short local connectors between nearby boxes stop outside the target box, not inside its fill.
+- [ ] If connectors are drawn before nodes, inspect the rendered output to ensure nodes did not cover arrowheads or make endpoints ambiguous.
+- [ ] Connectors do not cross through unrelated labels, legends, node titles, or dense component interiors.
+- [ ] Legend is outside every boundary box.
+- [ ] Export toolbar still works and is excluded from captures.
+- [ ] SVG is plain shapes and text; avoid `foreignObject`.
+
+### Type-Specific Diagram Expression Rules
+
+Apply these only when the corresponding visual pattern appears:
+
+- [ ] Message bus pills are centered on their event-flow axis, with connector lines split around the pill instead of crossing through it.
+- [ ] Region, cluster, cloud, or trust-boundary boxes have enough inner padding that labels and nodes do not touch the boundary stroke.
+- [ ] Security or trust-boundary diagrams make boundary crossings visually explicit with a connector endpoint, label, or crossing marker.
+- [ ] Process, runtime, and data-flow diagrams have a consistent step order and direction; loops, retries, and branches are labeled where they break the main direction.
+- [ ] Architecture and deployment diagrams keep containment visually unambiguous: a node is either clearly inside a boundary or clearly outside it, not sitting on the edge.
+- [ ] Dense diagrams use labels on long or non-obvious connectors so the viewer can tell what is moving, calling, or controlling.
+
+### Adding New Diagram Expression Rules
+
+When a new issue appears, add a checklist rule only if it generalizes beyond the current project and catches a diagram-level clarity or rendering problem. Use this admission test before editing the skill:
+
+- **Problem it catches:** What visual misunderstanding, broken connector, overlap, clipping, or layering mistake does this prevent?
+- **Why it generalizes:** Why would the same issue apply to other architecture, flow, security, topology, or deployment diagrams?
+- **Rule:** Write one concise, observable checklist item.
+- **How to verify:** State what the agent must inspect in the rendered output, screenshot, or SVG structure.
+- **Where it belongs:** Put always-relevant checks in Universal rules; put pattern-specific checks in Type-Specific rules.
+
+Do not add checklist rules whose only purpose is to decide whether a domain model, source document interpretation, product architecture, vendor terminology, or project-specific component choice is correct.
