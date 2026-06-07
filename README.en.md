@@ -6,7 +6,7 @@ Cloudy Tech Diagrams Skill is a general technical diagram drawing skill for AI a
 
 It uses a warm Claude-style visual direction that can fit quickly into common documents.
 
-## What Problem It Solves
+## 🎯 What Problem It Solves
 
 - You do not need to repeatedly explain diagram style, output format, export behavior, and quality checks every time you ask an agent to draw an architecture diagram
 - Agent-generated diagrams often look like drafts: unclear arrow endpoints, overflowing text, confused node hierarchy, and unstable exports
@@ -14,7 +14,7 @@ It uses a warm Claude-style visual direction that can fit quickly into common do
 - Technical docs, solution reviews, and technical talks need a diagram that can be opened, exported, and manually adjusted as drawio, PNG, or PDF
 - It provides a visual design aligned with the Claude website, with a unified visual style and quality baseline
 
-## Suitable For
+## 🧩 Suitable For
 
 - Software architecture diagrams
 - System design diagrams
@@ -27,7 +27,7 @@ It uses a warm Claude-style visual direction that can fit quickly into common do
 
 It is not positioned as a general poster, brand visual, landing page, dashboard, non-technical illustration, or ordinary slide deck tool.
 
-## Quick Start
+## 🚀 Quick Start
 
 Quick start has two steps: install the Skill somewhere the agent can read it, then call it in the prompt.
 
@@ -175,7 +175,7 @@ Read this documentation, identify its core project architecture, then use cloudy
 
 The generated result is usually a `.html` file. Open it directly in a browser, then use the Copy / PNG / PDF buttons at the top of the page to export it.
 
-## What The Output Is
+## 📦 What The Output Is
 
 Each diagram is a self-contained HTML file by default:
 
@@ -187,7 +187,7 @@ Each diagram is a self-contained HTML file by default:
 - Opens directly in modern browsers.
 - Suitable for continued use in technical docs, solution review materials, README files, issues, or talk drafts.
 
-## Examples
+## 🖼️ Examples
 
 ### Perfetto Project Architecture
 
@@ -201,7 +201,7 @@ Each diagram is a self-contained HTML file by default:
 
 ![Microservices Architecture](examples/images/microservices.png)
 
-## Design And Quality Principles
+## ✅ Design And Quality Principles
 
 The goal of this Skill is not to make diagrams complicated, but to make them reliably readable in technical documentation.
 
@@ -212,7 +212,7 @@ The goal of this Skill is not to make diagrams complicated, but to make them rel
 - Check diagram expression before and after generation: text does not overflow, arrowheads are visible, connectors have clear sources and targets, and legends do not sit inside boundary boxes.
 - The general checklist constrains diagram expression quality only; it does not decide whether a specific domain model is correct.
 
-## Repository Layout
+## 🗂️ Repository Layout
 
 ```text
 cloudy-tech-diagrams-skill/
@@ -234,10 +234,10 @@ cloudy-tech-diagrams-skill/
 
 `SKILL.md` is the core instruction file read by the agent. `assets/template.html` is the starting point the agent copies and customizes when creating diagrams. `references/` stores style reference material. `examples/` contains sample outputs for GitHub README and maintenance; it is not part of the minimal Release package.
 
-## Credits
+## 🙏 Credits
 
 - Cloudy Tech Diagrams Skill is inspired by [Cocoon-AI/architecture-diagram-generator](https://github.com/Cocoon-AI/architecture-diagram-generator). It extends and customizes that project. Thanks.
 
-## License
+## 📄 License
 
 MIT License. See [LICENSE](LICENSE).

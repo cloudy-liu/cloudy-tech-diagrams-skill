@@ -6,7 +6,7 @@ Cloudy Tech Diagrams Skill 是一个给 AI agent 使用的通用技术图绘制 
 
 使用 claude 风格温暖视觉风格，可快速融入到各种常规文档中。
 
-## 解决什么问题
+## 🎯 解决什么问题
 
 - 每次让 agent 画架构图都要重复说明风格、格式、导出方式和检查标准
 - 生成的图经常只像草稿：箭头落点不清楚、文字溢出、节点层级混乱、导出不稳定
@@ -14,7 +14,7 @@ Cloudy Tech Diagrams Skill 是一个给 AI agent 使用的通用技术图绘制 
 - 技术文档、方案评审和技术分享需要一份能打开、能导出、能继续手工调整的 drawio 图、PNG、PDF
 - 提供了 cloude 官网一致的视觉设计，有统一的视觉风格和质量底线
 
-## 适合画什么
+## 🧩 适合画什么
 
 - 软件架构图
 - 系统设计图
@@ -27,7 +27,7 @@ Cloudy Tech Diagrams Skill 是一个给 AI agent 使用的通用技术图绘制 
 
 它不定位为通用海报、品牌视觉、落地页、dashboard、非技术插画或普通幻灯片工具。
 
-## 快速开始
+## 🚀 快速开始
 
 快速开始分两步：先把 Skill 安装到 agent 能读取的位置，再在提示词里调用它。
 
@@ -175,7 +175,7 @@ git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git .claude/s
 
 生成结果通常是一份 `.html` 文件。直接用浏览器打开即可查看，并可使用页面顶部的 Copy / PNG / PDF 按钮导出。
 
-## 输出结果是什么
+## 📦 输出结果是什么
 
 每张图默认是一份自包含 HTML 文件：
 
@@ -187,7 +187,7 @@ git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git .claude/s
 - 可以直接在现代浏览器中打开。
 - 适合放进技术文档、方案评审材料、README、issue 或分享稿中继续使用。
 
-## 示例
+## 🖼️ 示例
 
 ### Perfetto 项目架构
 
@@ -201,7 +201,7 @@ git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git .claude/s
 
 ![微服务架构](examples/images/microservices.png)
 
-## 设计和质量原则
+## ✅ 设计和质量原则
 
 这个 Skill 的目标不是把图画得复杂，而是让图在技术文档里稳定可读。
 
@@ -212,7 +212,7 @@ git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git .claude/s
 - 生成前后都要检查图面表达：文字不溢出、箭头可见、连接线有明确起点和终点、图例不压在边界框里。
 - 通用 checklist 只约束图面表达质量，不约束具体领域模型是否正确。
 
-## 仓库结构
+## 🗂️ 仓库结构
 
 ```text
 cloudy-tech-diagrams-skill/
@@ -234,10 +234,10 @@ cloudy-tech-diagrams-skill/
 
 `SKILL.md` 是 agent 读取的核心指令。`assets/template.html` 是生成图表时复制和改写的起点。`references/` 保存风格参考资料。`examples/` 是 GitHub README 和维护用的示例输出，不会进入最小 Release 包。
 
-## 致谢
+## 🙏 致谢
 
 * Cloudy Tech Diagrams Skill 的灵感来源于 [Cocoon-AI/architecture-diagram-generator](https://github.com/Cocoon-AI/architecture-diagram-generator) 项目，对它做了扩展、客制化，感谢！
 
-## 许可证
+## 📄 许可证
 
 MIT License。详见 [LICENSE](LICENSE)。
