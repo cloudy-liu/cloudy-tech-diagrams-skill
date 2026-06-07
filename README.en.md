@@ -11,7 +11,7 @@ It uses a warm Claude-style visual direction that can fit quickly into common do
 - You do not need to repeatedly explain diagram style, output format, export behavior, and quality checks every time you ask an agent to draw an architecture diagram
 - Agent-generated diagrams often look like drafts: unclear arrow endpoints, overflowing text, confused node hierarchy, and unstable exports
 - Mermaid / Graphviz are good for quickly expressing structure, but they are less flexible for visual control, document embedding, and fine layout
-- Technical docs, solution reviews, and technical talks need a diagram that can be opened, exported, and manually adjusted as drawio, PNG, or PDF
+- Technical docs, solution reviews, and technical talks need a diagram that can be opened, exported, and manually adjusted in Draw.io or shared as PNG/PDF
 - It provides a visual design aligned with the Claude website, with a unified visual style and quality baseline
 
 ## 🧩 Suitable For
@@ -173,7 +173,7 @@ If you want the diagram to follow a document or an existing architecture diagram
 Read this documentation, identify its core project architecture, then use cloudy-tech-diagrams to generate a browser-ready HTML architecture diagram. Focus the diagram on project architecture, not overly detailed implementation details.
 ```
 
-The generated result is usually a `.html` file. Open it directly in a browser, then use the Copy / PNG / PDF buttons at the top of the page to export it.
+The generated result is usually a `.html` file. Open it directly in a browser, then use the Copy / PNG / PDF / Draw.io buttons at the top of the page to export it.
 
 ## 📦 What The Output Is
 
@@ -182,10 +182,13 @@ Each diagram is a self-contained HTML file by default:
 - Embedded CSS.
 - Inline SVG graphics.
 - No external images.
-- CDN JavaScript only for export.
-- Copy / PNG / PDF export toolbar kept by default.
+- CDN JavaScript only for Copy, PNG, and PDF export.
+- Built-in Draw.io export for the main SVG diagram.
+- Copy / PNG / PDF / Draw.io export toolbar kept by default.
 - Opens directly in modern browsers.
 - Suitable for continued use in technical docs, solution review materials, README files, issues, or talk drafts.
+
+Draw.io export is HTML-first: the browser-rendered HTML remains the primary artifact, and the `.drawio` file covers the main SVG diagram rather than the full page wrapper, summary cards, footer, or toolbar. It targets editable visual equivalence with draw.io-native objects, not an exact pixel clone or one whole-diagram image.
 
 ## 🖼️ Examples
 
