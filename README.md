@@ -173,7 +173,7 @@ git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git .claude/s
 阅读这份文档，识别它的核心项目架构，然后使用 cloudy-tech-diagrams 生成一份可在浏览器打开的 HTML 架构图。图的重点放在项目架构，不要展开到过细的实现细节。
 ```
 
-生成结果通常是一份 `.html` 文件。直接用浏览器打开即可查看，并可使用页面顶部的 Copy / PNG / PDF / Draw.io 按钮导出。
+生成结果通常是一份 `.html` 文件。直接用浏览器打开即可查看，并可使用 Export 菜单中的 Copy Image / Download PNG / Download PDF / Download Draw.io 动作导出。
 
 ## 📦 输出结果是什么
 
@@ -182,9 +182,9 @@ git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git .claude/s
 - 内嵌 CSS。
 - 使用内联 SVG 绘制图形。
 - 不依赖外部图片。
-- 只为 Copy、PNG、PDF 导出使用 CDN JavaScript。
+- 只为 Copy Image、Download PNG、Download PDF 导出使用 CDN JavaScript。
 - 内置针对主 SVG 图的 Draw.io 导出。
-- 默认保留 Copy / PNG / PDF / Draw.io 导出工具栏。
+- 默认保留 Copy Image / Download PNG / Download PDF / Download Draw.io 导出菜单。
 - 可以直接在现代浏览器中打开。
 - 适合放进技术文档、方案评审材料、README、issue 或分享稿中继续使用。
 
