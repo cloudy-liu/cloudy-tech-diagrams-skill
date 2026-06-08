@@ -209,6 +209,8 @@ Keep these intact:
   - `https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js`
 - `.toolbar` markup and CSS.
 - `copyAsImage()`, `downloadPNG()`, `downloadPDF()`, and `downloadDrawio()` before `</body>`.
+- The clipboard image export action should be labeled `Copy Image`, with a tooltip and accessible label that say it copies the diagram as an image to the clipboard.
+- The file export actions should be labeled `Download PNG`, `Download PDF`, and `Download Draw.io`.
 - `ignoreElements: (e) => e.classList && e.classList.contains('toolbar')` during capture.
 - `backgroundColor: '#E8E6DD'` in html2canvas calls.
 
@@ -234,7 +236,7 @@ Always produce a single self-contained `.html` file with:
 - Embedded CSS.
 - Inline SVG.
 - No external images.
-- CDN JavaScript only for Copy, PNG, and PDF export.
+- CDN JavaScript only for Copy Image, Download PNG, and Download PDF export.
 - Built-in JavaScript for Draw.io editable export.
 - Warm editorial visual design.
 

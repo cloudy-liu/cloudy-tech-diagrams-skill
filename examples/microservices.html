@@ -70,13 +70,33 @@
       position: absolute;
       top: 4px;
       right: 0;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
+      z-index: 10;
     }
 
-    .toolbar-actions { display: none; gap: 8px; }
+    .toolbar-actions {
+      position: absolute;
+      top: 0;
+      left: calc(100% + 8px);
+      display: none;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 2px;
+      width: 176px;
+      padding: 6px;
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      background: rgba(250, 249, 245, 0.96);
+      box-shadow: 0 12px 30px rgba(20, 20, 19, 0.10);
+      text-align: left;
+    }
     .toolbar.expanded .toolbar-actions { display: flex; }
+
+    .toolbar.toolbar-flip .toolbar-actions {
+      right: calc(100% + 8px);
+      left: auto;
+    }
 
     .toolbar-toggle,
     .toolbar-actions button {
@@ -91,7 +111,15 @@
     }
 
     .toolbar-toggle { padding: 9px 13px; }
-    .toolbar-actions button { padding: 9px 12px; white-space: nowrap; }
+    .toolbar-actions button {
+      width: 100%;
+      padding: 9px 10px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      text-align: left;
+      white-space: nowrap;
+    }
 
     .toolbar-toggle:hover,
     .toolbar-actions button:hover {
@@ -145,9 +173,10 @@
 
     @media (max-width: 760px) {
       body { padding: 18px; }
-      .header { padding-top: 48px; }
-      .header h1 { font-size: 30px; }
-      .toolbar { top: 0; left: 0; right: auto; }
+      .header h1 { font-size: 30px; padding-right: 84px; text-align: left; }
+      .toolbar { top: 0; right: 0; }
+      .toolbar-actions { position: fixed; top: auto; right: 18px; bottom: 18px; left: 18px; width: auto; }
+      .toolbar.toolbar-flip .toolbar-actions { right: 18px; left: 18px; }
       .diagram-container { padding: 16px; border-radius: 22px; }
     }
 
@@ -162,16 +191,16 @@
   <div class="container" id="report-container">
     <header class="header">
       <h1>Microservices Architecture</h1>
-      <p class="subtitle">Kubernetes-orchestrated services behind one gateway with per-service data stores</p>
       <div class="toolbar">
-        <div class="toolbar-actions">
-          <button onclick="copyAsImage(this)">Copy</button>
-          <button onclick="downloadPNG(this)">PNG</button>
-          <button onclick="downloadPDF(this)">PDF</button>
-          <button onclick="downloadDrawio(this)">Draw.io</button>
+        <button class="toolbar-toggle" type="button" onclick="toggleExportMenu(this)" title="Export options" aria-label="Export options" aria-expanded="false">Export</button>
+        <div class="toolbar-actions" role="menu" aria-label="Export options">
+          <button type="button" role="menuitem" onclick="copyAsImage(this)" title="Copy diagram as image to clipboard" aria-label="Copy diagram as image to clipboard">Copy Image</button>
+          <button type="button" role="menuitem" onclick="downloadPNG(this)">Download PNG</button>
+          <button type="button" role="menuitem" onclick="downloadPDF(this)">Download PDF</button>
+          <button type="button" role="menuitem" onclick="downloadDrawio(this)">Download Draw.io</button>
         </div>
-        <button class="toolbar-toggle" onclick="this.parentElement.classList.toggle('expanded')" title="Export options" aria-label="Export options">Export</button>
       </div>
+      <p class="subtitle">Kubernetes-orchestrated services behind one gateway with per-service data stores</p>
     </header>
 
     <main class="diagram-container">
@@ -288,6 +317,43 @@
   </div>
 
   <script>
+    function closeExportMenus(exceptMenu) {
+      document.querySelectorAll('.toolbar.expanded').forEach((menu) => {
+        if (menu === exceptMenu) return;
+        menu.classList.remove('expanded', 'toolbar-flip');
+        menu.querySelector('.toolbar-toggle')?.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    function positionExportMenu(menu) {
+      const actions = menu.querySelector('.toolbar-actions');
+      menu.classList.remove('toolbar-flip');
+      if (actions.getBoundingClientRect().right > window.innerWidth - 8) {
+        menu.classList.add('toolbar-flip');
+      }
+    }
+
+    function toggleExportMenu(btn) {
+      const menu = btn.closest('.toolbar');
+      const shouldOpen = !menu.classList.contains('expanded');
+      closeExportMenus(menu);
+      menu.classList.toggle('expanded', shouldOpen);
+      btn.setAttribute('aria-expanded', String(shouldOpen));
+      if (shouldOpen) positionExportMenu(menu);
+    }
+
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.toolbar')) {
+        closeExportMenus();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeExportMenus();
+      }
+    });
+
     async function captureReport() {
       const el = document.getElementById('report-container');
       const r = el.getBoundingClientRect();
@@ -520,6 +586,10 @@
       return points;
     }
 
+    function shapeUsesCurveCommand(shape) {
+      return directTag(shape) === 'path' && /[CQSTcqst]/.test(shape.getAttribute('d') || '');
+    }
+
     function buildEdgeCell(el, index) {
       const shape = firstDrawioShape(el, ['line', 'path', 'polyline']);
       if (!shape) return '';
@@ -532,6 +602,7 @@
       const stroke = shape.getAttribute('stroke') || '#9A9991';
       const strokeWidth = shape.getAttribute('stroke-width') || '1.6';
       const dashed = shape.hasAttribute('stroke-dasharray');
+      const curved = shapeUsesCurveCommand(shape);
       const id = drawioId(el, index);
       const start = points[0];
       const end = points[points.length - 1];
@@ -541,7 +612,8 @@
       const waypointXml = waypoints ? `<Array as="points">${waypoints}</Array>` : '';
       const style = cellStyle([
         'edgeStyle=none',
-        'rounded=0',
+        curved ? 'curved=1' : '',
+        curved ? 'rounded=0' : 'rounded=1',
         'html=1',
         'endArrow=open',
         'endFill=0',

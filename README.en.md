@@ -173,7 +173,7 @@ If you want the diagram to follow a document or an existing architecture diagram
 Read this documentation, identify its core project architecture, then use cloudy-tech-diagrams to generate a browser-ready HTML architecture diagram. Focus the diagram on project architecture, not overly detailed implementation details.
 ```
 
-The generated result is usually a `.html` file. Open it directly in a browser, then use the Copy / PNG / PDF / Draw.io buttons at the top of the page to export it.
+The generated result is usually a `.html` file. Open it directly in a browser, then use the Copy Image / Download PNG / Download PDF / Download Draw.io actions from the Export menu.
 
 ## 📦 What The Output Is
 
@@ -182,9 +182,9 @@ Each diagram is a self-contained HTML file by default:
 - Embedded CSS.
 - Inline SVG graphics.
 - No external images.
-- CDN JavaScript only for Copy, PNG, and PDF export.
+- CDN JavaScript only for Copy Image, Download PNG, and Download PDF export.
 - Built-in Draw.io export for the main SVG diagram.
-- Copy / PNG / PDF / Draw.io export toolbar kept by default.
+- Copy Image / Download PNG / Download PDF / Download Draw.io export menu kept by default.
 - Opens directly in modern browsers.
 - Suitable for continued use in technical docs, solution review materials, README files, issues, or talk drafts.
 
