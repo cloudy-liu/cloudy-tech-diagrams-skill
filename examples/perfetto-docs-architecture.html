@@ -616,6 +616,58 @@
       return parts.filter(Boolean).join(';') + ';';
     }
 
+    function drawioNumber(value) {
+      const rounded = Math.round(Number(value) * 100) / 100;
+      return Number.isInteger(rounded) ? String(rounded) : String(rounded);
+    }
+
+    function rectBounds(rect) {
+      return {
+        x: attrNumber(rect, 'x'),
+        y: attrNumber(rect, 'y'),
+        width: attrNumber(rect, 'width'),
+        height: attrNumber(rect, 'height')
+      };
+    }
+
+    function pointInsideBounds(x, y, bounds) {
+      return x >= bounds.x && x <= bounds.x + bounds.width && y >= bounds.y && y <= bounds.y + bounds.height;
+    }
+
+    function rectInsideBounds(rect, bounds) {
+      const inner = rectBounds(rect);
+      return inner.x >= bounds.x
+        && inner.y >= bounds.y
+        && inner.x + inner.width <= bounds.x + bounds.width
+        && inner.y + inner.height <= bounds.y + bounds.height;
+    }
+
+    function internalRectsInsideBox(svg, rect) {
+      const bounds = rectBounds(rect);
+      return Array.from(svg.querySelectorAll('rect'))
+        .filter((candidate) => candidate !== rect)
+        .filter((candidate) => !candidate.dataset.drawioType)
+        .filter((candidate) => rectInsideBounds(candidate, bounds));
+    }
+
+    function internalTextsInsideBox(svg, rect) {
+      const bounds = rectBounds(rect);
+      return Array.from(svg.querySelectorAll('text'))
+        .filter((text) => text.textContent.trim())
+        .filter((text) => pointInsideBounds(attrNumber(text, 'x'), attrNumber(text, 'y'), bounds))
+        .sort((a, b) => attrNumber(a, 'y') - attrNumber(b, 'y') || attrNumber(a, 'x') - attrNumber(b, 'x'));
+    }
+
+    function internalPrimitivesForBox(el, rect) {
+      if (el.dataset.drawioType !== 'component') return { rects: [], texts: [] };
+      const svg = el.ownerSVGElement || el.closest('svg');
+      if (!svg) return { rects: [], texts: [] };
+      return {
+        rects: internalRectsInsideBox(svg, rect),
+        texts: internalTextsInsideBox(svg, rect)
+      };
+    }
+
     function drawioLabelRowsFromData(el) {
       if (!el.dataset.drawioLabel) return null;
       const rows = [{
@@ -669,6 +721,8 @@
     }
 
     function drawioLabelForBox(el, rect) {
+      if (internalPrimitivesForBox(el, rect).texts.length) return '';
+
       const rowsFromData = drawioLabelRowsFromData(el);
       if (rowsFromData) return drawioLabelFromRows(rowsFromData);
 
@@ -687,6 +741,99 @@
         if (child) return child;
       }
       return null;
+    }
+
+    function buildInternalRectCell(rect, id) {
+      const bounds = rectBounds(rect);
+      const fill = rect.getAttribute('fill') || 'none';
+      const stroke = rect.getAttribute('stroke') || 'none';
+      const strokeWidth = rect.getAttribute('stroke-width') || '1';
+      const dashed = rect.hasAttribute('stroke-dasharray');
+      const rx = attrNumber(rect, 'rx', 0);
+      const style = cellStyle([
+        'rounded=1',
+        'whiteSpace=wrap',
+        'html=1',
+        'shadow=0',
+        'absoluteArcSize=1',
+        `arcSize=${Math.max(6, Math.round(rx))}`,
+        `fillColor=${fill}`,
+        `strokeColor=${stroke}`,
+        `strokeWidth=${strokeWidth}`,
+        dashed ? 'dashed=1' : '',
+        dashed ? `dashPattern=${rect.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+      ]);
+
+      return `<mxCell id="${xmlEscape(id)}" value="" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(bounds.x)}" y="${drawioNumber(bounds.y)}" width="${drawioNumber(bounds.width)}" height="${drawioNumber(bounds.height)}" as="geometry"/></mxCell>`;
+    }
+
+    function textAlignFromAnchor(text) {
+      const anchor = text.getAttribute('text-anchor') || 'start';
+      if (anchor === 'middle') return 'center';
+      if (anchor === 'end') return 'right';
+      return 'left';
+    }
+
+    function fontStyleFromWeight(text) {
+      const weight = text.getAttribute('font-weight') || '';
+      const numericWeight = Number.parseInt(weight, 10);
+      return weight.toLowerCase() === 'bold' || numericWeight >= 600 ? '1' : '0';
+    }
+
+    function textCellBounds(text, containerRect, innerRects) {
+      const textX = attrNumber(text, 'x');
+      const textY = attrNumber(text, 'y');
+      const fontSize = attrNumber(text, 'font-size', 12);
+      const matchingRect = innerRects
+        .map((innerRect) => ({ rect: innerRect, bounds: rectBounds(innerRect) }))
+        .filter(({ bounds }) => pointInsideBounds(textX, textY, bounds))
+        .sort((a, b) => (a.bounds.width * a.bounds.height) - (b.bounds.width * b.bounds.height))[0];
+
+      if (matchingRect) return matchingRect.bounds;
+
+      const container = rectBounds(containerRect);
+      const height = Math.ceil(fontSize * 1.35);
+      const width = container.width;
+      const align = textAlignFromAnchor(text);
+      const x = align === 'center' ? textX - width / 2 : align === 'right' ? textX - width : textX;
+      return {
+        x: Math.max(container.x, Math.min(x, container.x + container.width - width)),
+        y: textY - fontSize,
+        width,
+        height
+      };
+    }
+
+    function buildInternalTextCell(text, id, containerRect, innerRects) {
+      const bounds = textCellBounds(text, containerRect, innerRects);
+      const fontSize = text.getAttribute('font-size') || '12';
+      const fill = text.getAttribute('fill') || '#3D3C38';
+      const style = cellStyle([
+        'text',
+        'html=1',
+        'strokeColor=none',
+        'fillColor=none',
+        'rounded=0',
+        'whiteSpace=wrap',
+        'fontFamily=Montserrat',
+        `fontSize=${fontSize}`,
+        `fontColor=${fill}`,
+        `fontStyle=${fontStyleFromWeight(text)}`,
+        `align=${textAlignFromAnchor(text)}`,
+        'verticalAlign=middle',
+        'spacing=0'
+      ]);
+      const label = xmlEscape(text.textContent.trim());
+
+      return `<mxCell id="${xmlEscape(id)}" value="${label}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(bounds.x)}" y="${drawioNumber(bounds.y)}" width="${drawioNumber(bounds.width)}" height="${drawioNumber(bounds.height)}" as="geometry"/></mxCell>`;
+    }
+
+    function buildInternalPrimitiveCells(el, rect, parentId) {
+      const primitives = internalPrimitivesForBox(el, rect);
+      return [
+        ...primitives.rects.map((innerRect, index) => buildInternalRectCell(innerRect, `${parentId}-inner-rect-${index}`)),
+        ...primitives.texts.map((text, index) => buildInternalTextCell(text, `${parentId}-inner-text-${index}`, rect, primitives.rects))
+      ];
     }
 
     function buildBoxCell(el, index) {
@@ -811,7 +958,10 @@
         }
 
         if (group.dataset.drawioType === 'component' || group.dataset.drawioType === 'boundary') {
+          const id = drawioId(group, index + 2);
+          const rect = firstDrawioShape(group, ['rect']);
           cells.push(buildBoxCell(group, index + 2));
+          if (rect) cells.push(...buildInternalPrimitiveCells(group, rect, id));
         }
       });
 
