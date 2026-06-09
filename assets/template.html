@@ -562,8 +562,7 @@
     }
 
     function attrNumber(el, name, fallback = 0) {
-      const value = Number.parseFloat(el.getAttribute(name));
-      return Number.isFinite(value) ? value : fallback;
+      return numberValue(el.getAttribute(name), fallback);
     }
 
     function drawioId(el, index) {
@@ -578,6 +577,11 @@
     function drawioNumber(value) {
       const rounded = Math.round(Number(value) * 100) / 100;
       return Number.isInteger(rounded) ? String(rounded) : String(rounded);
+    }
+
+    function numberValue(value, fallback = 0) {
+      const parsed = Number.parseFloat(value);
+      return Number.isFinite(parsed) ? parsed : fallback;
     }
 
     function rectBounds(rect) {
@@ -601,11 +605,22 @@
         && inner.y + inner.height <= bounds.y + bounds.height;
     }
 
+    function enclosingDrawioType(el) {
+      const annotated = el.dataset?.drawioType ? el : el.closest?.('[data-drawio-type]');
+      return annotated?.dataset?.drawioType || '';
+    }
+
+    function standaloneDrawioAnnotation(el) {
+      const type = enclosingDrawioType(el);
+      return Boolean(type && type !== 'component' && type !== 'boundary');
+    }
+
     function internalRectsInsideBox(svg, rect) {
       const bounds = rectBounds(rect);
       return Array.from(svg.querySelectorAll('rect'))
         .filter((candidate) => candidate !== rect)
         .filter((candidate) => !candidate.dataset.drawioType)
+        .filter((candidate) => !standaloneDrawioAnnotation(candidate))
         .filter((candidate) => rectInsideBounds(candidate, bounds));
     }
 
@@ -613,6 +628,7 @@
       const bounds = rectBounds(rect);
       return Array.from(svg.querySelectorAll('text'))
         .filter((text) => text.textContent.trim())
+        .filter((text) => !standaloneDrawioAnnotation(text))
         .filter((text) => pointInsideBounds(attrNumber(text, 'x'), attrNumber(text, 'y'), bounds))
         .sort((a, b) => attrNumber(a, 'y') - attrNumber(b, 'y') || attrNumber(a, 'x') - attrNumber(b, 'x'));
     }
@@ -662,6 +678,7 @@
       const height = attrNumber(rect, 'height');
       const bottom = type === 'boundary' ? y + Math.min(54, height) : y + height;
       return Array.from(svg.querySelectorAll('text'))
+        .filter((text) => !standaloneDrawioAnnotation(text))
         .filter((text) => {
           const tx = attrNumber(text, 'x');
           const ty = attrNumber(text, 'y');
@@ -685,7 +702,7 @@
       const rowsFromData = drawioLabelRowsFromData(el);
       if (rowsFromData) return drawioLabelFromRows(rowsFromData);
 
-      const textChildren = directChildren(el, 'text');
+      const textChildren = directChildren(el, 'text').filter((text) => !standaloneDrawioAnnotation(text));
       if (textChildren.length) return drawioLabelFromRows(drawioLabelRowsFromTexts(textChildren));
 
       const svg = el.ownerSVGElement || el.closest('svg');
@@ -733,10 +750,14 @@
       return 'left';
     }
 
+    function fontStyleValueFromWeight(weight) {
+      const normalized = String(weight || '').toLowerCase();
+      const numericWeight = Number.parseInt(normalized, 10);
+      return normalized === 'bold' || numericWeight >= 600 ? '1' : '0';
+    }
+
     function fontStyleFromWeight(text) {
-      const weight = text.getAttribute('font-weight') || '';
-      const numericWeight = Number.parseInt(weight, 10);
-      return weight.toLowerCase() === 'bold' || numericWeight >= 600 ? '1' : '0';
+      return fontStyleValueFromWeight(text.getAttribute('font-weight') || '');
     }
 
     function textCellBounds(text, containerRect, innerRects) {
@@ -793,6 +814,90 @@
         ...primitives.rects.map((innerRect, index) => buildInternalRectCell(innerRect, `${parentId}-inner-rect-${index}`)),
         ...primitives.texts.map((text, index) => buildInternalTextCell(text, `${parentId}-inner-text-${index}`, rect, primitives.rects))
       ];
+    }
+
+    function buildLabelCell(el, index) {
+      const text = directTag(el) === 'text' ? el : directChildren(el, 'text')[0];
+      if (!text) return '';
+
+      const labelText = el.dataset.drawioLabel || text.textContent.trim();
+      if (!labelText) return '';
+
+      const fontSize = numberValue(el.dataset.drawioLabelSize || text.getAttribute('font-size'), 12);
+      const fontWeight = el.dataset.drawioLabelWeight || text.getAttribute('font-weight') || '400';
+      const align = textAlignFromAnchor(text);
+      const estimatedWidth = Math.max(fontSize * 3, labelText.length * fontSize * 0.62);
+      const width = numberValue(el.dataset.drawioWidth, estimatedWidth);
+      const height = numberValue(el.dataset.drawioHeight, fontSize * 1.45);
+      const textX = attrNumber(text, 'x');
+      const textY = attrNumber(text, 'y');
+      let x = numberValue(el.dataset.drawioX, textX);
+      if (!('drawioX' in el.dataset)) {
+        if (align === 'center') x -= width / 2;
+        if (align === 'right') x -= width;
+      }
+      const y = numberValue(el.dataset.drawioY, textY - fontSize);
+      const color = el.dataset.drawioLabelColor || text.getAttribute('fill') || '#3D3C38';
+      const id = drawioId(el, index);
+      const style = cellStyle([
+        'text',
+        'html=1',
+        'strokeColor=none',
+        'fillColor=none',
+        'whiteSpace=wrap',
+        'rounded=0',
+        `align=${align}`,
+        'verticalAlign=middle',
+        'fontFamily=Montserrat',
+        `fontSize=${fontSize}`,
+        `fontColor=${color}`,
+        `fontStyle=${fontStyleValueFromWeight(fontWeight)}`
+      ]);
+
+      return `<mxCell id="${xmlEscape(id)}" value="${xmlEscape(labelText)}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(x)}" y="${drawioNumber(y)}" width="${drawioNumber(width)}" height="${drawioNumber(height)}" as="geometry"/></mxCell>`;
+    }
+
+    function shapeBounds(shape) {
+      const tag = directTag(shape);
+      if (tag === 'circle') {
+        const r = attrNumber(shape, 'r');
+        return { x: attrNumber(shape, 'cx') - r, y: attrNumber(shape, 'cy') - r, width: r * 2, height: r * 2 };
+      }
+      if (tag === 'ellipse') {
+        const rx = attrNumber(shape, 'rx');
+        const ry = attrNumber(shape, 'ry');
+        return { x: attrNumber(shape, 'cx') - rx, y: attrNumber(shape, 'cy') - ry, width: rx * 2, height: ry * 2 };
+      }
+      return rectBounds(shape);
+    }
+
+    function buildShapeCell(el, index) {
+      const shape = firstDrawioShape(el, ['rect', 'circle', 'ellipse']);
+      if (!shape) return '';
+
+      const tag = directTag(shape);
+      const bounds = shapeBounds(shape);
+      const rx = attrNumber(shape, 'rx', 0);
+      const fill = shape.getAttribute('fill') || 'none';
+      const stroke = shape.getAttribute('stroke') || 'none';
+      const strokeWidth = shape.getAttribute('stroke-width') || '1';
+      const dashed = shape.hasAttribute('stroke-dasharray');
+      const id = drawioId(el, index);
+      const style = cellStyle([
+        tag === 'circle' || tag === 'ellipse' ? 'ellipse' : (rx > 0 ? 'rounded=1' : 'rounded=0'),
+        'whiteSpace=wrap',
+        'html=1',
+        'shadow=0',
+        tag === 'rect' ? 'absoluteArcSize=1' : '',
+        tag === 'rect' ? `arcSize=${Math.max(0, Math.round(rx))}` : '',
+        `fillColor=${fill}`,
+        `strokeColor=${stroke}`,
+        `strokeWidth=${strokeWidth}`,
+        dashed ? 'dashed=1' : '',
+        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+      ]);
+
+      return `<mxCell id="${xmlEscape(id)}" value="" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(bounds.x)}" y="${drawioNumber(bounds.y)}" width="${drawioNumber(bounds.width)}" height="${drawioNumber(bounds.height)}" as="geometry"/></mxCell>`;
     }
 
     function buildBoxCell(el, index) {
@@ -865,6 +970,17 @@
       return directTag(shape) === 'path' && /[CQSTcqst]/.test(shape.getAttribute('d') || '');
     }
 
+    function edgeMarkerStyle(shape) {
+      const hasStartMarker = shape.hasAttribute('marker-start');
+      const hasEndMarker = shape.hasAttribute('marker-end');
+      return [
+        hasStartMarker ? 'startArrow=open' : 'startArrow=none',
+        hasStartMarker ? 'startFill=0' : '',
+        hasEndMarker ? 'endArrow=open' : 'endArrow=none',
+        hasEndMarker ? 'endFill=0' : ''
+      ];
+    }
+
     function buildEdgeCell(el, index) {
       const shape = firstDrawioShape(el, ['line', 'path', 'polyline']);
       if (!shape) return '';
@@ -890,8 +1006,7 @@
         curved ? 'curved=1' : '',
         curved ? 'rounded=0' : 'rounded=1',
         'html=1',
-        'endArrow=open',
-        'endFill=0',
+        ...edgeMarkerStyle(shape),
         'fontFamily=Montserrat',
         'fontSize=11',
         'fontColor=#6F6C65',
@@ -913,6 +1028,16 @@
       Array.from(svg.querySelectorAll('[data-drawio-type]')).forEach((group, index) => {
         if (group.dataset.drawioType === 'edge') {
           cells.push(buildEdgeCell(group, index + 2));
+          return;
+        }
+
+        if (group.dataset.drawioType === 'label') {
+          cells.push(buildLabelCell(group, index + 2));
+          return;
+        }
+
+        if (group.dataset.drawioType === 'shape') {
+          cells.push(buildShapeCell(group, index + 2));
           return;
         }
 
