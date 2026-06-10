@@ -143,6 +143,111 @@ function fakeStandaloneSemanticSvg() {
   ]);
 }
 
+function fakeLegendSemanticSvg() {
+  return new FakeElement('svg', { viewBox: '0 0 1180 760' }, [
+    new FakeElement('title', {}, [], 'Legend semantic elements'),
+    new FakeElement('text', {
+      'data-drawio-type': 'label',
+      'data-drawio-id': 'legend-heading',
+      'data-drawio-width': '88',
+      'data-drawio-height': '18',
+      x: '54',
+      y: '660',
+      fill: '#3D3C38',
+      'font-size': '13',
+      'font-weight': '700'
+    }, [], 'Legend'),
+    new FakeElement('rect', {
+      'data-drawio-type': 'shape',
+      'data-drawio-id': 'legend-recording-swatch',
+      x: '54',
+      y: '678',
+      width: '18',
+      height: '11',
+      rx: '3',
+      fill: '#D8E8D8',
+      stroke: '#76B985',
+      'stroke-width': '1'
+    }),
+    new FakeElement('text', {
+      'data-drawio-type': 'label',
+      'data-drawio-id': 'legend-recording-label',
+      'data-drawio-width': '132',
+      'data-drawio-height': '16',
+      x: '80',
+      y: '687',
+      fill: '#6F6C65',
+      'font-size': '11'
+    }, [], 'recording components'),
+    new FakeElement('line', {
+      'data-drawio-type': 'edge',
+      'data-drawio-id': 'legend-trace-flow-line',
+      x1: '794',
+      y1: '683',
+      x2: '830',
+      y2: '683',
+      stroke: '#9A9991',
+      'stroke-width': '1.6',
+      'marker-end': 'url(#arrow-primary)'
+    }),
+    new FakeElement('text', {
+      'data-drawio-type': 'label',
+      'data-drawio-id': 'legend-trace-flow-label',
+      'data-drawio-width': '72',
+      'data-drawio-height': '16',
+      x: '840',
+      y: '687',
+      fill: '#6F6C65',
+      'font-size': '11'
+    }, [], 'trace flow'),
+    new FakeElement('line', {
+      'data-drawio-type': 'edge',
+      'data-drawio-id': 'legend-artifact-handoff-line',
+      x1: '930',
+      y1: '683',
+      x2: '966',
+      y2: '683',
+      stroke: '#BFA777',
+      'stroke-width': '1.6',
+      'stroke-dasharray': '5 5',
+      'marker-end': 'url(#arrow-event)'
+    }),
+    new FakeElement('text', {
+      'data-drawio-type': 'label',
+      'data-drawio-id': 'legend-artifact-handoff-label',
+      'data-drawio-width': '98',
+      'data-drawio-height': '16',
+      x: '976',
+      y: '687',
+      fill: '#6F6C65',
+      'font-size': '11'
+    }, [], 'artifact handoff'),
+    new FakeElement('rect', {
+      'data-drawio-type': 'shape',
+      'data-drawio-id': 'legend-scope-callout',
+      x: '54',
+      y: '718',
+      width: '1072',
+      height: '28',
+      rx: '12',
+      fill: '#F6F3EC',
+      stroke: '#C9C3B8',
+      'stroke-width': '1'
+    }),
+    new FakeElement('text', {
+      'data-drawio-type': 'label',
+      'data-drawio-id': 'legend-scope-label',
+      'data-drawio-width': '1030',
+      'data-drawio-height': '18',
+      x: '70',
+      y: '737',
+      fill: '#6F6C65',
+      'font-size': '11',
+      'font-weight': '500'
+    }, [], 'Scope: this is a project architecture map.')
+  ]);
+}
+
 function assertDrawioElement(html, id, type) {
   const pattern = new RegExp(
     `<[^>]+\\bdata-drawio-type="${type}"(?=[^>]*\\bdata-drawio-id="${id}")[^>]*>|` +
@@ -180,6 +285,26 @@ test('Perfetto sample annotates domain header icons and headings for Draw.io exp
   assertDrawioElement(html, 'visualize-traces-heading', 'label');
 });
 
+test('Perfetto sample annotates legend and scope callout for Draw.io export', () => {
+  const html = readFileSync(new URL('../examples/perfetto-docs-architecture.html', import.meta.url), 'utf8');
+
+  assertDrawioElement(html, 'legend-heading', 'label');
+  assertDrawioElement(html, 'legend-recording-swatch', 'shape');
+  assertDrawioElement(html, 'legend-recording-label', 'label');
+  assertDrawioElement(html, 'legend-analysis-swatch', 'shape');
+  assertDrawioElement(html, 'legend-analysis-label', 'label');
+  assertDrawioElement(html, 'legend-visualization-swatch', 'shape');
+  assertDrawioElement(html, 'legend-visualization-label', 'label');
+  assertDrawioElement(html, 'legend-shared-library-swatch', 'shape');
+  assertDrawioElement(html, 'legend-shared-library-label', 'label');
+  assertDrawioElement(html, 'legend-trace-flow-line', 'edge');
+  assertDrawioElement(html, 'legend-trace-flow-label', 'label');
+  assertDrawioElement(html, 'legend-artifact-handoff-line', 'edge');
+  assertDrawioElement(html, 'legend-artifact-handoff-label', 'label');
+  assertDrawioElement(html, 'legend-scope-callout', 'shape');
+  assertDrawioElement(html, 'legend-scope-label', 'label');
+});
+
 for (const file of htmlFiles) {
   const html = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
 
@@ -203,5 +328,27 @@ for (const file of htmlFiles) {
     assert.doesNotMatch(drawio, /id="lane-divider"(?:(?!<\/mxCell>)[\s\S])*endArrow=open/);
     assert.match(drawio, /id="arrow-connector"[\s\S]*?endArrow=open/);
     assert.doesNotMatch(drawio, /id="container-inner-text-/);
+  });
+
+  test(`${file} exports legend keys and scope callouts as Draw.io cells`, () => {
+    const buildDrawioFromSvg = extractDrawioExporter(html);
+    const drawio = buildDrawioFromSvg(fakeLegendSemanticSvg());
+
+    assert.match(drawio, /id="legend-heading"/);
+    assert.match(drawio, /value="Legend"/);
+    assert.match(drawio, /id="legend-recording-swatch"/);
+    assert.match(drawio, /fillColor=#D8E8D8/);
+    assert.match(drawio, /id="legend-recording-label"/);
+    assert.match(drawio, /value="recording components"/);
+    assert.match(drawio, /id="legend-trace-flow-line"/);
+    assert.match(drawio, /id="legend-trace-flow-line"[\s\S]*?endArrow=open/);
+    assert.match(drawio, /id="legend-artifact-handoff-line"/);
+    assert.match(drawio, /dashed=1/);
+    assert.match(drawio, /dashPattern=5 5/);
+    assert.match(drawio, /id="legend-artifact-handoff-line"[\s\S]*?endArrow=open/);
+    assert.match(drawio, /id="legend-scope-callout"/);
+    assert.match(drawio, /x="54" y="718" width="1072" height="28"/);
+    assert.match(drawio, /id="legend-scope-label"/);
+    assert.match(drawio, /Scope: this is a project architecture map\./);
   });
 }
