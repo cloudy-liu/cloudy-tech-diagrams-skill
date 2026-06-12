@@ -183,12 +183,14 @@ Each diagram is a self-contained HTML file by default:
 - Inline SVG graphics.
 - No external images.
 - CDN JavaScript only for Copy Image, Download PNG, and Download PDF export.
-- Built-in Draw.io export for the main SVG diagram.
+- Built-in Draw.io export for the main SVG diagram as an exportable diagram sheet.
 - Copy Image / Download PNG / Download PDF / Download Draw.io export menu kept by default.
 - Opens directly in modern browsers.
 - Suitable for continued use in technical docs, solution review materials, README files, issues, or talk drafts.
 
-Draw.io export is HTML-first: the browser-rendered HTML remains the primary artifact, and the `.drawio` file covers the main SVG diagram rather than the full page wrapper, summary cards, footer, or toolbar. It targets editable visual equivalence with draw.io-native objects, not an exact pixel clone or one whole-diagram image.
+Draw.io Export Fidelity is product-critical: the browser-rendered HTML remains the entry-level product experience, and the `.drawio` file is the high-fidelity editable continuation path for the exportable diagram sheet. It targets editable visual equivalence with draw.io-native objects. This is not an arbitrary HTML/CSS conversion, full-page export, exact pixel clone, or one whole-diagram image.
+
+The exportable diagram sheet includes the meaningful visual content that belongs to the diagram itself. When title, legend, caption, scope notes, and explanatory cards are part of the diagram, they should live inside the main SVG diagram and export as editable draw.io-native objects. Page chrome, toolbar, and unrelated footer metadata stay outside the Draw.io export.
 
 ## 🖼️ Examples
 
