@@ -558,6 +558,46 @@
       return Boolean(type && type !== 'component' && type !== 'boundary');
     }
 
+    function visibleTextChildren(el) {
+      const texts = directTag(el) === 'text' ? [el] : directChildren(el, 'text');
+      return texts
+        .filter((text) => text.textContent.trim())
+        .filter((text) => !visuallyHidden(text));
+    }
+
+    function visibleLabelRowsForAnnotation(el, svg) {
+      const type = el.dataset?.drawioType || '';
+      if (type === 'label' || type === 'edge') return drawioLabelRowsFromTexts(visibleTextChildren(el));
+
+      if (type === 'component' || type === 'boundary') {
+        const directRows = drawioLabelRowsFromTexts(visibleTextChildren(el).filter((text) => !standaloneDrawioAnnotation(text)));
+        if (directRows.length) return directRows;
+
+        const rect = firstDrawioShape(el, ['rect']);
+        if (!rect || !svg) return [];
+        return drawioLabelRowsFromTexts(textsInsideRect(svg, rect, type));
+      }
+
+      return [];
+    }
+
+    function labelMismatchWarnings(svg) {
+      return Array.from(svg.querySelectorAll('[data-drawio-type]'))
+        .filter((el) => !drawioIgnored(el))
+        .flatMap((el) => {
+          const visibleRows = visibleLabelRowsForAnnotation(el, svg);
+          const warnings = [];
+          const id = drawioId(el, 'annotation');
+          if (el.dataset.drawioLabel && visibleRows[0]?.label && el.dataset.drawioLabel !== visibleRows[0].label) {
+            warnings.push(`Draw.io label mismatch on ${id}: data-drawio-label="${el.dataset.drawioLabel}" differs from visible SVG text "${visibleRows[0].label}". Use data-drawio-note or aria-label for non-visible notes.`);
+          }
+          if (el.dataset.drawioSublabel && visibleRows[1]?.label && el.dataset.drawioSublabel !== visibleRows[1].label) {
+            warnings.push(`Draw.io label mismatch on ${id}: data-drawio-sublabel="${el.dataset.drawioSublabel}" differs from visible SVG text "${visibleRows[1].label}". Use data-drawio-note or aria-label for non-visible notes.`);
+          }
+          return warnings;
+        });
+    }
+
     function drawioPrimitiveElements(svg) {
       return ['rect', 'circle', 'ellipse', 'line', 'path', 'polyline', 'polygon', 'text']
         .flatMap((tagName) => Array.from(svg.querySelectorAll(tagName)));
@@ -617,7 +657,9 @@
     }
 
     function auditDrawioCoverage(svg) {
-      const warnings = drawioPrimitiveElements(svg)
+      const warnings = [
+        ...labelMismatchWarnings(svg),
+        ...drawioPrimitiveElements(svg)
         .filter(isMeaningfulVisibleSvgElement)
         .map((el) => {
           const ignoreOwner = drawioIgnoreOwner(el);
@@ -628,7 +670,8 @@
           if (hasDrawioCoverage(el, svg)) return '';
           return `Draw.io coverage gap: ${describeSvgElement(el)} is visible in the SVG sheet but has no data-drawio-type coverage and is not explicitly ignored.`;
         })
-        .filter(Boolean);
+        .filter(Boolean)
+      ];
       return Array.from(new Set(warnings));
     }
 
@@ -716,15 +759,18 @@
     function drawioLabelForBox(el, rect) {
       if (internalPrimitivesForBox(el, rect).texts.length) return '';
 
-      const rowsFromData = drawioLabelRowsFromData(el);
-      if (rowsFromData) return drawioLabelFromRows(rowsFromData);
+      const svg = el.ownerSVGElement || el.closest('svg');
+      const visibleRows = visibleLabelRowsForAnnotation(el, svg);
+      if (visibleRows.length) return drawioLabelFromRows(visibleRows);
 
       const textChildren = directChildren(el, 'text').filter((text) => !standaloneDrawioAnnotation(text));
       if (textChildren.length) return drawioLabelFromRows(drawioLabelRowsFromTexts(textChildren));
 
-      const svg = el.ownerSVGElement || el.closest('svg');
       const textRows = svg ? drawioLabelRowsFromTexts(textsInsideRect(svg, rect, el.dataset.drawioType)) : [];
-      return drawioLabelFromRows(textRows);
+      if (textRows.length) return drawioLabelFromRows(textRows);
+
+      const rowsFromData = drawioLabelRowsFromData(el);
+      return rowsFromData ? drawioLabelFromRows(rowsFromData) : '';
     }
 
     function firstDrawioShape(el, tagNames) {
@@ -837,7 +883,7 @@
       const text = directTag(el) === 'text' ? el : directChildren(el, 'text')[0];
       if (!text) return '';
 
-      const labelText = el.dataset.drawioLabel || text.textContent.trim();
+      const labelText = text.textContent.trim() || el.dataset.drawioLabel || '';
       if (!labelText) return '';
 
       const fontSize = numberValue(el.dataset.drawioLabelSize || text.getAttribute('font-size'), 12);
@@ -1001,6 +1047,35 @@
       ];
     }
 
+    function edgeLabelTextElement(el, shape) {
+      const directText = visibleTextChildren(el)[0];
+      if (directText) return directText;
+
+      const label = (el.dataset.drawioLabel || '').trim();
+      if (!label) return null;
+
+      const svg = el.ownerSVGElement || el.closest('svg');
+      if (!svg) return null;
+
+      const points = pointsFromShape(shape);
+      if (points.length < 2) return null;
+
+      const mid = {
+        x: (points[0].x + points[points.length - 1].x) / 2,
+        y: (points[0].y + points[points.length - 1].y) / 2
+      };
+
+      return Array.from(svg.querySelectorAll('text'))
+        .filter((text) => !text.dataset.drawioType)
+        .filter((text) => !text.closest?.('[data-drawio-type]'))
+        .filter((text) => text.textContent.trim() === label)
+        .sort((a, b) => {
+          const da = (attrNumber(a, 'x') - mid.x) ** 2 + (attrNumber(a, 'y') - mid.y) ** 2;
+          const db = (attrNumber(b, 'x') - mid.x) ** 2 + (attrNumber(b, 'y') - mid.y) ** 2;
+          return da - db;
+        })[0] || null;
+    }
+
     function buildEdgeCell(el, index) {
       const shape = firstDrawioShape(el, ['line', 'path', 'polyline']);
       if (!shape) return '';
@@ -1008,8 +1083,12 @@
       const points = pointsFromShape(shape);
       if (points.length < 2) return '';
 
-      const labelText = el.dataset.drawioLabel || directChildren(el, 'text')[0]?.textContent.trim() || '';
+      const labelTextElement = edgeLabelTextElement(el, shape);
+      const labelText = labelTextElement?.textContent.trim() || el.dataset.drawioLabel || '';
       const label = xmlEscape(labelText);
+      const labelFontSize = labelTextElement?.getAttribute('font-size') || '11';
+      const labelFontColor = labelTextElement?.getAttribute('fill') || '#6F6C65';
+      const labelFontWeight = labelTextElement?.getAttribute('font-weight') || '';
       const stroke = shape.getAttribute('stroke') || '#9A9991';
       const strokeWidth = shape.getAttribute('stroke-width') || '1.6';
       const dashed = shape.hasAttribute('stroke-dasharray');
@@ -1028,8 +1107,9 @@
         'html=1',
         ...edgeMarkerStyle(shape),
         'fontFamily=Montserrat',
-        'fontSize=11',
-        'fontColor=#6F6C65',
+        `fontSize=${labelFontSize}`,
+        `fontColor=${labelFontColor}`,
+        `fontStyle=${fontStyleValueFromWeight(labelFontWeight)}`,
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
         dashed ? 'dashed=1' : '',

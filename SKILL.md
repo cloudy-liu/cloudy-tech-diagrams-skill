@@ -194,7 +194,7 @@ Supported default annotations:
 
 - `data-drawio-type="component"` for component-level boxes, pills, stores, services, clients, and similar editable units.
 - `data-drawio-type="boundary"` for region, cluster, trust-boundary, or security boundary boxes.
-- `data-drawio-type="edge"` for connector groups, separators, lane dividers, and simple line glyphs. Add `data-drawio-label` when the edge has a label. Lines without SVG markers should export without arrowheads.
+- `data-drawio-type="edge"` for connector groups, separators, lane dividers, and simple line glyphs. Prefer an actual visible SVG `<text>` label; use `data-drawio-label` only as a fallback when there is no visible SVG label to export. Lines without SVG markers should export without arrowheads.
 - `data-drawio-type="label"` for standalone semantic text such as lane headings, region headings, section titles, legend labels, callouts, and labels that are not part of a component group.
 - `data-drawio-type="shape"` for standalone simple SVG primitives such as `rect`, `circle`, and `ellipse` used in meaningful icons, legend swatches, status glyphs, visual keys, or callout boxes.
 - `data-drawio-role` for diagram semantics such as card, panel, caption, scope-note, legend, legend-item, legend-swatch, flow, handoff, or metric. Keep `data-drawio-type` small and stable; use roles for meaning.
@@ -203,7 +203,7 @@ Supported default annotations:
 
 Use component-level export granularity for simple components. A component group should export as one draw.io vertex with the main and secondary SVG text folded into its label when the component has a simple label-only interior. For components with meaningful internal layout, such as nested pills, status rows, icon keys, legends, visual keys, or mini sections, keep the parent component as the containing box and preserve its internal primitives as separate editable draw.io cells. Standalone labels, lane dividers, icon primitives, legend entries, captions, explanatory cards, and scope callouts that carry diagram meaning must be annotated separately so they are not filtered out of the Draw.io export or folded into the wrong parent label. Non-core decorative elements may be approximated or omitted when draw.io cannot express them cleanly.
 
-Visible Diagram Label text is the source of truth for exported visible text. When an SVG element has visible text, `data-drawio-label` must not silently override visible SVG text with different wording. In plain terms: data-drawio-label must not silently override visible SVG text. Use non-visible metadata such as `data-drawio-note` or `aria-label` for internal notes and semantic descriptions.
+Visible Diagram Label text is the source of truth for exported visible text. When an SVG element has visible text, `data-drawio-label` must not silently override visible SVG text with different wording. In plain terms: data-drawio-label must not silently override visible SVG text. The exporter must fail strict coverage audit on mismatches. Use non-visible metadata such as `data-drawio-note` or `aria-label` for internal notes and semantic descriptions.
 
 Do not use a whole-diagram raster or SVG background reference layer as the default Draw.io export path. The primary export must stand on editable draw.io-native objects.
 
