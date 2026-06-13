@@ -188,7 +188,7 @@ git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git .claude/s
 - 可以直接在现代浏览器中打开。
 - 适合放进技术文档、方案评审材料、README、issue 或分享稿中继续使用。
 
-Draw.io 导出坚持 HTML-first：浏览器中打开的 HTML 仍然是主要产物，`.drawio` 文件只覆盖主 SVG 图，不导出完整页面包装、summary cards、footer 或 toolbar。它追求 draw.io 原生对象的可编辑的视觉等价，而不是精确像素克隆，也不是把整张图作为一张图片塞进 draw.io。
+Draw.io 导出坚持 HTML-first：浏览器中打开的 HTML 仍然是主要产物，`.drawio` 文件覆盖 exportable diagram sheet。当标题、图例、caption、scope notes、说明卡片属于图本身时，它们应位于主 SVG 中，并导出为可编辑的 draw.io 原生对象；页面 chrome、toolbar、无关 footer 元数据保持在 Draw.io 导出之外。它追求 draw.io 原生对象的可编辑视觉等价，而不是精确像素克隆，也不是把整张图作为一张图片塞进 draw.io。
 
 ## 🖼️ 示例
 

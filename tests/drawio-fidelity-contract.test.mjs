@@ -4,6 +4,7 @@ import test from 'node:test';
 
 const skill = readFileSync(new URL('../SKILL.md', import.meta.url), 'utf8');
 const english = readFileSync(new URL('../README.en.md', import.meta.url), 'utf8');
+const chinese = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
 const adrDir = new URL('../docs/adr/', import.meta.url);
 const adrText = readdirSync(adrDir)
   .filter((file) => file.endsWith('.md'))
@@ -27,6 +28,9 @@ test('documentation defines the exportable diagram sheet boundary', () => {
   }
 
   assert.doesNotMatch(english, /summary cards, footer, or toolbar/i);
+  assert.match(chinese, /标题、图例、caption、scope notes、说明卡片/);
+  assert.match(chinese, /页面 chrome、toolbar、无关 footer 元数据/);
+  assert.doesNotMatch(chinese, /不导出完整页面包装、summary cards、footer 或 toolbar/);
 });
 
 test('skill documents annotation roles, ignore semantics, and visible label rules', () => {
