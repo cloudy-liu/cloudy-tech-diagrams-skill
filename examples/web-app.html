@@ -427,6 +427,15 @@
       return parts.filter(Boolean).join(';') + ';';
     }
 
+    function drawioRoleStyle(el) {
+      const role = el.dataset?.drawioRole;
+      return role ? `cloudyRole=${role.replace(/[^a-zA-Z0-9_-]/g, '-')}` : '';
+    }
+
+    function drawioIgnored(el) {
+      return el.dataset?.drawioIgnore === 'true';
+    }
+
     function drawioNumber(value) {
       const rounded = Math.round(Number(value) * 100) / 100;
       return Number.isInteger(rounded) ? String(rounded) : String(rounded);
@@ -704,7 +713,8 @@
         'fontFamily=Montserrat',
         `fontSize=${fontSize}`,
         `fontColor=${color}`,
-        `fontStyle=${fontStyleValueFromWeight(fontWeight)}`
+        `fontStyle=${fontStyleValueFromWeight(fontWeight)}`,
+        drawioRoleStyle(el)
       ]);
 
       return `<mxCell id="${xmlEscape(id)}" value="${xmlEscape(labelText)}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(x)}" y="${drawioNumber(y)}" width="${drawioNumber(width)}" height="${drawioNumber(height)}" as="geometry"/></mxCell>`;
@@ -747,7 +757,8 @@
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
         dashed ? 'dashed=1' : '',
-        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : '',
+        drawioRoleStyle(el)
       ]);
 
       return `<mxCell id="${xmlEscape(id)}" value="" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(bounds.x)}" y="${drawioNumber(bounds.y)}" width="${drawioNumber(bounds.width)}" height="${drawioNumber(bounds.height)}" as="geometry"/></mxCell>`;
@@ -776,7 +787,8 @@
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
         dashed ? 'dashed=1' : '',
-        dashed ? `dashPattern=${rect.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+        dashed ? `dashPattern=${rect.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : '',
+        drawioRoleStyle(el)
       ];
 
       const typeStyle = type === 'boundary'
@@ -866,7 +878,8 @@
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
         dashed ? 'dashed=1' : '',
-        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : '',
+        drawioRoleStyle(el)
       ]);
 
       return `<mxCell id="${xmlEscape(id)}" value="${label}" style="${xmlEscape(style)}" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="${start.x}" y="${start.y}" as="sourcePoint"/><mxPoint x="${end.x}" y="${end.y}" as="targetPoint"/>${waypointXml}</mxGeometry></mxCell>`;
@@ -878,7 +891,9 @@
       const [, , width = '1000', height = '620'] = viewBox.split(/\s+/);
       const cells = ['<mxCell id="0"/>', '<mxCell id="1" parent="0"/>'];
 
-      Array.from(svg.querySelectorAll('[data-drawio-type]')).forEach((group, index) => {
+      Array.from(svg.querySelectorAll('[data-drawio-type]'))
+        .filter((group) => !drawioIgnored(group))
+        .forEach((group, index) => {
         if (group.dataset.drawioType === 'edge') {
           cells.push(buildEdgeCell(group, index + 2));
           return;
