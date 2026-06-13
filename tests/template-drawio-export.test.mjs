@@ -18,7 +18,7 @@ test('base template marks the main SVG with Draw.io semantic annotations', () =>
 });
 
 test('base template can build a draw.io mxGraphModel export', () => {
-  assert.match(template, /function buildDrawioFromSvg\(svg\)/);
+  assert.match(template, /function buildDrawioFromSvg\(svg, options = \{\}\)/);
   assert.match(template, /<mxGraphModel/);
   assert.match(template, /<mxCell/);
 });

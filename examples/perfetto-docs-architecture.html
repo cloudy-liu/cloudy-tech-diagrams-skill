@@ -634,6 +634,87 @@
       return Number.isFinite(parsed) ? parsed : fallback;
     }
 
+    function drawioIgnoreOwner(el) {
+      let node = el;
+      while (node && directTag(node) !== 'svg') {
+        if (drawioIgnored(node)) return node;
+        node = node.parentElement;
+      }
+      return null;
+    }
+
+    function drawioIgnoreReason(el) {
+      return (el.dataset?.drawioIgnoreReason || '').trim();
+    }
+
+    function inlineStyleValue(el, property) {
+      const style = el.getAttribute('style') || '';
+      const prefix = `${property}:`;
+      return style
+        .split(';')
+        .map((part) => part.trim())
+        .find((part) => part.toLowerCase().startsWith(prefix))
+        ?.slice(prefix.length)
+        .trim() || '';
+    }
+
+    function attrOrStyle(el, name, fallback = '') {
+      return el.getAttribute(name) || inlineStyleValue(el, name) || fallback;
+    }
+
+    function inNonRenderingSvgContainer(el) {
+      let node = el.parentElement;
+      while (node) {
+        const tag = directTag(node);
+        if (['defs', 'marker', 'clipPath', 'mask', 'pattern', 'symbol', 'title', 'desc', 'script', 'style'].includes(tag)) {
+          return true;
+        }
+        node = node.parentElement;
+      }
+      return false;
+    }
+
+    function visuallyHidden(el) {
+      const display = attrOrStyle(el, 'display').toLowerCase();
+      const visibility = attrOrStyle(el, 'visibility').toLowerCase();
+      const opacity = numberValue(attrOrStyle(el, 'opacity'), 1);
+      return display === 'none' || visibility === 'hidden' || opacity <= 0;
+    }
+
+    function hasVisibleFill(el) {
+      const fill = attrOrStyle(el, 'fill', 'black').toLowerCase();
+      const fillOpacity = numberValue(attrOrStyle(el, 'fill-opacity'), 1);
+      return fill !== 'none' && fillOpacity > 0;
+    }
+
+    function hasVisibleStroke(el) {
+      const stroke = attrOrStyle(el, 'stroke', 'none').toLowerCase();
+      const strokeOpacity = numberValue(attrOrStyle(el, 'stroke-opacity'), 1);
+      const strokeWidth = numberValue(attrOrStyle(el, 'stroke-width'), 1);
+      return stroke !== 'none' && strokeOpacity > 0 && strokeWidth > 0;
+    }
+
+    function hasVisiblePaint(el) {
+      return hasVisibleFill(el) || hasVisibleStroke(el);
+    }
+
+    function isMeaningfulVisibleSvgElement(el) {
+      if (inNonRenderingSvgContainer(el) || visuallyHidden(el)) return false;
+
+      const tag = directTag(el);
+      if (tag === 'text') return Boolean(el.textContent.trim());
+      if (tag === 'rect') return attrNumber(el, 'width') > 0 && attrNumber(el, 'height') > 0 && hasVisiblePaint(el);
+      if (tag === 'circle') return attrNumber(el, 'r') > 0 && hasVisiblePaint(el);
+      if (tag === 'ellipse') return attrNumber(el, 'rx') > 0 && attrNumber(el, 'ry') > 0 && hasVisiblePaint(el);
+      if (tag === 'line') {
+        return hasVisibleStroke(el)
+          && (attrNumber(el, 'x1') !== attrNumber(el, 'x2') || attrNumber(el, 'y1') !== attrNumber(el, 'y2'));
+      }
+      if (tag === 'path') return Boolean((el.getAttribute('d') || '').trim()) && hasVisiblePaint(el);
+      if (tag === 'polyline' || tag === 'polygon') return Boolean((el.getAttribute('points') || '').trim()) && hasVisiblePaint(el);
+      return false;
+    }
+
     function rectBounds(rect) {
       return {
         x: attrNumber(rect, 'x'),
@@ -663,6 +744,80 @@
     function standaloneDrawioAnnotation(el) {
       const type = enclosingDrawioType(el);
       return Boolean(type && type !== 'component' && type !== 'boundary');
+    }
+
+    function drawioPrimitiveElements(svg) {
+      return ['rect', 'circle', 'ellipse', 'line', 'path', 'polyline', 'polygon', 'text']
+        .flatMap((tagName) => Array.from(svg.querySelectorAll(tagName)));
+    }
+
+    function drawioBoxAnnotations(svg) {
+      return Array.from(svg.querySelectorAll('[data-drawio-type]'))
+        .filter((el) => !drawioIgnored(el))
+        .filter((el) => el.dataset.drawioType === 'component' || el.dataset.drawioType === 'boundary');
+    }
+
+    function textCoveredByBoxAnnotation(text, svg) {
+      const textX = attrNumber(text, 'x');
+      const textY = attrNumber(text, 'y');
+      return drawioBoxAnnotations(svg).some((box) => {
+        const rect = firstDrawioShape(box, ['rect']);
+        if (!rect) return false;
+        const bounds = rectBounds(rect);
+        if (!pointInsideBounds(textX, textY, bounds)) return false;
+        return box.dataset.drawioType === 'component' || textY <= bounds.y + Math.min(54, bounds.height);
+      });
+    }
+
+    function rectCoveredByComponentAnnotation(rect, svg) {
+      return drawioBoxAnnotations(svg)
+        .filter((box) => box.dataset.drawioType === 'component')
+        .some((box) => {
+          const boxRect = firstDrawioShape(box, ['rect']);
+          return boxRect && boxRect !== rect && rectInsideBounds(rect, rectBounds(boxRect));
+        });
+    }
+
+    function textCoveredByDrawioDataLabel(text, svg) {
+      const label = text.textContent.trim();
+      if (!label) return false;
+      return Array.from(svg.querySelectorAll('[data-drawio-type]'))
+        .filter((el) => !drawioIgnored(el))
+        .some((el) => el.dataset.drawioLabel === label || el.dataset.drawioSublabel === label);
+    }
+
+    function hasDrawioCoverage(el, svg) {
+      if (el.dataset?.drawioType) return true;
+      const annotatedParent = el.closest?.('[data-drawio-type]');
+      if (annotatedParent && !drawioIgnored(annotatedParent)) return true;
+
+      const tag = directTag(el);
+      if (tag === 'text') return textCoveredByBoxAnnotation(el, svg) || textCoveredByDrawioDataLabel(el, svg);
+      if (tag === 'rect') return rectCoveredByComponentAnnotation(el, svg);
+      return false;
+    }
+
+    function describeSvgElement(el) {
+      const tag = directTag(el);
+      const id = el.dataset?.drawioId || el.getAttribute('id') || '';
+      const suffix = tag === 'text' ? ` "${el.textContent.trim()}"` : (id ? ` #${id}` : '');
+      return `<${tag}${suffix}>`;
+    }
+
+    function auditDrawioCoverage(svg) {
+      const warnings = drawioPrimitiveElements(svg)
+        .filter(isMeaningfulVisibleSvgElement)
+        .map((el) => {
+          const ignoreOwner = drawioIgnoreOwner(el);
+          if (ignoreOwner) {
+            if (drawioIgnoreReason(ignoreOwner)) return '';
+            return `Draw.io coverage ignore missing data-drawio-ignore-reason: ${describeSvgElement(ignoreOwner)}.`;
+          }
+          if (hasDrawioCoverage(el, svg)) return '';
+          return `Draw.io coverage gap: ${describeSvgElement(el)} is visible in the SVG sheet but has no data-drawio-type coverage and is not explicitly ignored.`;
+        })
+        .filter(Boolean);
+      return Array.from(new Set(warnings));
     }
 
     function internalRectsInsideBox(svg, rect) {
@@ -1073,11 +1228,19 @@
       return `<mxCell id="${xmlEscape(id)}" value="${label}" style="${xmlEscape(style)}" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="${start.x}" y="${start.y}" as="sourcePoint"/><mxPoint x="${end.x}" y="${end.y}" as="targetPoint"/>${waypointXml}</mxGeometry></mxCell>`;
     }
 
-    function buildDrawioFromSvg(svg) {
+    function buildDrawioFromSvg(svg, options = {}) {
       const title = svg.querySelector('title')?.textContent.trim() || document.title || 'Diagram';
       const viewBox = svg.getAttribute('viewBox') || '0 0 1000 620';
       const [, , width = '1000', height = '620'] = viewBox.split(/\s+/);
       const cells = ['<mxCell id="0"/>', '<mxCell id="1" parent="0"/>'];
+      const coverageWarnings = auditDrawioCoverage(svg);
+
+      if (coverageWarnings.length) {
+        if (typeof options.onCoverageWarning === 'function') options.onCoverageWarning(coverageWarnings);
+        if (options.strictCoverage !== false) {
+          throw new Error(`Draw.io coverage audit failed:\n${coverageWarnings.join('\n')}`);
+        }
+      }
 
       Array.from(svg.querySelectorAll('[data-drawio-type]'))
         .filter((group) => !drawioIgnored(group))
@@ -1124,7 +1287,10 @@
       btn.textContent = 'Preparing';
       try {
         const svg = document.querySelector('.diagram-container svg');
-        const mxfile = buildDrawioFromSvg(svg);
+        const mxfile = buildDrawioFromSvg(svg, {
+          strictCoverage: false,
+          onCoverageWarning: (warnings) => console.warn('Draw.io coverage audit warnings', warnings)
+        });
         downloadTextFile('diagram.drawio', mxfile, 'application/xml');
         btn.textContent = 'Done';
       } catch (e) {

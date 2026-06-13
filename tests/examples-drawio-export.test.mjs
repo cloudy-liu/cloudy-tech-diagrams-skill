@@ -13,7 +13,7 @@ for (const example of examples) {
 
   test(`${example} includes built-in Draw.io export`, () => {
     assert.match(html, /downloadDrawio\(this\)/);
-    assert.match(html, /function buildDrawioFromSvg\(svg\)/);
+    assert.match(html, /function buildDrawioFromSvg\(svg, options = \{\}\)/);
     assert.match(html, /<mxGraphModel/);
   });
 
