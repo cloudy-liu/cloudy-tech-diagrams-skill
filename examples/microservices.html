@@ -1052,6 +1052,206 @@
       return `<mxCell id="${xmlEscape(id)}" value="${xmlEscape(label)}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${x}" y="${y}" width="${width}" height="${height}" as="geometry"/></mxCell>`;
     }
 
+    const CURVE_SAMPLE_STEPS = 8;
+
+    function isPathCommand(token) {
+      return /^[a-zA-Z]$/.test(token);
+    }
+
+    function pathTokens(pathData) {
+      return pathData.match(/[AaCcHhLlMmQqSsTtVvZz]|[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?/g) || [];
+    }
+
+    function addPathPoint(points, point) {
+      if (Number.isFinite(point.x) && Number.isFinite(point.y)) points.push(point);
+    }
+
+    function pathPoint(x, y, current, relative) {
+      return {
+        x: relative ? current.x + x : x,
+        y: relative ? current.y + y : y
+      };
+    }
+
+    function reflectPathPoint(point, around) {
+      return {
+        x: around.x * 2 - point.x,
+        y: around.y * 2 - point.y
+      };
+    }
+
+    function cubicBezierPoint(start, controlA, controlB, end, t) {
+      const mt = 1 - t;
+      return {
+        x: mt ** 3 * start.x + 3 * mt ** 2 * t * controlA.x + 3 * mt * t ** 2 * controlB.x + t ** 3 * end.x,
+        y: mt ** 3 * start.y + 3 * mt ** 2 * t * controlA.y + 3 * mt * t ** 2 * controlB.y + t ** 3 * end.y
+      };
+    }
+
+    function quadraticBezierPoint(start, control, end, t) {
+      const mt = 1 - t;
+      return {
+        x: mt ** 2 * start.x + 2 * mt * t * control.x + t ** 2 * end.x,
+        y: mt ** 2 * start.y + 2 * mt * t * control.y + t ** 2 * end.y
+      };
+    }
+
+    function sampleCurve(points, pointAt) {
+      for (let step = 1; step <= CURVE_SAMPLE_STEPS; step += 1) {
+        addPathPoint(points, pointAt(step / CURVE_SAMPLE_STEPS));
+      }
+    }
+
+    function pointsFromPathData(pathData) {
+      const tokens = pathTokens(pathData);
+      const points = [];
+      let index = 0;
+      let command = '';
+      let current = { x: 0, y: 0 };
+      let subpathStart = current;
+      let lastCubicControl = null;
+      let lastQuadraticControl = null;
+
+      const hasNumber = () => index < tokens.length && !isPathCommand(tokens[index]);
+      const readNumber = () => Number(tokens[index++]);
+
+      while (index < tokens.length) {
+        if (isPathCommand(tokens[index])) command = tokens[index++];
+        if (!command) break;
+
+        const upper = command.toUpperCase();
+        const relative = command !== upper;
+
+        if (upper === 'M') {
+          let first = true;
+          while (hasNumber()) {
+            const point = pathPoint(readNumber(), readNumber(), current, relative);
+            current = point;
+            if (first) subpathStart = point;
+            addPathPoint(points, point);
+            first = false;
+          }
+          command = relative ? 'l' : 'L';
+          lastCubicControl = null;
+          lastQuadraticControl = null;
+          continue;
+        }
+
+        if (upper === 'L') {
+          while (hasNumber()) {
+            current = pathPoint(readNumber(), readNumber(), current, relative);
+            addPathPoint(points, current);
+          }
+          lastCubicControl = null;
+          lastQuadraticControl = null;
+          continue;
+        }
+
+        if (upper === 'H') {
+          while (hasNumber()) {
+            const x = readNumber();
+            current = { x: relative ? current.x + x : x, y: current.y };
+            addPathPoint(points, current);
+          }
+          lastCubicControl = null;
+          lastQuadraticControl = null;
+          continue;
+        }
+
+        if (upper === 'V') {
+          while (hasNumber()) {
+            const y = readNumber();
+            current = { x: current.x, y: relative ? current.y + y : y };
+            addPathPoint(points, current);
+          }
+          lastCubicControl = null;
+          lastQuadraticControl = null;
+          continue;
+        }
+
+        if (upper === 'C') {
+          while (hasNumber()) {
+            const start = current;
+            const controlA = pathPoint(readNumber(), readNumber(), current, relative);
+            const controlB = pathPoint(readNumber(), readNumber(), current, relative);
+            const end = pathPoint(readNumber(), readNumber(), current, relative);
+            sampleCurve(points, (t) => cubicBezierPoint(start, controlA, controlB, end, t));
+            current = end;
+            lastCubicControl = controlB;
+            lastQuadraticControl = null;
+          }
+          continue;
+        }
+
+        if (upper === 'S') {
+          while (hasNumber()) {
+            const start = current;
+            const controlA = lastCubicControl ? reflectPathPoint(lastCubicControl, current) : current;
+            const controlB = pathPoint(readNumber(), readNumber(), current, relative);
+            const end = pathPoint(readNumber(), readNumber(), current, relative);
+            sampleCurve(points, (t) => cubicBezierPoint(start, controlA, controlB, end, t));
+            current = end;
+            lastCubicControl = controlB;
+            lastQuadraticControl = null;
+          }
+          continue;
+        }
+
+        if (upper === 'Q') {
+          while (hasNumber()) {
+            const start = current;
+            const control = pathPoint(readNumber(), readNumber(), current, relative);
+            const end = pathPoint(readNumber(), readNumber(), current, relative);
+            sampleCurve(points, (t) => quadraticBezierPoint(start, control, end, t));
+            current = end;
+            lastQuadraticControl = control;
+            lastCubicControl = null;
+          }
+          continue;
+        }
+
+        if (upper === 'T') {
+          while (hasNumber()) {
+            const start = current;
+            const control = lastQuadraticControl ? reflectPathPoint(lastQuadraticControl, current) : current;
+            const end = pathPoint(readNumber(), readNumber(), current, relative);
+            sampleCurve(points, (t) => quadraticBezierPoint(start, control, end, t));
+            current = end;
+            lastQuadraticControl = control;
+            lastCubicControl = null;
+          }
+          continue;
+        }
+
+        if (upper === 'A') {
+          while (hasNumber()) {
+            readNumber();
+            readNumber();
+            readNumber();
+            readNumber();
+            readNumber();
+            current = pathPoint(readNumber(), readNumber(), current, relative);
+            addPathPoint(points, current);
+          }
+          lastCubicControl = null;
+          lastQuadraticControl = null;
+          continue;
+        }
+
+        if (upper === 'Z') {
+          current = subpathStart;
+          addPathPoint(points, current);
+          lastCubicControl = null;
+          lastQuadraticControl = null;
+          continue;
+        }
+
+        break;
+      }
+
+      return points;
+    }
+
     function pointsFromShape(shape) {
       const tag = directTag(shape);
       if (tag === 'line') {
@@ -1070,12 +1270,9 @@
           .map(([x, y]) => ({ x, y }));
       }
 
-      const numbers = (shape.getAttribute('d') || '').match(/-?\d+(?:\.\d+)?/g) || [];
-      const points = [];
-      for (let i = 0; i < numbers.length - 1; i += 2) {
-        points.push({ x: Number(numbers[i]), y: Number(numbers[i + 1]) });
-      }
-      return points;
+      if (tag === 'path') return pointsFromPathData(shape.getAttribute('d') || '');
+
+      return [];
     }
 
     function shapeUsesCurveCommand(shape) {
