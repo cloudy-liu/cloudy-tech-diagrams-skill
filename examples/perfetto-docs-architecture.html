@@ -1455,6 +1455,20 @@
       ];
     }
 
+    function edgeTerminalAttributes(el) {
+      const source = (el.dataset.drawioSource || '').trim();
+      const target = (el.dataset.drawioTarget || '').trim();
+      const connect = (el.dataset.drawioConnect || '').trim().toLowerCase() === 'true';
+      const attrs = [];
+
+      if (source) attrs.push(`data-drawio-source="${xmlEscape(source)}"`);
+      if (target) attrs.push(`data-drawio-target="${xmlEscape(target)}"`);
+      if (connect && source) attrs.push(`source="${xmlEscape(source)}"`);
+      if (connect && target) attrs.push(`target="${xmlEscape(target)}"`);
+
+      return attrs.length ? ` ${attrs.join(' ')}` : '';
+    }
+
     function edgeLabelTextElement(el, shape) {
       const directText = visibleTextChildren(el)[0];
       if (directText) return directText;
@@ -1525,7 +1539,7 @@
         drawioRoleStyle(el)
       ]);
 
-      return `<mxCell id="${xmlEscape(id)}" value="${label}" style="${xmlEscape(style)}" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="${start.x}" y="${start.y}" as="sourcePoint"/><mxPoint x="${end.x}" y="${end.y}" as="targetPoint"/>${waypointXml}</mxGeometry></mxCell>`;
+      return `<mxCell id="${xmlEscape(id)}"${edgeTerminalAttributes(el)} value="${label}" style="${xmlEscape(style)}" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="${start.x}" y="${start.y}" as="sourcePoint"/><mxPoint x="${end.x}" y="${end.y}" as="targetPoint"/>${waypointXml}</mxGeometry></mxCell>`;
     }
 
     function buildDrawioFromSvg(svg, options = {}) {
