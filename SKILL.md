@@ -180,6 +180,8 @@ Draw.io Export Fidelity is product-critical. The browser-rendered HTML remains t
 
 Browser visual fidelity is primary. Do not simplify or degrade the rendered HTML/SVG just to make Draw.io export easier. When draw.io cannot reproduce a local visual detail exactly, export the closest editable draw.io-native approximation and keep the browser visual intact.
 
+Style mapping must preserve meaningful SVG fill, stroke, stroke-width, rounded corners, text color, font size, font weight, and marker direction on editable draw.io-native cells. Calibrate dashed strokes instead of passing raw SVG values through blindly: draw.io `dashPattern` is derived from SVG `stroke-dasharray` divided by SVG `stroke-width`, with `fixDash=1` on dashed cells. SVG marker arrowheads should map to open draw.io arrows with unfilled heads; this is an editable draw.io-native approximation, not a literal marker geometry clone.
+
 Use Draw.io semantic annotations on SVG groups so the exporter does not infer diagram intent from visual-only markup:
 
 ```svg

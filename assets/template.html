@@ -948,12 +948,28 @@
       return semanticContainerRoles().has(el.dataset.drawioRole || '');
     }
 
+    function drawioDashStyle(el) {
+      const dashArray = (el.getAttribute('stroke-dasharray') || '').replace(/,/g, ' ').trim();
+      if (!dashArray || dashArray === 'none') return [];
+
+      const values = dashArray.split(/\s+/)
+        .map((value) => Number(value))
+        .filter((value) => Number.isFinite(value) && value > 0);
+      if (!values.length) return [];
+
+      const strokeWidth = Math.max(numberValue(el.getAttribute('stroke-width'), 1), 0.1);
+      const pattern = values
+        .map((value) => drawioNumber(value / strokeWidth))
+        .join(' ');
+
+      return ['dashed=1', 'fixDash=1', `dashPattern=${pattern}`];
+    }
+
     function buildInternalRectCell(rect, id, parentId = '1', origin = { x: 0, y: 0 }) {
       const bounds = rectBounds(rect);
       const fill = rect.getAttribute('fill') || 'none';
       const stroke = rect.getAttribute('stroke') || 'none';
       const strokeWidth = rect.getAttribute('stroke-width') || '1';
-      const dashed = rect.hasAttribute('stroke-dasharray');
       const rx = attrNumber(rect, 'rx', 0);
       const style = cellStyle([
         'rounded=1',
@@ -965,8 +981,7 @@
         `fillColor=${fill}`,
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
-        dashed ? 'dashed=1' : '',
-        dashed ? `dashPattern=${rect.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : '',
+        ...drawioDashStyle(rect),
         drawioRoleStyle(rect)
       ]);
 
@@ -1117,7 +1132,6 @@
       const fill = shape.getAttribute('fill') || 'none';
       const stroke = shape.getAttribute('stroke') || 'none';
       const strokeWidth = shape.getAttribute('stroke-width') || '1';
-      const dashed = shape.hasAttribute('stroke-dasharray');
       const id = drawioId(el, index);
       const style = cellStyle([
         tag === 'circle' || tag === 'ellipse' ? 'ellipse' : (rx > 0 ? 'rounded=1' : 'rounded=0'),
@@ -1129,8 +1143,7 @@
         `fillColor=${fill}`,
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
-        dashed ? 'dashed=1' : '',
-        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : '',
+        ...drawioDashStyle(shape),
         drawioRoleStyle(el)
       ]);
 
@@ -1145,7 +1158,6 @@
       const fill = rect.getAttribute('fill') || 'none';
       const stroke = rect.getAttribute('stroke') || '#9A9991';
       const strokeWidth = rect.getAttribute('stroke-width') || '1.5';
-      const dashed = rect.hasAttribute('stroke-dasharray');
       const rx = attrNumber(rect, 'rx', 0);
       const label = drawioLabelForBox(el, rect);
       const baseStyle = [
@@ -1159,8 +1171,7 @@
         `fillColor=${fill}`,
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
-        dashed ? 'dashed=1' : '',
-        dashed ? `dashPattern=${rect.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : '',
+        ...drawioDashStyle(rect),
         drawioRoleStyle(el)
       ];
 
@@ -1476,7 +1487,6 @@
       const labelFontWeight = labelTextElement?.getAttribute('font-weight') || '';
       const stroke = shape.getAttribute('stroke') || '#9A9991';
       const strokeWidth = shape.getAttribute('stroke-width') || '1.6';
-      const dashed = shape.hasAttribute('stroke-dasharray');
       const curved = shapeUsesCurveCommand(shape);
       const id = drawioId(el, index);
       const start = points[0];
@@ -1497,8 +1507,7 @@
         `fontStyle=${fontStyleValueFromWeight(labelFontWeight)}`,
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
-        dashed ? 'dashed=1' : '',
-        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : '',
+        ...drawioDashStyle(shape),
         drawioRoleStyle(el)
       ]);
 
