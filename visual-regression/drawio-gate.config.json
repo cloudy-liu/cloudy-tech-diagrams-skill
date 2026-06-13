@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "renderers": {
+    "html": {
+      "engine": "playwright-chromium",
+      "selector": ".diagram-container svg",
+      "viewport": {
+        "width": 1200,
+        "height": 900
+      },
+      "deviceScaleFactor": 1,
+      "colorScheme": "light",
+      "fontReadiness": "wait-for-document-fonts"
+    },
+    "drawio": {
+      "engine": "diagrams-net-desktop-cli",
+      "command": "draw.io --export --format png --output <drawioPng> <drawioFile>",
+      "scale": 1,
+      "transparent": false
+    }
+  },
+  "thresholds": {
+    "maxPixelMismatchRatio": 0.015,
+    "perChannelTolerance": 3,
+    "maxAverageChannelDelta": 2
+  },
+  "ci": {
+    "defaultMode": "config-validation-only",
+    "releaseGateEnv": "DRAWIO_VISUAL_GATE=1",
+    "reason": "The pixel gate depends on browser, diagrams.net, and font rendering versions, so ordinary CI validates configuration and unit behavior while release validation supplies pinned screenshot artifacts."
+  },
+  "samples": [
+    {
+      "id": "drawio-fidelity-torture",
+      "html": "examples/drawio-fidelity-torture.html",
+      "selector": ".diagram-container svg",
+      "artifacts": {
+        "drawioFile": "dist/drawio-visual/drawio-fidelity-torture.drawio",
+        "htmlPng": "dist/drawio-visual/drawio-fidelity-torture.html.png",
+        "drawioPng": "dist/drawio-visual/drawio-fidelity-torture.drawio.png"
+      }
+    },
+    {
+      "id": "perfetto-docs-architecture",
+      "html": "examples/perfetto-docs-architecture.html",
+      "selector": ".diagram-container svg",
+      "artifacts": {
+        "drawioFile": "dist/drawio-visual/perfetto-docs-architecture.drawio",
+        "htmlPng": "dist/drawio-visual/perfetto-docs-architecture.html.png",
+        "drawioPng": "dist/drawio-visual/perfetto-docs-architecture.drawio.png"
+      }
+    }
+  ],
+  "knownLimitations": [
+    "font rendering can differ slightly across operating systems and Chromium builds",
+    "draw.io arrowhead and dash rendering are editable-native approximations of SVG markers and stroke-dasharray",
+    "the gate compares the exportable diagram sheet and intentionally excludes page chrome and toolbar UI",
+    "the release gate should be run on pinned renderer versions before release, not as an unconditional PR check"
+  ]
+}

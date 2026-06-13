@@ -213,6 +213,18 @@ Visible Diagram Label text is the source of truth for exported visible text. Whe
 
 Do not use a whole-diagram raster or SVG background reference layer as the default Draw.io export path. The primary export must stand on editable draw.io-native objects.
 
+### Draw.io Visual Regression Gate
+
+For release validation, run the Draw.io Visual Regression Gate after structural completeness, visible-label, sampled-edge, style-mapping, and exporter-version tests pass. The stable rendering path is:
+
+1. Render the browser HTML sheet with Playwright Chromium at 1200x900, deviceScaleFactor 1, light color scheme, and the `.diagram-container svg` selector after `document.fonts.ready`.
+2. Export the generated `.drawio` file with diagrams.net Desktop CLI using `draw.io --export --format png --output <drawioPng> <drawioFile>`.
+3. Compare the HTML PNG and draw.io PNG with `node tools/drawio-visual-regression.mjs gate --config visual-regression/drawio-gate.config.json` and `DRAWIO_VISUAL_GATE=1`.
+
+The default threshold is `maxPixelMismatchRatio=0.015`, `perChannelTolerance=3`, and `maxAverageChannelDelta=2`. This is a release validation gate, not an unconditional PR check, because browser, diagrams.net, and font rendering versions can otherwise make CI flaky. Ordinary CI should validate the gate configuration and PNG comparator behavior without requiring external screenshot artifacts.
+
+Known limitations are acceptable only when documented in `visual-regression/drawio-gate.config.json`: font rendering drift, draw.io-native approximations for SVG markers and dash patterns, and intentional exclusion of page chrome and toolbar UI. A passing pixel gate does not replace the editable-object contract; it runs after the semantic export tests.
+
 ## Export Toolbar
 
 Every generated diagram should keep the built-in export toolbar unless the user asks to remove it. The export control must stay in the title-line header utility area, not centered below the subtitle as a content row.

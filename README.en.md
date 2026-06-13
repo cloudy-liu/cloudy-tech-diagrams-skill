@@ -192,6 +192,20 @@ Draw.io Export Fidelity is product-critical: the browser-rendered HTML remains t
 
 The exportable diagram sheet includes the meaningful visual content that belongs to the diagram itself. When title, legend, caption, scope notes, and explanatory cards are part of the diagram, they should live inside the main SVG diagram and export as editable draw.io-native objects. Page chrome, toolbar, and unrelated footer metadata stay outside the Draw.io export.
 
+## Draw.io Visual Regression Gate
+
+Draw.io Visual Regression Gate is the release validation layer for product-level export fidelity. It runs after the structural Draw.io tests pass, then compares browser-rendered HTML screenshots with diagrams.net-rendered Draw.io screenshots for representative acceptance samples.
+
+The selected rendering path is intentionally narrow and repeatable:
+
+1. Render the HTML diagram sheet with Playwright Chromium at 1200x900, deviceScaleFactor 1, light color scheme, and the `.diagram-container svg` selector after `document.fonts.ready`.
+2. Export the `.drawio` artifact with diagrams.net Desktop CLI using `draw.io --export --format png --output <drawioPng> <drawioFile>`.
+3. Run `DRAWIO_VISUAL_GATE=1 node tools/drawio-visual-regression.mjs gate --config visual-regression/drawio-gate.config.json`.
+
+The default threshold is `maxPixelMismatchRatio=0.015`, `perChannelTolerance=3`, and `maxAverageChannelDelta=2`. Ordinary CI keeps this non-flaky by validating the gate config and PNG comparator without requiring external renderer artifacts; release validation supplies pinned Playwright Chromium, diagrams.net Desktop CLI, fonts, and screenshots. This avoids flaky CI while still keeping a real pixel-diff gate for release decisions.
+
+Known limitations are tracked in `visual-regression/drawio-gate.config.json`: font rendering drift, draw.io-native approximations for SVG markers and dash patterns, and intentional exclusion of page chrome and toolbar UI.
+
 ## 🖼️ Examples
 
 ### Perfetto Project Architecture
