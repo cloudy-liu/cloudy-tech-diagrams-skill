@@ -164,22 +164,26 @@ Draw soft region and security boundaries first, then arrows, then component node
 Use this HTML structure:
 
 1. Header with centered title, subtitle, and unobtrusive export toolbar.
-2. Main SVG diagram inside one warm paper container.
-3. Optional summary cards below the diagram.
+2. Main SVG diagram as one exportable diagram sheet inside a warm paper container.
+3. Optional page summary cards below the diagram only when they are page-level supporting content.
 4. Muted footer metadata.
+
+When title, legend, caption, scope notes, and explanatory cards are part of the diagram itself, place them inside the exportable diagram sheet. Page chrome, toolbar, and unrelated footer metadata stay outside the sheet.
 
 Do not create a marketing landing page. The first screen should be the diagram itself.
 
 ## Draw.io Editable Export
 
-Every generated HTML diagram should include Draw.io export by default. The HTML file remains the only generated artifact; the Draw.io button downloads a `.drawio` file for the main SVG diagram only.
+Every generated HTML diagram should include Draw.io export by default. The HTML file remains the only generated artifact; the Draw.io button downloads a `.drawio` file for the main SVG diagram as an exportable diagram sheet.
+
+Draw.io Export Fidelity is product-critical. The browser-rendered HTML remains the entry-level product experience, and Draw.io export is the high-fidelity editable continuation path for the diagram sheet. This is not an arbitrary HTML/CSS conversion, a full-page export, an exact pixel clone, or a one-image export.
 
 Browser visual fidelity is primary. Do not simplify or degrade the rendered HTML/SVG just to make Draw.io export easier. When draw.io cannot reproduce a local visual detail exactly, export the closest editable draw.io-native approximation and keep the browser visual intact.
 
 Use Draw.io semantic annotations on SVG groups so the exporter does not infer diagram intent from visual-only markup:
 
 ```svg
-<g data-drawio-type="component" data-drawio-id="api-service">
+<g data-drawio-type="component" data-drawio-role="service" data-drawio-id="api-service">
   <rect x="420" y="220" width="150" height="72" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
   <text x="495" y="248" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">API Service</text>
   <text x="495" y="268" fill="#6F6C65" font-size="12" text-anchor="middle">FastAPI :8000</text>
@@ -193,9 +197,13 @@ Supported default annotations:
 - `data-drawio-type="edge"` for connector groups, separators, lane dividers, and simple line glyphs. Add `data-drawio-label` when the edge has a label. Lines without SVG markers should export without arrowheads.
 - `data-drawio-type="label"` for standalone semantic text such as lane headings, region headings, section titles, legend labels, callouts, and labels that are not part of a component group.
 - `data-drawio-type="shape"` for standalone simple SVG primitives such as `rect`, `circle`, and `ellipse` used in meaningful icons, legend swatches, status glyphs, visual keys, or callout boxes.
+- `data-drawio-role` for diagram semantics such as card, panel, caption, scope-note, legend, legend-item, legend-swatch, flow, handoff, or metric. Keep `data-drawio-type` small and stable; use roles for meaning.
 - `data-drawio-id` for stable draw.io cell IDs.
+- `data-drawio-ignore="true"` only for visible elements that intentionally do not export. Always add `data-drawio-ignore-reason` so omissions are auditable.
 
-Use component-level export granularity for simple components. A component group should export as one draw.io vertex with the main and secondary SVG text folded into its label when the component has a simple label-only interior. For components with meaningful internal layout, such as nested pills, status rows, icon keys, legends, visual keys, or mini sections, keep the parent component as the containing box and preserve its internal primitives as separate editable draw.io cells. Standalone labels, lane dividers, icon primitives, legend entries, and scope callouts that carry diagram meaning must be annotated separately so they are not filtered out of the Draw.io export or folded into the wrong parent label. Non-core decorative elements may be approximated or omitted when draw.io cannot express them cleanly.
+Use component-level export granularity for simple components. A component group should export as one draw.io vertex with the main and secondary SVG text folded into its label when the component has a simple label-only interior. For components with meaningful internal layout, such as nested pills, status rows, icon keys, legends, visual keys, or mini sections, keep the parent component as the containing box and preserve its internal primitives as separate editable draw.io cells. Standalone labels, lane dividers, icon primitives, legend entries, captions, explanatory cards, and scope callouts that carry diagram meaning must be annotated separately so they are not filtered out of the Draw.io export or folded into the wrong parent label. Non-core decorative elements may be approximated or omitted when draw.io cannot express them cleanly.
+
+Visible Diagram Label text is the source of truth for exported visible text. When an SVG element has visible text, `data-drawio-label` must not silently override visible SVG text with different wording. In plain terms: data-drawio-label must not silently override visible SVG text. Use non-visible metadata such as `data-drawio-note` or `aria-label` for internal notes and semantic descriptions.
 
 Do not use a whole-diagram raster or SVG background reference layer as the default Draw.io export path. The primary export must stand on editable draw.io-native objects.
 
