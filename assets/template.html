@@ -294,66 +294,66 @@
           </marker>
         </defs>
 
-        <rect width="1000" height="620" rx="18" fill="#FAF9F5"/>
+        <rect width="1000" height="620" rx="18" fill="#FAF9F5" data-drawio-ignore="true" data-drawio-ignore-reason="paper background is represented by the draw.io page"/>
 
         <!-- Boundaries are drawn before arrows so soft panel fills do not hide flows. -->
-        <g data-drawio-type="boundary" data-drawio-id="cloud-region">
+        <g data-drawio-type="boundary" data-drawio-role="region" data-drawio-id="cloud-region">
           <rect x="210" y="82" width="740" height="430" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
           <text x="232" y="112" fill="#6F6C65" font-size="13" font-weight="600">Cloud Region / Product Boundary</text>
         </g>
 
-        <g data-drawio-type="boundary" data-drawio-id="identity-policy">
+        <g data-drawio-type="boundary" data-drawio-role="security-boundary" data-drawio-id="identity-policy">
           <rect x="395" y="155" width="190" height="230" rx="18" fill="none" stroke="#C88E6A" stroke-width="1.5" stroke-dasharray="6 6"/>
           <text x="414" y="181" fill="#8B6B55" font-size="12" font-weight="600">identity and policy</text>
         </g>
 
         <!-- Arrows are drawn before nodes so nodes stay visually dominant. -->
-        <g data-drawio-type="edge" data-drawio-id="clients-to-edge" data-drawio-label="HTTPS">
+        <g data-drawio-type="edge" data-drawio-role="flow" data-drawio-id="clients-to-edge" data-drawio-label="HTTPS">
           <line x1="150" y1="315" x2="238" y2="315" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
           <text x="194" y="300" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">HTTPS</text>
         </g>
 
-        <g data-drawio-type="edge" data-drawio-id="edge-to-gateway" data-drawio-label="edge">
+        <g data-drawio-type="edge" data-drawio-role="flow" data-drawio-id="edge-to-gateway" data-drawio-label="edge">
           <line x1="370" y1="315" x2="418" y2="315" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
           <text x="394" y="300" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">edge</text>
         </g>
 
-        <g data-drawio-type="edge" data-drawio-id="gateway-to-api" data-drawio-label="REST">
+        <g data-drawio-type="edge" data-drawio-role="flow" data-drawio-id="gateway-to-api" data-drawio-label="REST">
           <path d="M 555 285 C 590 235, 620 210, 675 205" fill="none" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
           <text x="628" y="246" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">REST</text>
         </g>
 
-        <g data-drawio-type="edge" data-drawio-id="gateway-to-worker" data-drawio-label="events">
+        <g data-drawio-type="edge" data-drawio-role="event-flow" data-drawio-id="gateway-to-worker" data-drawio-label="events">
           <path d="M 555 345 C 590 395, 620 420, 675 425" fill="none" stroke="#BFA777" stroke-width="1.6" stroke-dasharray="5 5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
           <text x="612" y="397" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">events</text>
         </g>
 
-        <g data-drawio-type="edge" data-drawio-id="api-to-db" data-drawio-label="SQL">
+        <g data-drawio-type="edge" data-drawio-role="flow" data-drawio-id="api-to-db" data-drawio-label="SQL">
           <line x1="805" y1="205" x2="848" y2="205" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
           <text x="826" y="190" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">SQL</text>
         </g>
 
-        <g data-drawio-type="edge" data-drawio-id="worker-to-api" data-drawio-label="consume">
+        <g data-drawio-type="edge" data-drawio-role="flow" data-drawio-id="worker-to-api" data-drawio-label="consume">
           <path d="M 735 392 C 735 345, 735 295, 735 250" fill="none" stroke="#76B985" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
           <text x="764" y="324" fill="#6F6C65" font-size="11" font-weight="500">consume</text>
         </g>
 
         <!-- External clients -->
-        <g data-drawio-type="component" data-drawio-id="clients">
+        <g data-drawio-type="component" data-drawio-role="client" data-drawio-id="clients">
           <rect x="40" y="270" width="110" height="90" rx="14" fill="#EDEAE3" stroke="#9A9991" stroke-width="2"/>
           <text x="95" y="307" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Clients</text>
           <text x="95" y="329" fill="#6F6C65" font-size="12" text-anchor="middle">Web / Mobile</text>
         </g>
 
         <!-- Cloud edge -->
-        <g data-drawio-type="component" data-drawio-id="cloudfront">
+        <g data-drawio-type="component" data-drawio-role="cloud-edge" data-drawio-id="cloudfront">
           <rect x="240" y="275" width="130" height="80" rx="14" fill="#F0DED7" stroke="#D87858" stroke-width="2"/>
           <text x="305" y="307" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">CloudFront</text>
           <text x="305" y="329" fill="#6F6C65" font-size="12" text-anchor="middle">CDN edge</text>
         </g>
 
         <!-- Security gateway -->
-        <g data-drawio-type="component" data-drawio-id="api-gateway">
+        <g data-drawio-type="component" data-drawio-role="gateway" data-drawio-id="api-gateway">
           <rect x="420" y="255" width="135" height="120" rx="14" fill="#F3E4DA" stroke="#C88E6A" stroke-width="2"/>
           <text x="487.5" y="297" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">API Gateway</text>
           <text x="487.5" y="319" fill="#6F6C65" font-size="12" text-anchor="middle">Auth / routing</text>
@@ -361,44 +361,45 @@
         </g>
 
         <!-- Backend service -->
-        <g data-drawio-type="component" data-drawio-id="api-service">
+        <g data-drawio-type="component" data-drawio-role="service" data-drawio-id="api-service">
           <rect x="675" y="165" width="130" height="80" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
           <text x="740" y="197" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">API Service</text>
           <text x="740" y="219" fill="#6F6C65" font-size="12" text-anchor="middle">FastAPI :8000</text>
         </g>
 
         <!-- Event worker -->
-        <g data-drawio-type="component" data-drawio-id="worker">
+        <g data-drawio-type="component" data-drawio-role="worker" data-drawio-id="worker">
           <rect x="675" y="390" width="130" height="70" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
           <text x="740" y="419" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Worker</text>
           <text x="740" y="440" fill="#6F6C65" font-size="12" text-anchor="middle">Async jobs</text>
         </g>
 
         <!-- Data store -->
-        <g data-drawio-type="component" data-drawio-id="postgres">
+        <g data-drawio-type="component" data-drawio-role="data-store" data-drawio-id="postgres">
           <rect x="850" y="165" width="110" height="80" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
           <text x="905" y="197" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Postgres</text>
           <text x="905" y="219" fill="#6F6C65" font-size="12" text-anchor="middle">Primary DB</text>
         </g>
 
         <!-- Message bus: keep pills centered on the event-flow axis. For vertical event flows, split connector lines above and below the pill instead of drawing through the label. -->
-        <g data-drawio-type="component" data-drawio-id="event-bus">
+        <g data-drawio-type="component" data-drawio-role="event-bus" data-drawio-id="event-bus">
           <rect x="680" y="322" width="120" height="28" rx="14" fill="#E6D7B4" stroke="#BFA777" stroke-width="1.5"/>
           <text x="740" y="341" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">Event Bus</text>
         </g>
 
         <!-- Legend, placed outside the region boundary. -->
-        <text x="230" y="558" fill="#3D3C38" font-size="13" font-weight="700">Legend</text>
-        <rect x="230" y="574" width="18" height="11" rx="3" fill="#E0E0F0" stroke="#8585DD" stroke-width="1"/>
-        <text x="256" y="583" fill="#6F6C65" font-size="11">Client</text>
-        <rect x="320" y="574" width="18" height="11" rx="3" fill="#D8E8D8" stroke="#76B985" stroke-width="1"/>
-        <text x="346" y="583" fill="#6F6C65" font-size="11">Compute</text>
-        <rect x="425" y="574" width="18" height="11" rx="3" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="1"/>
-        <text x="451" y="583" fill="#6F6C65" font-size="11">Data</text>
-        <rect x="515" y="574" width="18" height="11" rx="3" fill="#F0DED7" stroke="#D87858" stroke-width="1"/>
-        <text x="541" y="583" fill="#6F6C65" font-size="11">Cloud</text>
-        <line x1="610" y1="580" x2="640" y2="580" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
-        <text x="650" y="583" fill="#6F6C65" font-size="11">Primary flow</text>
+        <text data-drawio-type="label" data-drawio-role="legend" data-drawio-id="legend-heading" data-drawio-width="88" data-drawio-height="18" x="230" y="558" fill="#3D3C38" font-size="13" font-weight="700">Legend</text>
+        <rect data-drawio-type="shape" data-drawio-role="legend-swatch" data-drawio-id="legend-client-swatch" x="230" y="574" width="18" height="11" rx="3" fill="#E0E0F0" stroke="#8585DD" stroke-width="1"/>
+        <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-client-label" data-drawio-width="58" data-drawio-height="16" x="256" y="583" fill="#6F6C65" font-size="11">Client</text>
+        <rect data-drawio-type="shape" data-drawio-role="legend-swatch" data-drawio-id="legend-compute-swatch" x="320" y="574" width="18" height="11" rx="3" fill="#D8E8D8" stroke="#76B985" stroke-width="1"/>
+        <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-compute-label" data-drawio-width="76" data-drawio-height="16" x="346" y="583" fill="#6F6C65" font-size="11">Compute</text>
+        <rect data-drawio-type="shape" data-drawio-role="legend-swatch" data-drawio-id="legend-data-swatch" x="425" y="574" width="18" height="11" rx="3" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="1"/>
+        <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-data-label" data-drawio-width="48" data-drawio-height="16" x="451" y="583" fill="#6F6C65" font-size="11">Data</text>
+        <rect data-drawio-type="shape" data-drawio-role="legend-swatch" data-drawio-id="legend-cloud-swatch" x="515" y="574" width="18" height="11" rx="3" fill="#F0DED7" stroke="#D87858" stroke-width="1"/>
+        <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-cloud-label" data-drawio-width="54" data-drawio-height="16" x="541" y="583" fill="#6F6C65" font-size="11">Cloud</text>
+        <line data-drawio-type="edge" data-drawio-role="legend-flow" data-drawio-id="legend-primary-flow-line" x1="610" y1="580" x2="640" y2="580" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-primary-flow-label" data-drawio-width="96" data-drawio-height="16" x="650" y="583" fill="#6F6C65" font-size="11">Primary flow</text>
+        <text data-drawio-type="label" data-drawio-role="scope-note" data-drawio-id="sample-scope-note" data-drawio-width="520" data-drawio-height="16" x="230" y="608" fill="#6F6C65" font-size="11">Scope: replace sample components with your own product boundary.</text>
       </svg>
     </main>
 
@@ -572,6 +573,15 @@
 
     function cellStyle(parts) {
       return parts.filter(Boolean).join(';') + ';';
+    }
+
+    function drawioRoleStyle(el) {
+      const role = el.dataset?.drawioRole;
+      return role ? `cloudyRole=${role.replace(/[^a-zA-Z0-9_-]/g, '-')}` : '';
+    }
+
+    function drawioIgnored(el) {
+      return el.dataset?.drawioIgnore === 'true';
     }
 
     function drawioNumber(value) {
@@ -851,7 +861,8 @@
         'fontFamily=Montserrat',
         `fontSize=${fontSize}`,
         `fontColor=${color}`,
-        `fontStyle=${fontStyleValueFromWeight(fontWeight)}`
+        `fontStyle=${fontStyleValueFromWeight(fontWeight)}`,
+        drawioRoleStyle(el)
       ]);
 
       return `<mxCell id="${xmlEscape(id)}" value="${xmlEscape(labelText)}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(x)}" y="${drawioNumber(y)}" width="${drawioNumber(width)}" height="${drawioNumber(height)}" as="geometry"/></mxCell>`;
@@ -894,7 +905,8 @@
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
         dashed ? 'dashed=1' : '',
-        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : '',
+        drawioRoleStyle(el)
       ]);
 
       return `<mxCell id="${xmlEscape(id)}" value="" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(bounds.x)}" y="${drawioNumber(bounds.y)}" width="${drawioNumber(bounds.width)}" height="${drawioNumber(bounds.height)}" as="geometry"/></mxCell>`;
@@ -923,7 +935,8 @@
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
         dashed ? 'dashed=1' : '',
-        dashed ? `dashPattern=${rect.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+        dashed ? `dashPattern=${rect.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : '',
+        drawioRoleStyle(el)
       ];
 
       const typeStyle = type === 'boundary'
@@ -1013,7 +1026,8 @@
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
         dashed ? 'dashed=1' : '',
-        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+        dashed ? `dashPattern=${shape.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : '',
+        drawioRoleStyle(el)
       ]);
 
       return `<mxCell id="${xmlEscape(id)}" value="${label}" style="${xmlEscape(style)}" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="${start.x}" y="${start.y}" as="sourcePoint"/><mxPoint x="${end.x}" y="${end.y}" as="targetPoint"/>${waypointXml}</mxGeometry></mxCell>`;
@@ -1025,7 +1039,9 @@
       const [, , width = '1000', height = '620'] = viewBox.split(/\s+/);
       const cells = ['<mxCell id="0"/>', '<mxCell id="1" parent="0"/>'];
 
-      Array.from(svg.querySelectorAll('[data-drawio-type]')).forEach((group, index) => {
+      Array.from(svg.querySelectorAll('[data-drawio-type]'))
+        .filter((group) => !drawioIgnored(group))
+        .forEach((group, index) => {
         if (group.dataset.drawioType === 'edge') {
           cells.push(buildEdgeCell(group, index + 2));
           return;
