@@ -323,7 +323,8 @@ for (const file of htmlFiles) {
     assert.match(drawio, /x="252" y="62" width="36" height="36"/);
     assert.match(drawio, /id="lane-divider"/);
     assert.match(drawio, /dashed=1/);
-    assert.match(drawio, /dashPattern=5 5/);
+    assert.match(drawio, /fixDash=1/);
+    assert.match(drawio, /dashPattern=4.17 4.17/);
     assert.match(drawio, /endArrow=none/);
     assert.doesNotMatch(drawio, /id="lane-divider"(?:(?!<\/mxCell>)[\s\S])*endArrow=open/);
     assert.match(drawio, /id="arrow-connector"[\s\S]*?endArrow=open/);
@@ -344,7 +345,8 @@ for (const file of htmlFiles) {
     assert.match(drawio, /id="legend-trace-flow-line"[\s\S]*?endArrow=open/);
     assert.match(drawio, /id="legend-artifact-handoff-line"/);
     assert.match(drawio, /dashed=1/);
-    assert.match(drawio, /dashPattern=5 5/);
+    assert.match(drawio, /fixDash=1/);
+    assert.match(drawio, /dashPattern=3.13 3.13/);
     assert.match(drawio, /id="legend-artifact-handoff-line"[\s\S]*?endArrow=open/);
     assert.match(drawio, /id="legend-scope-callout"/);
     assert.match(drawio, /x="54" y="718" width="1072" height="28"/);

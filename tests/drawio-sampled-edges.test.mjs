@@ -160,7 +160,8 @@ for (const file of htmlFiles) {
     assert.match(drawio, /id="linear-elbow"/);
     assert.match(drawio, /strokeColor=#BFA777/);
     assert.match(drawio, /dashed=1/);
-    assert.match(drawio, /dashPattern=5 5/);
+    assert.match(drawio, /fixDash=1/);
+    assert.match(drawio, /dashPattern=2.78 2.78/);
     assert.match(drawio, /endArrow=open/);
     assert.match(drawio, /value="linear"/);
     assert.match(drawio, /fontColor=#A45D45/);
