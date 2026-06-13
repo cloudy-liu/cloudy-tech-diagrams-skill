@@ -564,6 +564,8 @@
         .replace(/'/g, '&apos;');
     }
 
+    const CLOUDY_DRAWIO_EXPORTER_VERSION = '2026.06.13.1';
+
     function directChildren(el, tagName) {
       return Array.from(el.children).filter((child) => child.tagName.toLowerCase() === tagName);
     }
@@ -1555,7 +1557,7 @@
       });
 
       const model = `<mxGraphModel dx="${xmlEscape(width)}" dy="${xmlEscape(height)}" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="${xmlEscape(width)}" pageHeight="${xmlEscape(height)}" math="0" shadow="0"><root>${cells.filter(Boolean).join('')}</root></mxGraphModel>`;
-      return `<?xml version="1.0" encoding="UTF-8"?><mxfile host="app.diagrams.net" agent="Cloudy Tech Diagrams" modified="${new Date().toISOString()}" type="device"><diagram id="cloudy-tech-diagram" name="${xmlEscape(title)}">${model}</diagram></mxfile>`;
+      return `<?xml version="1.0" encoding="UTF-8"?><mxfile host="app.diagrams.net" agent="Cloudy Tech Diagrams" cloudyDrawioExporterVersion="${xmlEscape(CLOUDY_DRAWIO_EXPORTER_VERSION)}" modified="${new Date().toISOString()}" type="device"><diagram id="cloudy-tech-diagram" name="${xmlEscape(title)}">${model}</diagram></mxfile>`;
     }
 
     function downloadTextFile(filename, content, mimeType) {

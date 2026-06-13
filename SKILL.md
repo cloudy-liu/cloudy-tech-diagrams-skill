@@ -182,6 +182,8 @@ Browser visual fidelity is primary. Do not simplify or degrade the rendered HTML
 
 Style mapping must preserve meaningful SVG fill, stroke, stroke-width, rounded corners, text color, font size, font weight, and marker direction on editable draw.io-native cells. Calibrate dashed strokes instead of passing raw SVG values through blindly: draw.io `dashPattern` is derived from SVG `stroke-dasharray` divided by SVG `stroke-width`, with `fixDash=1` on dashed cells. SVG marker arrowheads should map to open draw.io arrows with unfilled heads; this is an editable draw.io-native approximation, not a literal marker geometry clone.
 
+The Draw.io exporter block is versioned with `CLOUDY_DRAWIO_EXPORTER_VERSION`. When updating generated HTML diagrams or examples, refresh the full exporter block from the current template instead of hand-editing only selected functions, so stale exporter behavior is detectable and does not silently persist.
+
 Use Draw.io semantic annotations on SVG groups so the exporter does not infer diagram intent from visual-only markup:
 
 ```svg
