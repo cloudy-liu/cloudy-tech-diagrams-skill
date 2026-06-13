@@ -6,7 +6,8 @@ const htmlFiles = [
   'assets/template.html',
   'examples/web-app.html',
   'examples/microservices.html',
-  'examples/perfetto-docs-architecture.html'
+  'examples/perfetto-docs-architecture.html',
+  'examples/drawio-fidelity-torture.html'
 ];
 
 class FakeElement {

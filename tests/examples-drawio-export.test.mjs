@@ -5,7 +5,8 @@ import test from 'node:test';
 const examples = [
   'examples/web-app.html',
   'examples/microservices.html',
-  'examples/perfetto-docs-architecture.html'
+  'examples/perfetto-docs-architecture.html',
+  'examples/drawio-fidelity-torture.html'
 ];
 
 for (const example of examples) {

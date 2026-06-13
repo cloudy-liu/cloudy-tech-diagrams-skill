@@ -22,6 +22,11 @@ const sheetFiles = [
     file: 'examples/perfetto-docs-architecture.html',
     title: 'Project stack map',
     caption: 'Modeled after the official homepage stack'
+  },
+  {
+    file: 'examples/drawio-fidelity-torture.html',
+    title: 'Draw.io Fidelity Torture Sheet',
+    caption: 'Editable export acceptance sample'
   }
 ];
 
