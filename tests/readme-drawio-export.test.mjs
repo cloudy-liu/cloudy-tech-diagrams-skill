@@ -13,6 +13,6 @@ test('English README documents Draw.io as a default built-in export option', () 
 
 test('Chinese README documents Draw.io as a default built-in export option', () => {
   assert.match(chinese, /Copy Image \/ Download PNG \/ Download PDF \/ Download Draw\.io/);
-  assert.match(chinese, /主 SVG 图/);
-  assert.match(chinese, /可编辑的视觉等价/);
+  assert.match(chinese, /exportable diagram sheet/);
+  assert.match(chinese, /可编辑视觉等价/);
 });

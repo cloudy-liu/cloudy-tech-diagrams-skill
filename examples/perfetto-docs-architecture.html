@@ -308,6 +308,13 @@
         <text data-drawio-type="label" data-drawio-role="sheet-title" data-drawio-id="sheet-title" data-drawio-width="430" data-drawio-height="26" x="48" y="42" fill="#141413" font-size="18" font-weight="700">Project stack map</text>
         <text data-drawio-type="label" data-drawio-role="caption" data-drawio-id="sheet-caption" data-drawio-width="720" data-drawio-height="18" x="48" y="64" fill="#6F6C65" font-size="12" font-weight="500">Modeled after the official homepage stack: record traces, analyze traces, and visualize traces.</text>
 
+        <g data-drawio-type="component" data-drawio-role="card" data-drawio-id="sheet-artifact-card">
+          <rect x="832" y="28" width="294" height="50" rx="14" fill="#F6F3EC" stroke="#C9C3B8" stroke-width="1"/>
+          <rect data-drawio-role="card-pill" x="850" y="43" width="76" height="18" rx="9" fill="#E6D7B4" stroke="#BFA777" stroke-width="1"/>
+          <text data-drawio-role="card-metric" x="888" y="56" fill="#7B6841" font-size="10" font-weight="700" text-anchor="middle">TRACE</text>
+          <text data-drawio-role="card-detail" x="940" y="56" fill="#6F6C65" font-size="11" font-weight="600">recording to analysis</text>
+        </g>
+
         <rect data-drawio-type="boundary" data-drawio-id="record-traces-boundary" x="34" y="92" width="630" height="530" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
         <rect data-drawio-type="boundary" data-drawio-id="analyze-traces-boundary" x="686" y="92" width="220" height="530" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
         <rect data-drawio-type="boundary" data-drawio-id="visualize-traces-boundary" x="930" y="92" width="216" height="530" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
@@ -970,7 +977,15 @@
       return null;
     }
 
-    function buildInternalRectCell(rect, id) {
+    function semanticContainerRoles() {
+      return new Set(['card', 'panel', 'callout']);
+    }
+
+    function semanticContainerRole(el) {
+      return semanticContainerRoles().has(el.dataset.drawioRole || '');
+    }
+
+    function buildInternalRectCell(rect, id, parentId = '1', origin = { x: 0, y: 0 }) {
       const bounds = rectBounds(rect);
       const fill = rect.getAttribute('fill') || 'none';
       const stroke = rect.getAttribute('stroke') || 'none';
@@ -988,10 +1003,11 @@
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
         dashed ? 'dashed=1' : '',
-        dashed ? `dashPattern=${rect.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : ''
+        dashed ? `dashPattern=${rect.getAttribute('stroke-dasharray').replace(/,/g, ' ')}` : '',
+        drawioRoleStyle(rect)
       ]);
 
-      return `<mxCell id="${xmlEscape(id)}" value="" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(bounds.x)}" y="${drawioNumber(bounds.y)}" width="${drawioNumber(bounds.width)}" height="${drawioNumber(bounds.height)}" as="geometry"/></mxCell>`;
+      return `<mxCell id="${xmlEscape(id)}" value="" style="${xmlEscape(style)}" vertex="1" parent="${xmlEscape(parentId)}"><mxGeometry x="${drawioNumber(bounds.x - origin.x)}" y="${drawioNumber(bounds.y - origin.y)}" width="${drawioNumber(bounds.width)}" height="${drawioNumber(bounds.height)}" as="geometry"/></mxCell>`;
     }
 
     function textAlignFromAnchor(text) {
@@ -1024,8 +1040,9 @@
 
       const container = rectBounds(containerRect);
       const height = Math.ceil(fontSize * 1.35);
-      const width = container.width;
       const align = textAlignFromAnchor(text);
+      const inset = Math.max(0, Math.min(textX - container.x, container.x + container.width - textX));
+      const width = align === 'center' ? container.width : Math.max(fontSize * 3, container.width - inset * 2);
       const x = align === 'center' ? textX - width / 2 : align === 'right' ? textX - width : textX;
       return {
         x: Math.max(container.x, Math.min(x, container.x + container.width - width)),
@@ -1035,7 +1052,7 @@
       };
     }
 
-    function buildInternalTextCell(text, id, containerRect, innerRects) {
+    function buildInternalTextCell(text, id, containerRect, innerRects, parentId = '1', origin = { x: 0, y: 0 }) {
       const bounds = textCellBounds(text, containerRect, innerRects);
       const fontSize = text.getAttribute('font-size') || '12';
       const fill = text.getAttribute('fill') || '#3D3C38';
@@ -1052,18 +1069,22 @@
         `fontStyle=${fontStyleFromWeight(text)}`,
         `align=${textAlignFromAnchor(text)}`,
         'verticalAlign=middle',
-        'spacing=0'
+        'spacing=0',
+        drawioRoleStyle(text)
       ]);
       const label = xmlEscape(text.textContent.trim());
 
-      return `<mxCell id="${xmlEscape(id)}" value="${label}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(bounds.x)}" y="${drawioNumber(bounds.y)}" width="${drawioNumber(bounds.width)}" height="${drawioNumber(bounds.height)}" as="geometry"/></mxCell>`;
+      return `<mxCell id="${xmlEscape(id)}" value="${label}" style="${xmlEscape(style)}" vertex="1" parent="${xmlEscape(parentId)}"><mxGeometry x="${drawioNumber(bounds.x - origin.x)}" y="${drawioNumber(bounds.y - origin.y)}" width="${drawioNumber(bounds.width)}" height="${drawioNumber(bounds.height)}" as="geometry"/></mxCell>`;
     }
 
     function buildInternalPrimitiveCells(el, rect, parentId) {
       const primitives = internalPrimitivesForBox(el, rect);
+      const grouped = semanticContainerRole(el);
+      const primitiveParentId = grouped ? parentId : '1';
+      const origin = grouped ? rectBounds(rect) : { x: 0, y: 0 };
       return [
-        ...primitives.rects.map((innerRect, index) => buildInternalRectCell(innerRect, `${parentId}-inner-rect-${index}`)),
-        ...primitives.texts.map((text, index) => buildInternalTextCell(text, `${parentId}-inner-text-${index}`, rect, primitives.rects))
+        ...primitives.rects.map((innerRect, index) => buildInternalRectCell(innerRect, `${parentId}-inner-rect-${index}`, primitiveParentId, origin)),
+        ...primitives.texts.map((text, index) => buildInternalTextCell(text, `${parentId}-inner-text-${index}`, rect, primitives.rects, primitiveParentId, origin))
       ];
     }
 
@@ -1182,6 +1203,8 @@
 
       const typeStyle = type === 'boundary'
         ? ['container=1', 'collapsible=0', 'recursiveResize=0', 'align=left', 'verticalAlign=top', 'spacingLeft=18', 'spacingTop=10', 'fontColor=#6F6C65', 'fontSize=13', 'fontStyle=1']
+        : semanticContainerRole(el)
+          ? ['container=1', 'collapsible=0', 'recursiveResize=0', 'align=left', 'verticalAlign=top', 'spacing=8', 'fontColor=#3D3C38', 'fontSize=13']
         : ['align=center', 'verticalAlign=middle', 'spacing=8', 'fontColor=#3D3C38', 'fontSize=15'];
 
       const id = drawioId(el, index);
