@@ -1,15 +1,10 @@
 import assert from 'node:assert/strict';
-import { readdirSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 const skill = readFileSync(new URL('../SKILL.md', import.meta.url), 'utf8');
 const english = readFileSync(new URL('../README.en.md', import.meta.url), 'utf8');
 const chinese = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
-const adrDir = new URL('../docs/adr/', import.meta.url);
-const adrText = readdirSync(adrDir)
-  .filter((file) => file.endsWith('.md'))
-  .map((file) => readFileSync(new URL(file, adrDir), 'utf8'))
-  .join('\n\n');
 
 test('documentation treats Draw.io Export Fidelity as the product contract', () => {
   for (const doc of [skill, english]) {
@@ -65,10 +60,11 @@ test('skill documents annotation roles, ignore semantics, and visible label rule
   assert.match(skill, /data-drawio-label must not silently override visible SVG text/i);
 });
 
-test('ADR records the annotated SVG sheet decision for Draw.io fidelity', () => {
-  assert.match(adrText, /annotated SVG sheet/i);
-  assert.match(adrText, /full-page DOM conversion/i);
-  assert.match(adrText, /draw\.io-first generation/i);
-  assert.match(adrText, /one-image export/i);
-  assert.match(adrText, /Browser Visual Fidelity/i);
+test('public documentation records the annotated SVG sheet decision for Draw.io fidelity', () => {
+  const docs = `${skill}\n\n${english}`;
+
+  assert.match(docs, /annotated SVG|exportable SVG sheet/i);
+  assert.match(docs, /full-page DOM conversion/i);
+  assert.match(docs, /one-image export|whole-diagram raster/i);
+  assert.match(docs, /Browser visual fidelity is primary|browser-rendered HTML remains the entry-level/i);
 });

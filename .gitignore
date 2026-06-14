@@ -1,6 +1,7 @@
 CONTEXT.md
 skill-implementation-reading.md
 docs/
+visual-regression/
 .local-debug/
 .tmp-chrome-profile/
 dist-audit/
