@@ -76,7 +76,8 @@ test('visual regression gate config selects a stable release rendering path', ()
 
   assert.equal(config.version, 1);
   assert.equal(config.renderers.html.engine, 'playwright-chromium');
-  assert.equal(config.renderers.html.selector, '.diagram-container svg');
+  assert.equal(config.renderers.html.selector, '#report-container');
+  assert.deepEqual(config.renderers.html.excludeSelectors, ['.toolbar', '.cards', '.footer']);
   assert.equal(config.renderers.html.viewport.width, 1200);
   assert.equal(config.renderers.html.viewport.height, 900);
   assert.equal(config.renderers.html.deviceScaleFactor, 1);
@@ -95,7 +96,8 @@ test('visual regression gate config selects a stable release rendering path', ()
   assert.deepEqual(sampleIds, ['drawio-fidelity-torture', 'perfetto-docs-architecture']);
   for (const sample of config.samples) {
     assert.ok(existsSync(join(repoRoot, sample.html)), `${sample.html} should exist`);
-    assert.equal(sample.selector, '.diagram-container svg');
+    assert.equal(sample.selector, '#report-container');
+    assert.deepEqual(sample.excludeSelectors, ['.toolbar', '.cards', '.footer']);
     assert.match(sample.artifacts.htmlPng, /^dist\/drawio-visual\//);
     assert.match(sample.artifacts.drawioPng, /^dist\/drawio-visual\//);
   }

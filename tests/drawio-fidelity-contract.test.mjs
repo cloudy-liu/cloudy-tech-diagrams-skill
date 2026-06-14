@@ -24,12 +24,12 @@ test('documentation defines the exportable diagram sheet boundary', () => {
   for (const doc of [skill, english]) {
     assert.match(doc, /exportable diagram sheet/i);
     assert.match(doc, /HTML page header is mandatory/i);
-    assert.match(doc, /visible `<h1>` and subtitle/i);
+    assert.match(doc, /visible (?:HTML )?`<h1>` and subtitle/i);
     assert.match(doc, /not duplicate (?:that|the) page title or subtitle/i);
     assert.match(doc, /sheet-owned title or caption/i);
     assert.match(doc, /Visible diagram legends and scope notes|diagram legend, scope note/i);
     assert.match(doc, /fixed template summary badges|fixed template summary badge/i);
-    assert.match(doc, /page chrome, toolbar, and unrelated footer metadata/i);
+    assert.match(doc, /page chrome, toolbar, and unrelated footer metadata|toolbar, footer, and page-support cards/i);
   }
 
   assert.match(chinese, /Draw\.io Export Fidelity/);
@@ -37,9 +37,24 @@ test('documentation defines the exportable diagram sheet boundary', () => {
   assert.match(chinese, /SVG sheet/);
   assert.match(chinese, /scope note/);
   assert.match(chinese, /summary badge/);
-  assert.match(chinese, /page chrome|页面 chrome/);
+  assert.match(chinese, /page-support cards|page chrome|页面 chrome/);
   assert.doesNotMatch(english, /summary cards, footer, or toolbar/i);
   assert.doesNotMatch(chinese, /summary cards.*footer.*toolbar/i);
+});
+
+test('documentation defines the default Draw.io report export boundary', () => {
+  for (const doc of [skill, english]) {
+    assert.match(doc, /default Draw\.io export/i);
+    assert.match(doc, /controlled report export/i);
+    assert.match(doc, /page header plus (?:the )?exportable SVG sheet/i);
+    assert.match(doc, /visible HTML `<h1>` and subtitle/i);
+    assert.match(doc, /excluding toolbar, footer, and page-support cards/i);
+  }
+
+  assert.match(chinese, /default Draw\.io export/);
+  assert.match(chinese, /controlled report export/);
+  assert.match(chinese, /page header plus exportable SVG sheet/);
+  assert.match(chinese, /page-support cards/);
 });
 
 test('skill documents annotation roles, ignore semantics, and visible label rules', () => {

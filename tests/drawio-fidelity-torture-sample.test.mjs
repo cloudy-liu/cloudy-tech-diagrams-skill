@@ -23,24 +23,25 @@ test('Draw.io fidelity torture sample exists as a browser-first HTML diagram', (
   assert.doesNotMatch(html, /data:image\/(?:svg\+xml|png)/);
 });
 
-test('Draw.io fidelity torture sample keeps diagram-owned sheet content in SVG', () => {
+test('Draw.io fidelity torture sample keeps page header out of the SVG sheet', () => {
   const svg = mainSvg(sampleHtml());
 
-  assert.match(svg, /data-drawio-role="sheet-title"/);
-  assert.match(svg, /data-drawio-role="caption"/);
+  assert.doesNotMatch(svg, /data-drawio-role="sheet-title"/);
+  assert.doesNotMatch(svg, /data-drawio-id="sheet-title"/);
+  assert.doesNotMatch(svg, /data-drawio-role="caption"/);
+  assert.doesNotMatch(svg, /data-drawio-id="sheet-caption"/);
+  assert.doesNotMatch(svg, /torture-observability-card/);
+  assert.doesNotMatch(svg, /native cells/);
+  assert.match(svg, /viewBox="0 70 1000 550"/);
   assert.match(svg, /data-drawio-role="legend"/);
   assert.match(svg, /data-drawio-role="legend-swatch"/);
   assert.match(svg, /data-drawio-role="legend-label"/);
   assert.match(svg, /data-drawio-role="scope-note"/);
-  assert.match(svg, /data-drawio-role="card"/);
 });
 
 test('Draw.io fidelity torture sample exercises high-risk editable export cases', () => {
   const svg = mainSvg(sampleHtml());
 
-  assert.match(svg, /data-drawio-id="torture-observability-card"/);
-  assert.match(svg, /data-drawio-role="card-pill"/);
-  assert.match(svg, /data-drawio-role="card-metric"/);
   assert.match(svg, /data-drawio-id="torture-curved-rest"/);
   assert.match(svg, /data-drawio-id="torture-dashed-events"/);
   assert.match(svg, /data-drawio-id="torture-semantic-handoff"/);

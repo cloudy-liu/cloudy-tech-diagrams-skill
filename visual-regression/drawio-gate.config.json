@@ -3,7 +3,12 @@
   "renderers": {
     "html": {
       "engine": "playwright-chromium",
-      "selector": ".diagram-container svg",
+      "selector": "#report-container",
+      "excludeSelectors": [
+        ".toolbar",
+        ".cards",
+        ".footer"
+      ],
       "viewport": {
         "width": 1200,
         "height": 900
@@ -33,7 +38,12 @@
     {
       "id": "drawio-fidelity-torture",
       "html": "examples/drawio-fidelity-torture.html",
-      "selector": ".diagram-container svg",
+      "selector": "#report-container",
+      "excludeSelectors": [
+        ".toolbar",
+        ".cards",
+        ".footer"
+      ],
       "artifacts": {
         "drawioFile": "dist/drawio-visual/drawio-fidelity-torture.drawio",
         "htmlPng": "dist/drawio-visual/drawio-fidelity-torture.html.png",
@@ -43,7 +53,12 @@
     {
       "id": "perfetto-docs-architecture",
       "html": "examples/perfetto-docs-architecture.html",
-      "selector": ".diagram-container svg",
+      "selector": "#report-container",
+      "excludeSelectors": [
+        ".toolbar",
+        ".cards",
+        ".footer"
+      ],
       "artifacts": {
         "drawioFile": "dist/drawio-visual/perfetto-docs-architecture.drawio",
         "htmlPng": "dist/drawio-visual/perfetto-docs-architecture.html.png",
@@ -54,7 +69,7 @@
   "knownLimitations": [
     "font rendering can differ slightly across operating systems and Chromium builds",
     "draw.io arrowhead and dash rendering are editable-native approximations of SVG markers and stroke-dasharray",
-    "the gate compares the exportable diagram sheet and intentionally excludes page chrome and toolbar UI",
+    "the gate compares the controlled report export and intentionally excludes toolbar UI, footer metadata, and page-support cards",
     "the release gate should be run on pinned renderer versions before release, not as an unconditional PR check"
   ]
 }

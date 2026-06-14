@@ -176,13 +176,13 @@ Do not create a marketing landing page. The first screen should be the diagram i
 
 ## Draw.io Editable Export
 
-Every generated HTML diagram should include Draw.io export by default. The HTML file remains the only generated artifact; the Draw.io button downloads a `.drawio` file for the main SVG diagram as an exportable diagram sheet.
+Every generated HTML diagram should include Draw.io export by default. The HTML file remains the only generated artifact; the Draw.io button downloads a `.drawio` controlled report export: page header plus the exportable SVG sheet, excluding toolbar, footer, and page-support cards.
 
-Draw.io Export Fidelity is product-critical. The browser-rendered HTML remains the entry-level product experience, and Draw.io export is the high-fidelity editable continuation path for the diagram sheet. This is not an arbitrary HTML/CSS conversion, a full-page export, an exact pixel clone, or a one-image export.
+Draw.io Export Fidelity is product-critical. The browser-rendered HTML remains the entry-level product experience, and Draw.io export is the high-fidelity editable continuation path for the visible report: page header plus the exportable diagram sheet. This is not an arbitrary HTML/CSS conversion, a full-page DOM conversion, an exact pixel clone, or a one-image export.
 
 Browser visual fidelity is primary. Do not simplify or degrade the rendered HTML/SVG just to make Draw.io export easier. When draw.io cannot reproduce a local visual detail exactly, export the closest editable draw.io-native approximation and keep the browser visual intact.
 
-Page-level `<h1>` and subtitle text are required in the HTML header and are not exported by default. Export sheet-owned title/caption text only when it is explicitly part of the SVG sheet. Visible legends and scope notes inside the SVG are required export content unless intentionally marked with `data-drawio-ignore="true"` and an audit reason.
+Page-level `<h1>` and subtitle text are required in the HTML header and exported by default as native Draw.io text cells above the SVG sheet. Do not duplicate the visible HTML `<h1>` and subtitle inside the default SVG sheet. Export sheet-owned title/caption text only when it is explicitly part of the SVG sheet. Visible legends and scope notes inside the SVG are required export content unless intentionally marked with `data-drawio-ignore="true"` and an audit reason.
 
 Style mapping must preserve meaningful SVG fill, stroke, stroke-width, rounded corners, text color, font size, font weight, and marker direction on editable draw.io-native cells. Calibrate dashed strokes instead of passing raw SVG values through blindly: draw.io `dashPattern` is derived from SVG `stroke-dasharray` divided by SVG `stroke-width`, with `fixDash=1` on dashed cells. SVG marker arrowheads should map to open draw.io arrows with unfilled heads; this is an editable draw.io-native approximation, not a literal marker geometry clone.
 
@@ -221,13 +221,13 @@ Do not use a whole-diagram raster or SVG background reference layer as the defau
 
 For release validation, run the Draw.io Visual Regression Gate after structural completeness, visible-label, sampled-edge, style-mapping, and exporter-version tests pass. The stable rendering path is:
 
-1. Render the browser HTML sheet with Playwright Chromium at 1200x900, deviceScaleFactor 1, light color scheme, and the `.diagram-container svg` selector after `document.fonts.ready`.
+1. Render the controlled report region with Playwright Chromium at 1200x900, deviceScaleFactor 1, light color scheme, and the `#report-container` selector after `document.fonts.ready`, excluding `.toolbar`, `.cards`, and `.footer`.
 2. Export the generated `.drawio` file with diagrams.net Desktop CLI using `draw.io --export --format png --output <drawioPng> <drawioFile>`.
 3. Compare the HTML PNG and draw.io PNG with `node tools/drawio-visual-regression.mjs gate --config visual-regression/drawio-gate.config.json` and `DRAWIO_VISUAL_GATE=1`.
 
 The default threshold is `maxPixelMismatchRatio=0.015`, `perChannelTolerance=3`, and `maxAverageChannelDelta=2`. This is a release validation gate, not an unconditional PR check, because browser, diagrams.net, and font rendering versions can otherwise make CI flaky. Ordinary CI should validate the gate configuration and PNG comparator behavior without requiring external screenshot artifacts.
 
-Known limitations are acceptable only when documented in `visual-regression/drawio-gate.config.json`: font rendering drift, draw.io-native approximations for SVG markers and dash patterns, and intentional exclusion of page chrome and toolbar UI. A passing pixel gate does not replace the editable-object contract; it runs after the semantic export tests.
+Known limitations are acceptable only when documented in `visual-regression/drawio-gate.config.json`: font rendering drift, draw.io-native approximations for SVG markers and dash patterns, and intentional exclusion of toolbar UI, footer metadata, and page-support cards. A passing pixel gate does not replace the editable-object contract; it runs after the semantic export tests.
 
 ## Export Toolbar
 
@@ -297,7 +297,7 @@ Before finalizing a generated diagram, verify diagram expression quality: the re
 - [ ] Connectors do not cross through unrelated labels, legends, node titles, or dense component interiors.
 - [ ] Legend is outside every boundary box.
 - [ ] Export toolbar still works and is excluded from captures.
-- [ ] Draw.io export button is present by default and downloads a `.drawio` file for the main SVG diagram.
+- [ ] Draw.io export button is present by default and downloads a `.drawio` controlled report export with the HTML page header plus exportable SVG sheet.
 - [ ] Main SVG components, boundaries, and connectors use Draw.io semantic annotations where they should export as editable draw.io-native objects.
 - [ ] Draw.io export does not rely on a whole-diagram raster or SVG image as the primary export path.
 - [ ] SVG is plain shapes and text; avoid `foreignObject`.

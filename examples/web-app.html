@@ -413,7 +413,7 @@
         .replace(/'/g, '&apos;');
     }
 
-    const CLOUDY_DRAWIO_EXPORTER_VERSION = '2026.06.14.2';
+    const CLOUDY_DRAWIO_EXPORTER_VERSION = '2026.06.14.3';
 
     function directChildren(el, tagName) {
       return Array.from(el.children).filter((child) => child.tagName.toLowerCase() === tagName);
@@ -1422,12 +1422,17 @@
     }
 
     function buildDrawioFromSvg(svg, options = {}) {
-      const title = svg.querySelector('title')?.textContent.trim() || document.title || 'Diagram';
+      const fallbackDocumentTitle = typeof document !== 'undefined' ? document.title : '';
+      const title = options.title || svg.querySelector('title')?.textContent.trim() || fallbackDocumentTitle || 'Diagram';
       const viewBox = svgViewBox(svg);
-      const width = drawioNumber(viewBox.width);
-      const height = drawioNumber(viewBox.height);
-      const origin = { x: viewBox.x, y: viewBox.y };
-      const cells = ['<mxCell id="0"/>', '<mxCell id="1" parent="0"/>'];
+      const offset = options.offset || {};
+      const offsetX = numberValue(offset.x, 0);
+      const offsetY = numberValue(offset.y, 0);
+      const pageWidth = drawioNumber(numberValue(options.pageWidth, viewBox.width + offsetX));
+      const pageHeight = drawioNumber(numberValue(options.pageHeight, viewBox.height + offsetY));
+      const origin = { x: viewBox.x - offsetX, y: viewBox.y - offsetY };
+      const prependCells = Array.isArray(options.prependCells) ? options.prependCells : [];
+      const cells = ['<mxCell id="0"/>', '<mxCell id="1" parent="0"/>', ...prependCells];
       const coverageWarnings = auditDrawioCoverage(svg);
 
       if (coverageWarnings.length) {
@@ -1463,8 +1468,89 @@
         }
       });
 
-      const model = `<mxGraphModel dx="${xmlEscape(width)}" dy="${xmlEscape(height)}" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="${xmlEscape(width)}" pageHeight="${xmlEscape(height)}" math="0" shadow="0"><root>${cells.filter(Boolean).join('')}</root></mxGraphModel>`;
+      const model = `<mxGraphModel dx="${xmlEscape(pageWidth)}" dy="${xmlEscape(pageHeight)}" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="${xmlEscape(pageWidth)}" pageHeight="${xmlEscape(pageHeight)}" math="0" shadow="0"><root>${cells.filter(Boolean).join('')}</root></mxGraphModel>`;
       return `<?xml version="1.0" encoding="UTF-8"?><mxfile host="app.diagrams.net" agent="Cloudy Tech Diagrams" cloudyDrawioExporterVersion="${xmlEscape(CLOUDY_DRAWIO_EXPORTER_VERSION)}" modified="${new Date().toISOString()}" type="device"><diagram id="cloudy-tech-diagram" name="${xmlEscape(title)}">${model}</diagram></mxfile>`;
+    }
+
+    function reportText(root, selector) {
+      return root.querySelector(selector)?.textContent.trim() || '';
+    }
+
+    function buildReportTextCell({ id, value, x, y, width, height, fontSize, fontColor, fontWeight }) {
+      if (!value) return '';
+
+      const style = cellStyle([
+        'text',
+        'html=1',
+        'strokeColor=none',
+        'fillColor=none',
+        'whiteSpace=wrap',
+        'rounded=0',
+        'align=center',
+        'verticalAlign=middle',
+        'fontFamily=Montserrat',
+        `fontSize=${fontSize}`,
+        `fontColor=${fontColor}`,
+        `fontStyle=${fontStyleValueFromWeight(fontWeight)}`,
+        `cloudyRole=${id}`
+      ]);
+
+      return `<mxCell id="${xmlEscape(id)}" value="${xmlEscape(value)}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(x)}" y="${drawioNumber(y)}" width="${drawioNumber(width)}" height="${drawioNumber(height)}" as="geometry"/></mxCell>`;
+    }
+
+    function buildReportHeaderCells(title, subtitle, pageWidth) {
+      const subtitleInset = Math.min(80, Math.max(0, pageWidth * 0.08));
+      return [
+        buildReportTextCell({
+          id: 'report-title',
+          value: title,
+          x: 0,
+          y: 0,
+          width: pageWidth,
+          height: 52,
+          fontSize: 42,
+          fontColor: '#141413',
+          fontWeight: '700'
+        }),
+        buildReportTextCell({
+          id: 'report-subtitle',
+          value: subtitle,
+          x: subtitleInset,
+          y: 58,
+          width: pageWidth - (subtitleInset * 2),
+          height: 24,
+          fontSize: 15,
+          fontColor: '#6F6C65',
+          fontWeight: '400'
+        })
+      ].filter(Boolean);
+    }
+
+    function reportHeaderHeight(title, subtitle) {
+      if (!title) return 0;
+      return subtitle ? 104 : 72;
+    }
+
+    function buildDrawioReportFromDocument(root = document, options = {}) {
+      const svg = root.querySelector('.diagram-container svg');
+      if (!svg) throw new Error('Draw.io report export requires .diagram-container svg');
+
+      const viewBox = svgViewBox(svg);
+      const title = reportText(root, '.header h1');
+      const subtitle = reportText(root, '.subtitle');
+      const pageWidth = numberValue(options.pageWidth, viewBox.width);
+      const headerHeight = reportHeaderHeight(title, subtitle);
+      const headerCells = buildReportHeaderCells(title, subtitle, pageWidth);
+      const prependCells = Array.isArray(options.prependCells) ? options.prependCells : [];
+
+      return buildDrawioFromSvg(svg, {
+        ...options,
+        title: title || options.title,
+        pageWidth,
+        pageHeight: numberValue(options.pageHeight, viewBox.height + headerHeight),
+        offset: { x: 0, y: headerHeight },
+        prependCells: [...headerCells, ...prependCells]
+      });
     }
 
     function downloadTextFile(filename, content, mimeType) {
@@ -1481,8 +1567,7 @@
       const orig = btn.textContent;
       btn.textContent = 'Preparing';
       try {
-        const svg = document.querySelector('.diagram-container svg');
-        const mxfile = buildDrawioFromSvg(svg, {
+        const mxfile = buildDrawioReportFromDocument(document, {
           strictCoverage: false,
           onCoverageWarning: (warnings) => console.warn('Draw.io coverage audit warnings', warnings)
         });
