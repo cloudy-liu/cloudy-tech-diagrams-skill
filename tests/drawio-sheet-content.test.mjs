@@ -26,14 +26,12 @@ const defaultPageHeaderFiles = [
     title: 'Perfetto Project Architecture',
     subtitle: "A homepage-style stack view of Perfetto's recording, analysis, and visualization capabilities, with a compact trace artifact flow across the three domains.",
     anchorId: 'record-traces-boundary'
-  }
-];
-
-const sheetTitleAcceptanceFiles = [
+  },
   {
     file: 'examples/drawio-fidelity-torture.html',
     title: 'Draw.io Fidelity Torture Sheet',
-    caption: 'Editable export acceptance sample'
+    subtitle: 'Acceptance sample for high-fidelity editable export while preserving the browser-rendered HTML diagram.',
+    anchorId: 'cloud-region'
   }
 ];
 
@@ -69,8 +67,7 @@ function rectForDrawioId(svg, id) {
 }
 
 const scopeCalloutFiles = [
-  ...defaultPageHeaderFiles,
-  ...sheetTitleAcceptanceFiles
+  ...defaultPageHeaderFiles
 ];
 
 for (const { file, title, subtitle, anchorId } of defaultPageHeaderFiles) {
@@ -122,17 +119,5 @@ for (const { file } of scopeCalloutFiles) {
   test(`${file} renders scope notes as callouts instead of loose footer text`, () => {
     assert.match(svg, /<rect[^>]+data-drawio-type="shape"[^>]+data-drawio-role="scope-note"[^>]+rx="12"[^>]+fill="#F6F3EC"[^>]+stroke="#C9C3B8"/);
     assert.match(svg, /<text[^>]+data-drawio-type="label"[^>]+data-drawio-role="scope-note"[^>]+font-weight="500"/);
-  });
-}
-
-for (const { file, title, caption } of sheetTitleAcceptanceFiles) {
-  const html = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
-  const svg = mainSvg(html);
-
-  test(`${file} can keep optional sheet-owned title and caption inside the SVG sheet`, () => {
-    assert.match(svg, /data-drawio-type="label"[^>]+data-drawio-role="sheet-title"[^>]+data-drawio-id="sheet-title"/);
-    assert.match(svg, /data-drawio-type="label"[^>]+data-drawio-role="caption"[^>]+data-drawio-id="sheet-caption"/);
-    assert.match(svg, new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-    assert.match(svg, new RegExp(caption.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   });
 }

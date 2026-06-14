@@ -10,13 +10,6 @@ const htmlFiles = [
   'examples/drawio-fidelity-torture.html'
 ];
 
-const defaultDiagramFiles = [
-  'assets/template.html',
-  'examples/web-app.html',
-  'examples/microservices.html',
-  'examples/perfetto-docs-architecture.html'
-];
-
 class FakeElement {
   constructor(tagName, attrs = {}, children = [], text = '') {
     this.tagName = tagName;
@@ -147,12 +140,6 @@ function mainSvg(html) {
   return match[0];
 }
 
-function assertSvgHasSemanticCard(svg) {
-  assert.match(svg, /data-drawio-type="component"[^>]+data-drawio-role="card"/);
-  assert.match(svg, /data-drawio-role="card-pill"/);
-  assert.match(svg, /data-drawio-role="card-metric"|data-drawio-role="card-detail"/);
-}
-
 for (const file of htmlFiles) {
   const html = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
 
@@ -173,7 +160,7 @@ for (const file of htmlFiles) {
 
 }
 
-for (const file of defaultDiagramFiles) {
+for (const file of htmlFiles) {
   const html = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
   const svg = mainSvg(html);
 
@@ -184,9 +171,3 @@ for (const file of defaultDiagramFiles) {
     assert.doesNotMatch(svg, /data-drawio-role="card-detail"/);
   });
 }
-
-test('Draw.io fidelity torture sample keeps a semantic card as an explicit acceptance case', () => {
-  const html = readFileSync(new URL('../examples/drawio-fidelity-torture.html', import.meta.url), 'utf8');
-
-  assertSvgHasSemanticCard(mainSvg(html));
-});
