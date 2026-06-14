@@ -596,7 +596,7 @@
         .replace(/'/g, '&apos;');
     }
 
-    const CLOUDY_DRAWIO_EXPORTER_VERSION = '2026.06.14.1';
+    const CLOUDY_DRAWIO_EXPORTER_VERSION = '2026.06.14.2';
 
     function directChildren(el, tagName) {
       return Array.from(el.children).filter((child) => child.tagName.toLowerCase() === tagName);
@@ -1518,6 +1518,45 @@
         })[0] || null;
     }
 
+    function buildEdgeLabelCell(el, edgeId, text, origin = { x: 0, y: 0 }) {
+      const labelText = text?.textContent.trim() || '';
+      if (!labelText) return '';
+
+      const fontSize = numberValue(el.dataset.drawioLabelSize || text.getAttribute('font-size'), 11);
+      const fontWeight = el.dataset.drawioLabelWeight || text.getAttribute('font-weight') || '400';
+      const align = textAlignFromAnchor(text);
+      const estimatedWidth = Math.max(fontSize * 3, labelText.length * fontSize * 0.62);
+      const width = numberValue(el.dataset.drawioLabelWidth || text.dataset?.drawioWidth, estimatedWidth);
+      const height = numberValue(el.dataset.drawioLabelHeight || text.dataset?.drawioHeight, fontSize * 1.45);
+      const textX = attrNumber(text, 'x');
+      const textY = attrNumber(text, 'y');
+      const hasExplicitX = Boolean(el.dataset.drawioLabelX || text.dataset?.drawioX);
+      let x = numberValue(el.dataset.drawioLabelX || text.dataset?.drawioX, textX);
+      if (!hasExplicitX) {
+        if (align === 'center') x -= width / 2;
+        if (align === 'right') x -= width;
+      }
+      const y = numberValue(el.dataset.drawioLabelY || text.dataset?.drawioY, textY - fontSize);
+      const color = text.getAttribute('fill') || el.dataset.drawioLabelColor || '#6F6C65';
+      const style = cellStyle([
+        'text',
+        'html=1',
+        'strokeColor=none',
+        'fillColor=none',
+        'whiteSpace=wrap',
+        'rounded=0',
+        `align=${align}`,
+        'verticalAlign=middle',
+        'fontFamily=Montserrat',
+        `fontSize=${fontSize}`,
+        `fontColor=${color}`,
+        `fontStyle=${fontStyleValueFromWeight(fontWeight)}`,
+        drawioRoleStyle(el)
+      ]);
+
+      return `<mxCell id="${xmlEscape(edgeId)}-label" data-drawio-edge-label-for="${xmlEscape(edgeId)}" value="${xmlEscape(labelText)}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(x - origin.x)}" y="${drawioNumber(y - origin.y)}" width="${drawioNumber(width)}" height="${drawioNumber(height)}" as="geometry"/></mxCell>`;
+    }
+
     function buildEdgeCell(el, index, origin = { x: 0, y: 0 }) {
       const shape = firstDrawioShape(el, ['line', 'path', 'polyline']);
       if (!shape) return '';
@@ -1526,7 +1565,7 @@
       if (points.length < 2) return '';
 
       const labelTextElement = edgeLabelTextElement(el, shape);
-      const labelText = labelTextElement?.textContent.trim() || el.dataset.drawioLabel || '';
+      const labelText = labelTextElement ? '' : (el.dataset.drawioLabel || '');
       const label = xmlEscape(labelText);
       const labelFontSize = labelTextElement?.getAttribute('font-size') || '11';
       const labelFontColor = labelTextElement?.getAttribute('fill') || '#6F6C65';
@@ -1561,7 +1600,8 @@
         drawioRoleStyle(el)
       ]);
 
-      return `<mxCell id="${xmlEscape(id)}"${edgeTerminalAttributes(el)} value="${label}" style="${xmlEscape(style)}" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="${drawioNumber(start.x)}" y="${drawioNumber(start.y)}" as="sourcePoint"/><mxPoint x="${drawioNumber(end.x)}" y="${drawioNumber(end.y)}" as="targetPoint"/>${waypointXml}</mxGeometry></mxCell>`;
+      const edgeCell = `<mxCell id="${xmlEscape(id)}"${edgeTerminalAttributes(el)} value="${label}" style="${xmlEscape(style)}" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="${drawioNumber(start.x)}" y="${drawioNumber(start.y)}" as="sourcePoint"/><mxPoint x="${drawioNumber(end.x)}" y="${drawioNumber(end.y)}" as="targetPoint"/>${waypointXml}</mxGeometry></mxCell>`;
+      return `${edgeCell}${buildEdgeLabelCell(el, id, labelTextElement, origin)}`;
     }
 
     function buildDrawioFromSvg(svg, options = {}) {

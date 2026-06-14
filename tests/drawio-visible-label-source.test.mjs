@@ -179,6 +179,63 @@ function fakeMatchingVisibleLabelSvg() {
   ]);
 }
 
+function fakePerfettoEdgeLabelSvg() {
+  return new FakeElement('svg', { viewBox: '0 68 1180 692' }, [
+    new FakeElement('title', {}, [], 'Perfetto edge labels'),
+    new FakeElement('g', {
+      'data-drawio-type': 'edge',
+      'data-drawio-id': 'trace-file-to-importers',
+      'data-drawio-label': 'trace artifact'
+    }, [
+      new FakeElement('path', {
+        d: 'M 568 571 C 626 568, 662 520, 704 357',
+        fill: 'none',
+        stroke: '#BFA777',
+        'stroke-width': '1.6',
+        'stroke-dasharray': '5 5',
+        'stroke-linecap': 'round',
+        'stroke-linejoin': 'round',
+        'marker-end': 'url(#arrow-event)'
+      }),
+      new FakeElement('text', {
+        x: '646',
+        y: '446',
+        fill: '#6F6C65',
+        'font-size': '11',
+        'font-weight': '500'
+      }, [], 'trace artifact')
+    ]),
+    new FakeElement('g', {
+      'data-drawio-type': 'edge',
+      'data-drawio-id': 'processor-to-ui',
+      'data-drawio-label': 'render'
+    }, [
+      new FakeElement('path', {
+        d: 'M 872 212 C 900 212, 920 212, 954 212',
+        fill: 'none',
+        stroke: '#8585DD',
+        'stroke-width': '1.6',
+        'stroke-linecap': 'round',
+        'marker-end': 'url(#arrow-ui)'
+      }),
+      new FakeElement('text', {
+        x: '914',
+        y: '198',
+        fill: '#6F6C65',
+        'font-size': '11',
+        'font-weight': '500',
+        'text-anchor': 'middle'
+      }, [], 'render')
+    ])
+  ]);
+}
+
+function drawioCell(drawio, id) {
+  const match = drawio.match(new RegExp(`<mxCell id="${id}"[\\s\\S]*?</mxCell>`));
+  assert.ok(match, `missing Draw.io cell ${id}`);
+  return match[0];
+}
+
 for (const file of htmlFiles) {
   const html = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
 
@@ -189,7 +246,9 @@ for (const file of htmlFiles) {
 
     assert.match(drawio, /id="visible-caption"[\s\S]*?value="Visible Caption"/);
     assert.match(drawio, /id="visible-boundary"[\s\S]*?Visible Boundary/);
-    assert.match(drawio, /id="visible-edge"[\s\S]*?value="Visible Flow"/);
+    assert.match(drawioCell(drawio, 'visible-edge'), /value=""/);
+    assert.match(drawioCell(drawio, 'visible-edge-label'), /data-drawio-edge-label-for="visible-edge"/);
+    assert.match(drawioCell(drawio, 'visible-edge-label'), /value="Visible Flow"/);
     assert.doesNotMatch(drawio, /Internal caption note/);
     assert.doesNotMatch(drawio, /Internal boundary note/);
     assert.doesNotMatch(drawio, /Internal flow note/);
@@ -214,9 +273,42 @@ for (const file of htmlFiles) {
 
     const drawio = buildDrawioFromSvg(fakeMatchingVisibleLabelSvg());
 
-    assert.match(drawio, /id="matching-edge"[\s\S]*?value="Visible Flow"/);
-    assert.match(drawio, /id="matching-edge"[\s\S]*?fontSize=12/);
-    assert.match(drawio, /id="matching-edge"[\s\S]*?fontColor=#527AA0/);
-    assert.match(drawio, /id="matching-edge"[\s\S]*?fontStyle=0/);
+    const edge = drawioCell(drawio, 'matching-edge');
+    const label = drawioCell(drawio, 'matching-edge-label');
+
+    assert.match(edge, /value=""/);
+    assert.match(label, /data-drawio-edge-label-for="matching-edge"/);
+    assert.match(label, /value="Visible Flow"/);
+    assert.match(label, /fontSize=12/);
+    assert.match(label, /fontColor=#527AA0/);
+    assert.match(label, /fontStyle=0/);
+    assert.match(label, /align=center/);
+  });
+
+  test(`${file} exports Perfetto edge labels as positioned native text cells`, () => {
+    const { buildDrawioFromSvg } = extractDrawioExporter(html);
+
+    const drawio = buildDrawioFromSvg(fakePerfettoEdgeLabelSvg());
+    const traceEdge = drawioCell(drawio, 'trace-file-to-importers');
+    const traceLabel = drawioCell(drawio, 'trace-file-to-importers-label');
+    const renderEdge = drawioCell(drawio, 'processor-to-ui');
+    const renderLabel = drawioCell(drawio, 'processor-to-ui-label');
+
+    assert.match(traceEdge, /value=""/);
+    assert.match(renderEdge, /value=""/);
+    assert.match(traceLabel, /data-drawio-edge-label-for="trace-file-to-importers"/);
+    assert.match(traceLabel, /value="trace artifact"/);
+    assert.match(traceLabel, /fontColor=#6F6C65/);
+    assert.match(traceLabel, /fontSize=11/);
+    assert.match(traceLabel, /fontStyle=0/);
+    assert.match(traceLabel, /align=left/);
+    assert.match(traceLabel, /x="646" y="367" width="95.48" height="15.95"/);
+    assert.match(renderLabel, /data-drawio-edge-label-for="processor-to-ui"/);
+    assert.match(renderLabel, /value="render"/);
+    assert.match(renderLabel, /fontColor=#6F6C65/);
+    assert.match(renderLabel, /fontSize=11/);
+    assert.match(renderLabel, /fontStyle=0/);
+    assert.match(renderLabel, /align=center/);
+    assert.match(renderLabel, /x="893.54" y="119" width="40.92" height="15.95"/);
   });
 }
