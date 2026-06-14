@@ -168,7 +168,9 @@ Use this HTML structure:
 3. Optional page summary cards below the diagram only when they are page-level supporting content.
 4. Muted footer metadata.
 
-When title, legend, caption, scope notes, and explanatory cards are part of the diagram itself, place them inside the exportable diagram sheet. Page chrome, toolbar, and unrelated footer metadata stay outside the sheet.
+The HTML page header is mandatory: keep the visible `<h1>` and subtitle as the browser-first visual hierarchy. Do not duplicate that page title or subtitle inside the default SVG sheet. If the exported Draw.io sheet must stand alone, add an explicit sheet-owned title or caption inside the SVG with semantic annotations; that is optional sheet content, not a replacement for the HTML header.
+
+When a diagram legend, scope note, or explanatory card is visible and meaningful diagram content, place it inside the exportable diagram sheet and annotate it so it exports as editable draw.io-native cells. Do not include fixed template summary badges or generic ASYNC/SLO/EDIT cards by default; cards belong in the SVG sheet only when they carry real diagram-specific context. Page chrome, toolbar, and unrelated footer metadata stay outside the sheet.
 
 Do not create a marketing landing page. The first screen should be the diagram itself.
 
@@ -179,6 +181,8 @@ Every generated HTML diagram should include Draw.io export by default. The HTML 
 Draw.io Export Fidelity is product-critical. The browser-rendered HTML remains the entry-level product experience, and Draw.io export is the high-fidelity editable continuation path for the diagram sheet. This is not an arbitrary HTML/CSS conversion, a full-page export, an exact pixel clone, or a one-image export.
 
 Browser visual fidelity is primary. Do not simplify or degrade the rendered HTML/SVG just to make Draw.io export easier. When draw.io cannot reproduce a local visual detail exactly, export the closest editable draw.io-native approximation and keep the browser visual intact.
+
+Page-level `<h1>` and subtitle text are required in the HTML header and are not exported by default. Export sheet-owned title/caption text only when it is explicitly part of the SVG sheet. Visible legends and scope notes inside the SVG are required export content unless intentionally marked with `data-drawio-ignore="true"` and an audit reason.
 
 Style mapping must preserve meaningful SVG fill, stroke, stroke-width, rounded corners, text color, font size, font weight, and marker direction on editable draw.io-native cells. Calibrate dashed strokes instead of passing raw SVG values through blindly: draw.io `dashPattern` is derived from SVG `stroke-dasharray` divided by SVG `stroke-width`, with `fixDash=1` on dashed cells. SVG marker arrowheads should map to open draw.io arrows with unfilled heads; this is an editable draw.io-native approximation, not a literal marker geometry clone.
 

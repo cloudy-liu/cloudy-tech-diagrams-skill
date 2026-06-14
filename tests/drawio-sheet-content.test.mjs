@@ -2,27 +2,30 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
-const sheetFiles = [
+const defaultPageHeaderFiles = [
   {
     file: 'assets/template.html',
-    title: '[PROJECT NAME] technical flow',
-    caption: 'Warm editorial technical diagram'
+    title: '[PROJECT NAME] Technical Diagram',
+    subtitle: 'A focused technical diagram showing system boundaries, runtime flow, and operational context.'
   },
   {
     file: 'examples/web-app.html',
     title: 'Web Application Architecture',
-    caption: 'React + Node.js + PostgreSQL stack'
+    subtitle: 'React + Node.js + PostgreSQL stack with a small cache layer'
   },
   {
     file: 'examples/microservices.html',
     title: 'Microservices Architecture',
-    caption: 'Kubernetes-orchestrated services'
+    subtitle: 'Kubernetes-orchestrated services behind one gateway with per-service data stores'
   },
   {
     file: 'examples/perfetto-docs-architecture.html',
-    title: 'Project stack map',
-    caption: 'Modeled after the official homepage stack'
-  },
+    title: 'Perfetto Project Architecture',
+    subtitle: "A homepage-style stack view of Perfetto's recording, analysis, and visualization capabilities, with a compact trace artifact flow across the three domains."
+  }
+];
+
+const sheetTitleAcceptanceFiles = [
   {
     file: 'examples/drawio-fidelity-torture.html',
     title: 'Draw.io Fidelity Torture Sheet',
@@ -36,15 +39,22 @@ function mainSvg(html) {
   return match[0];
 }
 
-for (const { file, title, caption } of sheetFiles) {
+for (const { file, title, subtitle } of defaultPageHeaderFiles) {
   const html = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
   const svg = mainSvg(html);
 
-  test(`${file} keeps diagram-owned title and caption inside the exportable SVG sheet`, () => {
-    assert.match(svg, /data-drawio-type="label"[^>]+data-drawio-role="sheet-title"[^>]+data-drawio-id="sheet-title"/);
-    assert.match(svg, /data-drawio-type="label"[^>]+data-drawio-role="caption"[^>]+data-drawio-id="sheet-caption"/);
-    assert.match(svg, new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-    assert.match(svg, new RegExp(caption.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  test(`${file} keeps page title and subtitle in the HTML header`, () => {
+    assert.match(html, new RegExp(`<h1>${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</h1>`));
+    assert.match(html, new RegExp(`<p class="subtitle">${subtitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</p>`));
+  });
+
+  test(`${file} does not duplicate page title or subtitle inside the default SVG sheet`, () => {
+    assert.doesNotMatch(svg, /data-drawio-role="sheet-title"/);
+    assert.doesNotMatch(svg, /data-drawio-id="sheet-title"/);
+    assert.doesNotMatch(svg, /data-drawio-role="caption"/);
+    assert.doesNotMatch(svg, /data-drawio-id="sheet-caption"/);
+    assert.doesNotMatch(svg, new RegExp(`<text[^>]*>${title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</text>`));
+    assert.doesNotMatch(svg, new RegExp(`<text[^>]*>${subtitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</text>`));
   });
 
   test(`${file} keeps legend and scope note inside the exportable SVG sheet`, () => {
@@ -59,5 +69,17 @@ for (const { file, title, caption } of sheetFiles) {
     assert.doesNotMatch(svg, /Copy Image/);
     assert.doesNotMatch(svg, /class="footer"/);
     assert.doesNotMatch(svg, /Generated with/);
+  });
+}
+
+for (const { file, title, caption } of sheetTitleAcceptanceFiles) {
+  const html = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
+  const svg = mainSvg(html);
+
+  test(`${file} can keep optional sheet-owned title and caption inside the SVG sheet`, () => {
+    assert.match(svg, /data-drawio-type="label"[^>]+data-drawio-role="sheet-title"[^>]+data-drawio-id="sheet-title"/);
+    assert.match(svg, /data-drawio-type="label"[^>]+data-drawio-role="caption"[^>]+data-drawio-id="sheet-caption"/);
+    assert.match(svg, new RegExp(title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    assert.match(svg, new RegExp(caption.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   });
 }

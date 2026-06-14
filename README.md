@@ -183,12 +183,14 @@ git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git .claude/s
 - 使用内联 SVG 绘制图形。
 - 不依赖外部图片。
 - 只为 Copy Image、Download PNG、Download PDF 导出使用 CDN JavaScript。
-- 内置针对主 SVG 图的 Draw.io 导出。
+- 内置针对主 SVG 图的 Draw.io 导出，主 SVG 是 exportable diagram sheet。
 - 默认保留 Copy Image / Download PNG / Download PDF / Download Draw.io 导出菜单。
 - 可以直接在现代浏览器中打开。
 - 适合放进技术文档、方案评审材料、README、issue 或分享稿中继续使用。
 
-Draw.io 导出坚持 HTML-first：浏览器中打开的 HTML 仍然是主要产物，`.drawio` 文件覆盖 exportable diagram sheet。当标题、图例、caption、scope notes、说明卡片属于图本身时，它们应位于主 SVG 中，并导出为可编辑的 draw.io 原生对象；页面 chrome、toolbar、无关 footer 元数据保持在 Draw.io 导出之外。它追求 draw.io 原生对象的可编辑视觉等价，而不是精确像素克隆，也不是把整张图作为一张图片塞进 draw.io。
+Draw.io Export Fidelity 是产品级契约，但坚持 HTML-first：浏览器中打开的 HTML 仍然是入口级体验，`.drawio` 文件是 exportable diagram sheet 的高保真可编辑延续。HTML 页头的可见 `<h1>` 和 subtitle 是硬性视觉层级，默认不在 SVG sheet 里重复；只有当导出的 Draw.io sheet 需要独立成立时，才在 SVG 内显式加入 sheet-owned title 或 caption 并标注导出。
+
+exportable diagram sheet 覆盖真正属于图本身的有意义视觉内容。只要 SVG 内存在有意义的可见图例或 scope note，就必须导出为可编辑的 draw.io 原生对象，除非显式 `data-drawio-ignore="true"` 并写明 audit reason。说明卡片只有在承载真实图上下文时才进入 SVG sheet；固定模板 summary badge 或泛用 ASYNC/SLO/EDIT 卡片不是默认内容。页面 chrome、toolbar、无关 footer 元数据保持在 Draw.io 导出之外。它追求 draw.io 原生对象的可编辑视觉等价，而不是任意 HTML/CSS 转换、精确像素克隆，也不是把整张图作为一张图片塞进 draw.io。
 
 ## 🖼️ 示例
 
