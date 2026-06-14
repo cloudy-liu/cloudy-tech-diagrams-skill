@@ -409,7 +409,8 @@
         <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-cloud-label" data-drawio-width="54" data-drawio-height="16" x="541" y="583" fill="#6F6C65" font-size="11">Cloud</text>
         <line data-drawio-type="edge" data-drawio-role="legend-flow" data-drawio-id="legend-primary-flow-line" x1="610" y1="580" x2="640" y2="580" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
         <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-primary-flow-label" data-drawio-width="96" data-drawio-height="16" x="650" y="583" fill="#6F6C65" font-size="11">Primary flow</text>
-        <text data-drawio-type="label" data-drawio-role="scope-note" data-drawio-id="sample-scope-note" data-drawio-width="520" data-drawio-height="16" x="230" y="608" fill="#6F6C65" font-size="11">Scope: acceptance sample for editable Draw.io fidelity, not a product architecture.</text>
+        <rect data-drawio-type="shape" data-drawio-role="scope-note" data-drawio-id="sample-scope-callout" x="214" y="590" width="590" height="28" rx="12" fill="#F6F3EC" stroke="#C9C3B8" stroke-width="1"/>
+        <text data-drawio-type="label" data-drawio-role="scope-note" data-drawio-id="sample-scope-note" data-drawio-width="550" data-drawio-height="18" x="230" y="609" fill="#6F6C65" font-size="11" font-weight="500">Scope: acceptance sample for editable Draw.io fidelity, not a product architecture.</text>
       </svg>
     </main>
 
@@ -564,7 +565,7 @@
         .replace(/'/g, '&apos;');
     }
 
-    const CLOUDY_DRAWIO_EXPORTER_VERSION = '2026.06.13.1';
+    const CLOUDY_DRAWIO_EXPORTER_VERSION = '2026.06.14.1';
 
     function directChildren(el, tagName) {
       return Array.from(el.children).filter((child) => child.tagName.toLowerCase() === tagName);
@@ -604,6 +605,18 @@
     function numberValue(value, fallback = 0) {
       const parsed = Number.parseFloat(value);
       return Number.isFinite(parsed) ? parsed : fallback;
+    }
+
+    function svgViewBox(svg) {
+      const values = (svg.getAttribute('viewBox') || '0 0 1000 620')
+        .split(/\s+/)
+        .map((value) => Number(value));
+      return {
+        x: Number.isFinite(values[0]) ? values[0] : 0,
+        y: Number.isFinite(values[1]) ? values[1] : 0,
+        width: Number.isFinite(values[2]) ? values[2] : 1000,
+        height: Number.isFinite(values[3]) ? values[3] : 620
+      };
     }
 
     function drawioIgnoreOwner(el) {
@@ -1057,18 +1070,18 @@
       return `<mxCell id="${xmlEscape(id)}" value="${label}" style="${xmlEscape(style)}" vertex="1" parent="${xmlEscape(parentId)}"><mxGeometry x="${drawioNumber(bounds.x - origin.x)}" y="${drawioNumber(bounds.y - origin.y)}" width="${drawioNumber(bounds.width)}" height="${drawioNumber(bounds.height)}" as="geometry"/></mxCell>`;
     }
 
-    function buildInternalPrimitiveCells(el, rect, parentId) {
+    function buildInternalPrimitiveCells(el, rect, parentId, pageOrigin = { x: 0, y: 0 }) {
       const primitives = internalPrimitivesForBox(el, rect);
       const grouped = semanticContainerRole(el);
       const primitiveParentId = grouped ? parentId : '1';
-      const origin = grouped ? rectBounds(rect) : { x: 0, y: 0 };
+      const origin = grouped ? rectBounds(rect) : pageOrigin;
       return [
         ...primitives.rects.map((innerRect, index) => buildInternalRectCell(innerRect, `${parentId}-inner-rect-${index}`, primitiveParentId, origin)),
         ...primitives.texts.map((text, index) => buildInternalTextCell(text, `${parentId}-inner-text-${index}`, rect, primitives.rects, primitiveParentId, origin))
       ];
     }
 
-    function buildLabelCell(el, index) {
+    function buildLabelCell(el, index, origin = { x: 0, y: 0 }) {
       const text = directTag(el) === 'text' ? el : directChildren(el, 'text')[0];
       if (!text) return '';
 
@@ -1107,7 +1120,7 @@
         drawioRoleStyle(el)
       ]);
 
-      return `<mxCell id="${xmlEscape(id)}" value="${xmlEscape(labelText)}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(x)}" y="${drawioNumber(y)}" width="${drawioNumber(width)}" height="${drawioNumber(height)}" as="geometry"/></mxCell>`;
+      return `<mxCell id="${xmlEscape(id)}" value="${xmlEscape(labelText)}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(x - origin.x)}" y="${drawioNumber(y - origin.y)}" width="${drawioNumber(width)}" height="${drawioNumber(height)}" as="geometry"/></mxCell>`;
     }
 
     function shapeBounds(shape) {
@@ -1124,7 +1137,7 @@
       return rectBounds(shape);
     }
 
-    function buildShapeCell(el, index) {
+    function buildShapeCell(el, index, origin = { x: 0, y: 0 }) {
       const shape = firstDrawioShape(el, ['rect', 'circle', 'ellipse']);
       if (!shape) return '';
 
@@ -1149,10 +1162,10 @@
         drawioRoleStyle(el)
       ]);
 
-      return `<mxCell id="${xmlEscape(id)}" value="" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(bounds.x)}" y="${drawioNumber(bounds.y)}" width="${drawioNumber(bounds.width)}" height="${drawioNumber(bounds.height)}" as="geometry"/></mxCell>`;
+      return `<mxCell id="${xmlEscape(id)}" value="" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(bounds.x - origin.x)}" y="${drawioNumber(bounds.y - origin.y)}" width="${drawioNumber(bounds.width)}" height="${drawioNumber(bounds.height)}" as="geometry"/></mxCell>`;
     }
 
-    function buildBoxCell(el, index) {
+    function buildBoxCell(el, index, origin = { x: 0, y: 0 }) {
       const rect = firstDrawioShape(el, ['rect']);
       if (!rect) return '';
 
@@ -1190,7 +1203,7 @@
       const width = attrNumber(rect, 'width');
       const height = attrNumber(rect, 'height');
 
-      return `<mxCell id="${xmlEscape(id)}" value="${xmlEscape(label)}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${x}" y="${y}" width="${width}" height="${height}" as="geometry"/></mxCell>`;
+      return `<mxCell id="${xmlEscape(id)}" value="${xmlEscape(label)}" style="${xmlEscape(style)}" vertex="1" parent="1"><mxGeometry x="${drawioNumber(x - origin.x)}" y="${drawioNumber(y - origin.y)}" width="${width}" height="${height}" as="geometry"/></mxCell>`;
     }
 
     const CURVE_SAMPLE_STEPS = 8;
@@ -1474,7 +1487,7 @@
         })[0] || null;
     }
 
-    function buildEdgeCell(el, index) {
+    function buildEdgeCell(el, index, origin = { x: 0, y: 0 }) {
       const shape = firstDrawioShape(el, ['line', 'path', 'polyline']);
       if (!shape) return '';
 
@@ -1491,10 +1504,14 @@
       const strokeWidth = shape.getAttribute('stroke-width') || '1.6';
       const curved = shapeUsesCurveCommand(shape);
       const id = drawioId(el, index);
-      const start = points[0];
-      const end = points[points.length - 1];
-      const waypoints = points.slice(1, -1)
-        .map((point) => `<mxPoint x="${point.x}" y="${point.y}"/>`)
+      const translatedPoints = points.map((point) => ({
+        x: point.x - origin.x,
+        y: point.y - origin.y
+      }));
+      const start = translatedPoints[0];
+      const end = translatedPoints[translatedPoints.length - 1];
+      const waypoints = translatedPoints.slice(1, -1)
+        .map((point) => `<mxPoint x="${drawioNumber(point.x)}" y="${drawioNumber(point.y)}"/>`)
         .join('');
       const waypointXml = waypoints ? `<Array as="points">${waypoints}</Array>` : '';
       const style = cellStyle([
@@ -1513,13 +1530,15 @@
         drawioRoleStyle(el)
       ]);
 
-      return `<mxCell id="${xmlEscape(id)}"${edgeTerminalAttributes(el)} value="${label}" style="${xmlEscape(style)}" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="${start.x}" y="${start.y}" as="sourcePoint"/><mxPoint x="${end.x}" y="${end.y}" as="targetPoint"/>${waypointXml}</mxGeometry></mxCell>`;
+      return `<mxCell id="${xmlEscape(id)}"${edgeTerminalAttributes(el)} value="${label}" style="${xmlEscape(style)}" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="${drawioNumber(start.x)}" y="${drawioNumber(start.y)}" as="sourcePoint"/><mxPoint x="${drawioNumber(end.x)}" y="${drawioNumber(end.y)}" as="targetPoint"/>${waypointXml}</mxGeometry></mxCell>`;
     }
 
     function buildDrawioFromSvg(svg, options = {}) {
       const title = svg.querySelector('title')?.textContent.trim() || document.title || 'Diagram';
-      const viewBox = svg.getAttribute('viewBox') || '0 0 1000 620';
-      const [, , width = '1000', height = '620'] = viewBox.split(/\s+/);
+      const viewBox = svgViewBox(svg);
+      const width = drawioNumber(viewBox.width);
+      const height = drawioNumber(viewBox.height);
+      const origin = { x: viewBox.x, y: viewBox.y };
       const cells = ['<mxCell id="0"/>', '<mxCell id="1" parent="0"/>'];
       const coverageWarnings = auditDrawioCoverage(svg);
 
@@ -1534,25 +1553,25 @@
         .filter((group) => !drawioIgnored(group))
         .forEach((group, index) => {
         if (group.dataset.drawioType === 'edge') {
-          cells.push(buildEdgeCell(group, index + 2));
+          cells.push(buildEdgeCell(group, index + 2, origin));
           return;
         }
 
         if (group.dataset.drawioType === 'label') {
-          cells.push(buildLabelCell(group, index + 2));
+          cells.push(buildLabelCell(group, index + 2, origin));
           return;
         }
 
         if (group.dataset.drawioType === 'shape') {
-          cells.push(buildShapeCell(group, index + 2));
+          cells.push(buildShapeCell(group, index + 2, origin));
           return;
         }
 
         if (group.dataset.drawioType === 'component' || group.dataset.drawioType === 'boundary') {
           const id = drawioId(group, index + 2);
           const rect = firstDrawioShape(group, ['rect']);
-          cells.push(buildBoxCell(group, index + 2));
-          if (rect) cells.push(...buildInternalPrimitiveCells(group, rect, id));
+          cells.push(buildBoxCell(group, index + 2, origin));
+          if (rect) cells.push(...buildInternalPrimitiveCells(group, rect, id, origin));
         }
       });
 
