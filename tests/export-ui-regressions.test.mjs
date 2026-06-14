@@ -46,6 +46,10 @@ for (const file of htmlFiles) {
     assert.match(html, /bottom:\s*18px;/);
   });
 
+  test(`${file} keeps selected text readable on the warm canvas`, () => {
+    assert.match(html, /::selection\s*{[\s\S]*?background:\s*#E6D7B4;[\s\S]*?color:\s*var\(--ink\);/);
+  });
+
   test(`${file} exports SVG curve paths as curved Draw.io edges`, () => {
     assert.match(html, /function shapeUsesCurveCommand\(shape\)/);
     assert.match(html, /curved \? 'curved=1' : ''/);

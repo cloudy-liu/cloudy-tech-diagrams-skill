@@ -91,6 +91,37 @@ function fakeSvg() {
   ]);
 }
 
+function fakeCroppedSvg() {
+  return new FakeElement('svg', { viewBox: '10 70 1000 550' }, [
+    new FakeElement('title', {}, [], 'Cropped export'),
+    new FakeElement('rect', {
+      'data-drawio-type': 'shape',
+      'data-drawio-role': 'scope-note',
+      'data-drawio-id': 'cropped-scope-callout',
+      x: '225',
+      y: '572',
+      width: '610',
+      height: '28',
+      rx: '12',
+      fill: '#F6F3EC',
+      stroke: '#C9C3B8',
+      'stroke-width': '1'
+    }),
+    new FakeElement('text', {
+      'data-drawio-type': 'label',
+      'data-drawio-role': 'scope-note',
+      'data-drawio-id': 'cropped-scope-label',
+      'data-drawio-width': '560',
+      'data-drawio-height': '18',
+      x: '245',
+      y: '591',
+      fill: '#6F6C65',
+      'font-size': '11',
+      'font-weight': '500'
+    }, [], 'Scope: cropped sheet export.')
+  ]);
+}
+
 test('template exposes the current Draw.io exporter version marker', () => {
   const template = readFileSync(new URL('../assets/template.html', import.meta.url), 'utf8');
   const source = exporterSource(template);
@@ -128,6 +159,17 @@ for (const file of htmlFiles) {
     assert.match(drawio, new RegExp(`cloudyDrawioExporterVersion="${CLOUDY_DRAWIO_EXPORTER_VERSION}"`));
   });
 }
+
+test('Draw.io exporter offsets native cells by the SVG viewBox origin', () => {
+  const template = readFileSync(new URL('../assets/template.html', import.meta.url), 'utf8');
+  const { buildDrawioFromSvg } = extractExporter(exporterSource(template));
+  const drawio = buildDrawioFromSvg(fakeCroppedSvg());
+
+  assert.match(drawio, /pageWidth="1000"/);
+  assert.match(drawio, /pageHeight="550"/);
+  assert.match(drawio, /id="cropped-scope-callout"[\s\S]*?<mxGeometry x="215" y="502" width="610" height="28"/);
+  assert.match(drawio, /id="cropped-scope-label"[\s\S]*?<mxGeometry x="235" y="510" width="560" height="18"/);
+});
 
 test('skill tells maintainers to refresh the full exporter block when updating diagrams', () => {
   const skill = readFileSync(new URL('../SKILL.md', import.meta.url), 'utf8');
