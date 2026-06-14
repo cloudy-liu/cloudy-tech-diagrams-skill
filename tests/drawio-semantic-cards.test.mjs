@@ -10,6 +10,13 @@ const htmlFiles = [
   'examples/drawio-fidelity-torture.html'
 ];
 
+const defaultDiagramFiles = [
+  'assets/template.html',
+  'examples/web-app.html',
+  'examples/microservices.html',
+  'examples/perfetto-docs-architecture.html'
+];
+
 class FakeElement {
   constructor(tagName, attrs = {}, children = [], text = '') {
     this.tagName = tagName;
@@ -164,7 +171,22 @@ for (const file of htmlFiles) {
     assert.match(drawio, /id="release-risk-card-inner-text-1"[\s\S]*?x="16" y="46" width="188" height="19"/);
   });
 
-  test(`${file} keeps at least one explanatory card inside the exportable SVG sheet`, () => {
-    assertSvgHasSemanticCard(mainSvg(html));
+}
+
+for (const file of defaultDiagramFiles) {
+  const html = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
+  const svg = mainSvg(html);
+
+  test(`${file} does not include a fixed template summary badge by default`, () => {
+    assert.doesNotMatch(svg, /data-drawio-type="component"[^>]+data-drawio-role="card"/);
+    assert.doesNotMatch(svg, /data-drawio-role="card-pill"/);
+    assert.doesNotMatch(svg, /data-drawio-role="card-metric"/);
+    assert.doesNotMatch(svg, /data-drawio-role="card-detail"/);
   });
 }
+
+test('Draw.io fidelity torture sample keeps a semantic card as an explicit acceptance case', () => {
+  const html = readFileSync(new URL('../examples/drawio-fidelity-torture.html', import.meta.url), 'utf8');
+
+  assertSvgHasSemanticCard(mainSvg(html));
+});

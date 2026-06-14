@@ -190,7 +190,9 @@ Each diagram is a self-contained HTML file by default:
 
 Draw.io Export Fidelity is product-critical: the browser-rendered HTML remains the entry-level product experience, and the `.drawio` file is the high-fidelity editable continuation path for the exportable diagram sheet. It targets editable visual equivalence with draw.io-native objects. This is not an arbitrary HTML/CSS conversion, full-page export, exact pixel clone, or one whole-diagram image.
 
-The exportable diagram sheet includes the meaningful visual content that belongs to the diagram itself. When title, legend, caption, scope notes, and explanatory cards are part of the diagram, they should live inside the main SVG diagram and export as editable draw.io-native objects. Page chrome, toolbar, and unrelated footer metadata stay outside the Draw.io export.
+The HTML page header is mandatory: the visible `<h1>` and subtitle remain the browser-first visual hierarchy. Default SVG sheets should not duplicate the page title or subtitle. If the exported Draw.io sheet must stand alone, add explicit sheet-owned title or caption content inside the SVG and annotate it for export.
+
+The exportable diagram sheet includes the meaningful visual content that belongs to the diagram itself. Visible diagram legends and scope notes inside the SVG must export as editable draw.io-native objects unless explicitly ignored with an audit reason. Explanatory cards belong in the SVG sheet only when they carry real diagram-specific context; fixed template summary badges and generic ASYNC/SLO/EDIT cards are not default content. Page chrome, toolbar, and unrelated footer metadata stay outside the Draw.io export.
 
 ## Draw.io Visual Regression Gate
 
