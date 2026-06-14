@@ -1,3 +1,0 @@
-# Page header title and subtitle remain visible
-
-Cloudy Tech Diagrams keeps the visible H1 **Page Header Title** and supporting **Page Header Subtitle** as part of the browser-first visual identity of every **HTML Diagram Output**. A visible **Sheet-Owned Title** or **Sheet-Owned Caption** inside the **Main SVG Diagram** is optional and should not duplicate the page title or subtitle by default; it is used only when the exported diagram sheet must stand alone with local visible context. This preserves **Browser Visual Fidelity** while still allowing Draw.io exports to carry sheet-owned title or caption content when it is genuinely part of the diagram.

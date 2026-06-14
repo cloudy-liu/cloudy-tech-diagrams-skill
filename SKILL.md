@@ -223,11 +223,11 @@ For release validation, run the Draw.io Visual Regression Gate after structural 
 
 1. Render the controlled report region with Playwright Chromium at 1200x900, deviceScaleFactor 1, light color scheme, and the `#report-container` selector after `document.fonts.ready`, excluding `.toolbar`, `.cards`, and `.footer`.
 2. Export the generated `.drawio` file with diagrams.net Desktop CLI using `draw.io --export --format png --output <drawioPng> <drawioFile>`.
-3. Compare the HTML PNG and draw.io PNG with `node tools/drawio-visual-regression.mjs gate --config visual-regression/drawio-gate.config.json` and `DRAWIO_VISUAL_GATE=1`.
+3. Compare the HTML PNG and draw.io PNG with `node tools/drawio-visual-regression.mjs gate --config <local-gate-config.json>` and `DRAWIO_VISUAL_GATE=1`.
 
-The default threshold is `maxPixelMismatchRatio=0.015`, `perChannelTolerance=3`, and `maxAverageChannelDelta=2`. This is a release validation gate, not an unconditional PR check, because browser, diagrams.net, and font rendering versions can otherwise make CI flaky. Ordinary CI should validate the gate configuration and PNG comparator behavior without requiring external screenshot artifacts.
+The default threshold is `maxPixelMismatchRatio=0.015`, `perChannelTolerance=3`, and `maxAverageChannelDelta=2`. This is a release validation gate, not an unconditional PR check, because browser, diagrams.net, and font rendering versions can otherwise make CI flaky. Keep the gate config local-only and ignored by git; it is not part of the public repository or release package. Ordinary CI should validate the gate configuration shape and PNG comparator behavior without requiring external screenshot artifacts.
 
-Known limitations are acceptable only when documented in `visual-regression/drawio-gate.config.json`: font rendering drift, draw.io-native approximations for SVG markers and dash patterns, and intentional exclusion of toolbar UI, footer metadata, and page-support cards. A passing pixel gate does not replace the editable-object contract; it runs after the semantic export tests.
+Known limitations are acceptable only when documented in the local gate config: font rendering drift, draw.io-native approximations for SVG markers and dash patterns, and intentional exclusion of toolbar UI, footer metadata, and page-support cards. A passing pixel gate does not replace the editable-object contract; it runs after the semantic export tests.
 
 ## Export Toolbar
 

@@ -8,11 +8,75 @@ import { deflateSync } from 'node:zlib';
 import test from 'node:test';
 
 const repoRoot = fileURLToPath(new URL('../', import.meta.url));
-const configPath = join(repoRoot, 'visual-regression/drawio-gate.config.json');
 const toolPath = join(repoRoot, 'tools/drawio-visual-regression.mjs');
 
-function readJson(path) {
-  return JSON.parse(readFileSync(path, 'utf8'));
+function gateConfigFixture() {
+  return {
+    version: 1,
+    renderers: {
+      html: {
+        engine: 'playwright-chromium',
+        selector: '#report-container',
+        excludeSelectors: ['.toolbar', '.cards', '.footer'],
+        viewport: {
+          width: 1200,
+          height: 900
+        },
+        deviceScaleFactor: 1,
+        colorScheme: 'light'
+      },
+      drawio: {
+        engine: 'diagrams-net-desktop-cli',
+        command: 'draw.io --export --format png --output <drawioPng> <drawioFile>'
+      }
+    },
+    thresholds: {
+      maxPixelMismatchRatio: 0.015,
+      perChannelTolerance: 3,
+      maxAverageChannelDelta: 2
+    },
+    ci: {
+      defaultMode: 'config-validation-only',
+      releaseGateEnv: 'DRAWIO_VISUAL_GATE=1'
+    },
+    samples: [
+      {
+        id: 'drawio-fidelity-torture',
+        html: 'examples/drawio-fidelity-torture.html',
+        selector: '#report-container',
+        excludeSelectors: ['.toolbar', '.cards', '.footer'],
+        artifacts: {
+          drawioFile: 'dist/drawio-visual/drawio-fidelity-torture.drawio',
+          htmlPng: 'dist/drawio-visual/drawio-fidelity-torture.html.png',
+          drawioPng: 'dist/drawio-visual/drawio-fidelity-torture.drawio.png'
+        }
+      },
+      {
+        id: 'perfetto-docs-architecture',
+        html: 'examples/perfetto-docs-architecture.html',
+        selector: '#report-container',
+        excludeSelectors: ['.toolbar', '.cards', '.footer'],
+        artifacts: {
+          drawioFile: 'dist/drawio-visual/perfetto-docs-architecture.drawio',
+          htmlPng: 'dist/drawio-visual/perfetto-docs-architecture.html.png',
+          drawioPng: 'dist/drawio-visual/perfetto-docs-architecture.drawio.png'
+        }
+      }
+    ],
+    knownLimitations: [
+      'font rendering can differ slightly across operating systems and Chromium builds',
+      'draw.io arrowhead and dash rendering are editable-native approximations of SVG markers and stroke-dasharray',
+      'the gate compares the controlled report export and intentionally excludes toolbar UI, footer metadata, and page-support cards',
+      'the release gate should be run on pinned renderer versions before release, not as an unconditional PR check'
+    ]
+  };
+}
+
+function writeGateConfigFixture() {
+  const workDir = mkdtempSync(join(tmpdir(), 'drawio-visual-config-'));
+  const configPath = join(workDir, 'drawio-gate.config.json');
+  writeFileSync(configPath, JSON.stringify(gateConfigFixture(), null, 2));
+  return { workDir, configPath };
 }
 
 function crc32(buffer) {
@@ -71,8 +135,7 @@ async function loadTool() {
 }
 
 test('visual regression gate config selects a stable release rendering path', () => {
-  assert.ok(existsSync(configPath), 'expected visual-regression/drawio-gate.config.json');
-  const config = readJson(configPath);
+  const config = gateConfigFixture();
 
   assert.equal(config.version, 1);
   assert.equal(config.renderers.html.engine, 'playwright-chromium');
@@ -122,13 +185,18 @@ test('documentation defines the Draw.io visual regression gate and non-flaky CI 
 
 test('visual regression tool validates configured acceptance samples without requiring screenshots in CI', async () => {
   const { loadGateConfig, validateGateConfig } = await loadTool();
-  const config = loadGateConfig(configPath);
-  const result = validateGateConfig(config, { repoRoot, requireArtifacts: false });
+  const { workDir, configPath } = writeGateConfigFixture();
+  try {
+    const config = loadGateConfig(configPath);
+    const result = validateGateConfig(config, { repoRoot, requireArtifacts: false });
 
-  assert.equal(result.ok, true);
-  assert.deepEqual(result.sampleIds, ['drawio-fidelity-torture', 'perfetto-docs-architecture']);
-  assert.deepEqual(result.missingArtifacts, []);
-  assert.equal(result.releaseGateEnv, 'DRAWIO_VISUAL_GATE=1');
+    assert.equal(result.ok, true);
+    assert.deepEqual(result.sampleIds, ['drawio-fidelity-torture', 'perfetto-docs-architecture']);
+    assert.deepEqual(result.missingArtifacts, []);
+    assert.equal(result.releaseGateEnv, 'DRAWIO_VISUAL_GATE=1');
+  } finally {
+    rmSync(workDir, { recursive: true, force: true });
+  }
 });
 
 test('visual regression tool compares HTML and Draw.io PNG screenshots with thresholds', async () => {

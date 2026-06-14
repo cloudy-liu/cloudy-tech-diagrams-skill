@@ -202,11 +202,11 @@ The selected rendering path is intentionally narrow and repeatable:
 
 1. Render the controlled report region with Playwright Chromium at 1200x900, deviceScaleFactor 1, light color scheme, and the `#report-container` selector after `document.fonts.ready`, excluding `.toolbar`, `.cards`, and `.footer`.
 2. Export the `.drawio` artifact with diagrams.net Desktop CLI using `draw.io --export --format png --output <drawioPng> <drawioFile>`.
-3. Run `DRAWIO_VISUAL_GATE=1 node tools/drawio-visual-regression.mjs gate --config visual-regression/drawio-gate.config.json`.
+3. Run `DRAWIO_VISUAL_GATE=1 node tools/drawio-visual-regression.mjs gate --config <local-gate-config.json>`.
 
-The default threshold is `maxPixelMismatchRatio=0.015`, `perChannelTolerance=3`, and `maxAverageChannelDelta=2`. Ordinary CI keeps this non-flaky by validating the gate config and PNG comparator without requiring external renderer artifacts; release validation supplies pinned Playwright Chromium, diagrams.net Desktop CLI, fonts, and screenshots. This avoids flaky CI while still keeping a real pixel-diff gate for release decisions.
+The default threshold is `maxPixelMismatchRatio=0.015`, `perChannelTolerance=3`, and `maxAverageChannelDelta=2`. The gate config is local-only and ignored by git; it is not published as a repository folder. Ordinary CI keeps this non-flaky by validating the gate config shape and PNG comparator without requiring external renderer artifacts; release validation supplies pinned Playwright Chromium, diagrams.net Desktop CLI, fonts, and screenshots. This avoids flaky CI while still keeping a real pixel-diff gate for release decisions.
 
-Known limitations are tracked in `visual-regression/drawio-gate.config.json`: font rendering drift, draw.io-native approximations for SVG markers and dash patterns, and intentional exclusion of toolbar UI, footer metadata, and page-support cards.
+Known limitations belong in the local gate config: font rendering drift, draw.io-native approximations for SVG markers and dash patterns, and intentional exclusion of toolbar UI, footer metadata, and page-support cards.
 
 ## 🖼️ Examples
 
