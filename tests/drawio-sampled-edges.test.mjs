@@ -80,6 +80,12 @@ function extractDrawioExporter(html) {
   return new Function(`${source}; return { buildDrawioFromSvg };`)().buildDrawioFromSvg;
 }
 
+function drawioCell(drawio, id) {
+  const match = drawio.match(new RegExp(`<mxCell id="${id}"[\\s\\S]*?</mxCell>`));
+  assert.ok(match, `missing Draw.io cell ${id}`);
+  return match[0];
+}
+
 function fakeCurvedEdgeSvg() {
   return new FakeElement('svg', { viewBox: '0 0 320 180' }, [
     new FakeElement('title', {}, [], 'Sampled curve'),
@@ -145,8 +151,10 @@ for (const file of htmlFiles) {
     assert.match(drawio, /id="sampled-curve"/);
     assert.match(drawio, /strokeColor=#527AA0/);
     assert.match(drawio, /endArrow=open/);
-    assert.match(drawio, /value="sampled"/);
-    assert.match(drawio, /fontColor=#527AA0/);
+    assert.match(drawioCell(drawio, 'sampled-curve'), /value=""/);
+    assert.match(drawioCell(drawio, 'sampled-curve-label'), /value="sampled"/);
+    assert.match(drawioCell(drawio, 'sampled-curve-label'), /data-drawio-edge-label-for="sampled-curve"/);
+    assert.match(drawioCell(drawio, 'sampled-curve-label'), /fontColor=#527AA0/);
     assert.match(drawio, /<mxPoint x="100" y="100" as="sourcePoint"\/>/);
     assert.match(drawio, /<mxPoint x="240" y="100" as="targetPoint"\/>/);
     assert.match(drawio, /<mxPoint x="170" y="55"\/>/);
@@ -164,8 +172,10 @@ for (const file of htmlFiles) {
     assert.match(drawio, /fixDash=1/);
     assert.match(drawio, /dashPattern=2.78 2.78/);
     assert.match(drawio, /endArrow=open/);
-    assert.match(drawio, /value="linear"/);
-    assert.match(drawio, /fontColor=#A45D45/);
+    assert.match(drawioCell(drawio, 'linear-elbow'), /value=""/);
+    assert.match(drawioCell(drawio, 'linear-elbow-label'), /value="linear"/);
+    assert.match(drawioCell(drawio, 'linear-elbow-label'), /data-drawio-edge-label-for="linear-elbow"/);
+    assert.match(drawioCell(drawio, 'linear-elbow-label'), /fontColor=#A45D45/);
     assert.match(drawio, /<mxPoint x="20" y="30" as="sourcePoint"\/>/);
     assert.match(drawio, /<mxPoint x="120" y="30"\/>/);
     assert.match(drawio, /<mxPoint x="120" y="90" as="targetPoint"\/>/);
