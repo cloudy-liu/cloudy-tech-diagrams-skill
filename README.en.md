@@ -212,7 +212,7 @@ Known limitations belong in the local gate config: font rendering drift, draw.io
 
 ### Perfetto Project Architecture
 
-![Perfetto Project Architecture](examples/perfetto-docs-architecture.png)
+![Perfetto Project Architecture](examples/images/perfetto-docs-architecture.png)
 
 ### Web Application Architecture
 

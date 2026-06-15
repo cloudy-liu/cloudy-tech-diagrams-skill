@@ -6,7 +6,20 @@ Cloudy Tech Diagrams Skill 是一个给 AI agent 使用的通用技术图绘制 
 
 使用 claude 风格温暖视觉风格，可快速融入到各种常规文档中。
 
-## 🎯 解决什么问题
+## 效果
+
+<table>
+  <tr>
+    <td width="50%" valign="top"><img src="./examples/images/web-app.png" alt="Web app architecture" width="100%"></td>
+    <td width="50%" valign="top"><img src="./examples/images/microservices.png" alt="Microservices architecture" width="100%"></td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top"><img src="./examples/images/perfetto-docs-architecture.png" alt="Perfetto project architecture" width="100%"></td>
+    <td width="50%" valign="top"><img src="./examples/images/export-drawio-ani.gif" alt="Draw.io export animation" width="100%"></td>
+  </tr>
+</table>
+
+## 解决什么问题
 
 - 每次让 agent 画架构图都要重复说明风格、格式、导出方式和检查标准
 - 生成的图经常只像草稿：箭头落点不清楚、文字溢出、节点层级混乱、导出不稳定
@@ -14,7 +27,7 @@ Cloudy Tech Diagrams Skill 是一个给 AI agent 使用的通用技术图绘制 
 - 技术文档、方案评审和技术分享需要一份能打开、能导出到 Draw.io 继续手工调整，也能导出为 PNG/PDF 的图
 - 提供了 cloude 官网一致的视觉设计，有统一的视觉风格和质量底线
 
-## 🧩 适合画什么
+## 适合画什么
 
 - 软件架构图
 - 系统设计图
@@ -27,124 +40,19 @@ Cloudy Tech Diagrams Skill 是一个给 AI agent 使用的通用技术图绘制 
 
 它不定位为通用海报、品牌视觉、落地页、dashboard、非技术插画或普通幻灯片工具。
 
-## 🚀 快速开始
+## 快速开始
 
 快速开始分两步：先把 Skill 安装到 agent 能读取的位置，再在提示词里调用它。
 
 ### 安装
 
-安装分两层：先选择获取渠道，再选择安装位置。
-
-#### 选择获取渠道
-
-**Release 包**：推荐用于正式使用、团队分发和发布验证。
-
-从 GitHub Releases 下载最新 Release 包：
-
-```text
-cloudy-tech-diagrams-skill-vX.Y.Z.zip
-```
-
-Release zip 内部会包含一个顶层 Skill 目录：
-
-```text
-cloudy-tech-diagrams/
-├── SKILL.md
-├── LICENSE
-├── VERSION
-├── assets/
-└── references/
-```
-
-**源码 clone**：适合本地开发、调试、参与修改，或暂时还没有 Release 包时快速试用。
-
-源码仓库地址：
+将以下 GitHub 地址直接提供给你的 Agent（Claude Code、Codex、Cursor 等），它会自动帮你安装好：
 
 ```text
 https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git
 ```
 
-本仓库根目录本身就是 Skill Root。只要 agent 能读到 `SKILL.md`、`assets/` 和 `references/`，就可以使用。源码安装不会自动生成 `VERSION` 文件；需要稳定分发给团队或用于发布验证时，优先使用 GitHub Release 生成的 zip 包。
-
-#### 选择安装位置
-
-**Codex / Agents**
-
-全局安装，使用 Release 包：
-
-```bash
-unzip cloudy-tech-diagrams-skill-vX.Y.Z.zip -d ~/.agents/skills/
-```
-
-全局安装，使用源码 clone：
-
-```bash
-mkdir -p ~/.agents/skills
-git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git ~/.agents/skills/cloudy-tech-diagrams
-```
-
-全局安装后的路径通常是：
-
-```text
-~/.agents/skills/cloudy-tech-diagrams/
-```
-
-项目本地安装，使用 Release 包：
-
-```bash
-mkdir -p .agents/skills
-unzip cloudy-tech-diagrams-skill-vX.Y.Z.zip -d .agents/skills/
-```
-
-项目本地安装，使用源码 clone：
-
-```bash
-mkdir -p .agents/skills
-git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git .agents/skills/cloudy-tech-diagrams
-```
-
-**Claude Code**
-
-全局安装，使用 Release 包：
-
-```bash
-unzip cloudy-tech-diagrams-skill-vX.Y.Z.zip -d ~/.claude/skills/
-```
-
-全局安装，使用源码 clone：
-
-```bash
-mkdir -p ~/.claude/skills
-git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git ~/.claude/skills/cloudy-tech-diagrams
-```
-
-全局安装后的路径通常是：
-
-```text
-~/.claude/skills/cloudy-tech-diagrams/
-```
-
-项目本地安装，使用 Release 包：
-
-```bash
-mkdir -p .claude/skills
-unzip cloudy-tech-diagrams-skill-vX.Y.Z.zip -d .claude/skills/
-```
-
-项目本地安装，使用源码 clone：
-
-```bash
-mkdir -p .claude/skills
-git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git .claude/skills/cloudy-tech-diagrams
-```
-
-**Claude.ai**
-
-如果你的 Claude.ai 工作区支持自定义 Skill 上传，可以直接上传 Release zip。不同账号和组织的入口可能不同，以当前 Claude.ai 界面为准。
-
-**Cursor / Windsurf / 其他 Agent**
-
-这些大多都支持 `.agents/skills` 这样的标准格式，可直接复用上面 Codex / Agents 的 Skill 配置。
+Agent 会根据运行环境自动选择合适的安装位置（全局或项目本地）。
 
 ### 使用
 
@@ -175,7 +83,7 @@ git clone https://github.com/cloudy-liu/cloudy-tech-diagrams-skill.git .claude/s
 
 生成结果通常是一份 `.html` 文件。直接用浏览器打开即可查看，并可使用 Export 菜单中的 Copy Image / Download PNG / Download PDF / Download Draw.io 动作导出。
 
-## 📦 输出结果是什么
+## 输出结果是什么
 
 每张图默认是一份自包含 HTML 文件：
 
@@ -192,21 +100,8 @@ Draw.io Export Fidelity 是产品级契约，但坚持 HTML-first：浏览器中
 
 default Draw.io export 是 controlled report export：page header plus exportable SVG sheet，excluding toolbar, footer, and page-support cards。exportable diagram sheet 覆盖真正属于图本身的有意义视觉内容。只要 SVG 内存在有意义的可见图例或 scope note，就必须导出为可编辑的 draw.io 原生对象，除非显式 `data-drawio-ignore="true"` 并写明 audit reason。说明卡片只有在承载真实图上下文时才进入 SVG sheet；固定模板 summary badge 或泛用 ASYNC/SLO/EDIT 卡片不是默认内容。它追求 draw.io 原生对象的可编辑视觉等价，而不是任意 HTML/CSS 转换、精确像素克隆，也不是把整张图作为一张图片塞进 draw.io。
 
-## 🖼️ 示例
 
-### Perfetto 项目架构
-
-![Perfetto 项目架构](examples/perfetto-docs-architecture.png)
-
-### Web 应用架构
-
-![Web 应用架构](examples/images/web-app.png)
-
-### 微服务架构
-
-![微服务架构](examples/images/microservices.png)
-
-## ✅ 设计和质量原则
+## 设计和质量原则
 
 这个 Skill 的目标不是把图画得复杂，而是让图在技术文档里稳定可读。
 
@@ -217,7 +112,7 @@ default Draw.io export 是 controlled report export：page header plus exportabl
 - 生成前后都要检查图面表达：文字不溢出、箭头可见、连接线有明确起点和终点、图例不压在边界框里。
 - 通用 checklist 只约束图面表达质量，不约束具体领域模型是否正确。
 
-## 🗂️ 仓库结构
+## 仓库结构
 
 ```text
 cloudy-tech-diagrams-skill/
@@ -239,10 +134,10 @@ cloudy-tech-diagrams-skill/
 
 `SKILL.md` 是 agent 读取的核心指令。`assets/template.html` 是生成图表时复制和改写的起点。`references/` 保存风格参考资料。`examples/` 是 GitHub README 和维护用的示例输出，不会进入最小 Release 包。
 
-## 🙏 致谢
+## 致谢
 
 * Cloudy Tech Diagrams Skill 的灵感来源于 [Cocoon-AI/architecture-diagram-generator](https://github.com/Cocoon-AI/architecture-diagram-generator) 项目，对它做了扩展、客制化，感谢！
 
-## 📄 许可证
+## 许可证
 
 MIT License。详见 [LICENSE](LICENSE)。
