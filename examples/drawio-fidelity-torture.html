@@ -289,7 +289,7 @@
     </header>
 
     <main class="diagram-container">
-      <svg viewBox="0 70 1000 550" role="img" aria-labelledby="diagram-title diagram-desc">
+      <svg viewBox="0 70 1000 570" role="img" aria-labelledby="diagram-title diagram-desc">
         <title id="diagram-title">Draw.io Fidelity Torture Sheet</title>
         <desc id="diagram-desc">Acceptance sample covering report header export, legend, scope note, nested primitives, dashed and curved connectors, label colors, arrowheads, and edge semantics.</desc>
 
@@ -299,7 +299,7 @@
           </marker>
         </defs>
 
-        <rect width="1000" height="620" rx="18" fill="#FAF9F5" data-drawio-ignore="true" data-drawio-ignore-reason="paper background is represented by the draw.io page"/>
+        <rect width="1000" height="650" rx="18" fill="#FAF9F5" data-drawio-ignore="true" data-drawio-ignore-reason="paper background is represented by the draw.io page"/>
 
         <!-- Boundaries are drawn before arrows so soft panel fills do not hide flows. -->
         <g data-drawio-type="boundary" data-drawio-role="region" data-drawio-id="cloud-region">
@@ -347,21 +347,21 @@
         <g data-drawio-type="component" data-drawio-role="client" data-drawio-id="clients">
           <rect x="40" y="270" width="110" height="90" rx="14" fill="#EDEAE3" stroke="#9A9991" stroke-width="2"/>
           <text x="95" y="307" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Clients</text>
-          <text x="95" y="329" fill="#6F6C65" font-size="12" text-anchor="middle">Web / Mobile</text>
+          <text x="95" y="329" fill="#5F5A54" font-size="12" text-anchor="middle">Web / Mobile</text>
         </g>
 
         <!-- Cloud edge -->
         <g data-drawio-type="component" data-drawio-role="cloud-edge" data-drawio-id="cloudfront">
           <rect x="240" y="275" width="130" height="80" rx="14" fill="#F0DED7" stroke="#D87858" stroke-width="2"/>
           <text x="305" y="307" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">CloudFront</text>
-          <text x="305" y="329" fill="#6F6C65" font-size="12" text-anchor="middle">CDN edge</text>
+          <text x="305" y="329" fill="#5F5A54" font-size="12" text-anchor="middle">CDN edge</text>
         </g>
 
         <!-- Security gateway -->
         <g data-drawio-type="component" data-drawio-role="gateway" data-drawio-id="api-gateway">
           <rect x="420" y="255" width="135" height="120" rx="14" fill="#F3E4DA" stroke="#C88E6A" stroke-width="2"/>
           <text x="487.5" y="297" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">API Gateway</text>
-          <text x="487.5" y="319" fill="#6F6C65" font-size="12" text-anchor="middle">Auth / routing</text>
+          <text x="487.5" y="319" fill="#5F5A54" font-size="12" text-anchor="middle">Auth / routing</text>
           <text x="487.5" y="343" fill="#8B6B55" font-size="11" font-weight="600" text-anchor="middle">HTTPS :443</text>
         </g>
 
@@ -369,21 +369,21 @@
         <g data-drawio-type="component" data-drawio-role="service" data-drawio-id="api-service">
           <rect x="675" y="165" width="130" height="80" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
           <text x="740" y="197" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">API Service</text>
-          <text x="740" y="219" fill="#6F6C65" font-size="12" text-anchor="middle">FastAPI :8000</text>
+          <text x="740" y="219" fill="#5F5A54" font-size="12" text-anchor="middle">FastAPI :8000</text>
         </g>
 
         <!-- Event worker -->
         <g data-drawio-type="component" data-drawio-role="worker" data-drawio-id="worker">
           <rect x="675" y="390" width="130" height="70" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
           <text x="740" y="419" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Worker</text>
-          <text x="740" y="440" fill="#6F6C65" font-size="12" text-anchor="middle">Async jobs</text>
+          <text x="740" y="440" fill="#5F5A54" font-size="12" text-anchor="middle">Async jobs</text>
         </g>
 
         <!-- Data store -->
         <g data-drawio-type="component" data-drawio-role="data-store" data-drawio-id="postgres">
           <rect x="850" y="165" width="110" height="80" rx="14" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
           <text x="905" y="197" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Postgres</text>
-          <text x="905" y="219" fill="#6F6C65" font-size="12" text-anchor="middle">Primary DB</text>
+          <text x="905" y="219" fill="#5F5A54" font-size="12" text-anchor="middle">Primary DB</text>
         </g>
 
         <!-- Message bus: keep pills centered on the event-flow axis. For vertical event flows, split connector lines above and below the pill instead of drawing through the label. -->
@@ -404,8 +404,8 @@
         <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-cloud-label" data-drawio-width="54" data-drawio-height="16" x="541" y="583" fill="#6F6C65" font-size="11">Cloud</text>
         <line data-drawio-type="edge" data-drawio-role="legend-flow" data-drawio-id="legend-primary-flow-line" x1="610" y1="580" x2="640" y2="580" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
         <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-primary-flow-label" data-drawio-width="96" data-drawio-height="16" x="650" y="583" fill="#6F6C65" font-size="11">Primary flow</text>
-        <rect data-drawio-type="shape" data-drawio-role="scope-note" data-drawio-id="sample-scope-callout" x="214" y="590" width="590" height="28" rx="12" fill="#F6F3EC" stroke="#C9C3B8" stroke-width="1"/>
-        <text data-drawio-type="label" data-drawio-role="scope-note" data-drawio-id="sample-scope-note" data-drawio-width="550" data-drawio-height="18" x="230" y="609" fill="#6F6C65" font-size="11" font-weight="500">Scope: acceptance sample for editable Draw.io fidelity, not a product architecture.</text>
+        <rect data-drawio-type="shape" data-drawio-role="scope-note" data-drawio-id="sample-scope-callout" x="214" y="602" width="590" height="28" rx="12" fill="#F6F3EC" stroke="#C9C3B8" stroke-width="1"/>
+        <text data-drawio-type="label" data-drawio-role="scope-note" data-drawio-id="sample-scope-note" data-drawio-width="550" data-drawio-height="18" x="230" y="621" fill="#6F6C65" font-size="11" font-weight="500">Scope: acceptance sample for editable Draw.io fidelity, not a product architecture.</text>
       </svg>
     </main>
 
@@ -560,7 +560,7 @@
         .replace(/'/g, '&apos;');
     }
 
-    const CLOUDY_DRAWIO_EXPORTER_VERSION = '2026.06.14.3';
+    const CLOUDY_DRAWIO_EXPORTER_VERSION = '2026.06.16.1';
 
     function directChildren(el, tagName) {
       return Array.from(el.children).filter((child) => child.tagName.toLowerCase() === tagName);
@@ -882,7 +882,7 @@
       if (el.dataset.drawioSublabel) {
         rows.push({
           label: el.dataset.drawioSublabel,
-          color: el.dataset.drawioSublabelColor || '#6F6C65',
+          color: el.dataset.drawioSublabelColor || '#5F5A54',
           fontSize: el.dataset.drawioSublabelSize || '12',
           fontWeight: el.dataset.drawioSublabelWeight || '400'
         });
@@ -893,7 +893,7 @@
     function drawioLabelRowsFromTexts(texts) {
       return texts.map((text, index) => ({
         label: text.textContent.trim(),
-        color: text.getAttribute('fill') || (index === 0 ? '#3D3C38' : '#6F6C65'),
+        color: text.getAttribute('fill') || (index === 0 ? '#3D3C38' : '#5F5A54'),
         fontSize: text.getAttribute('font-size') || (index === 0 ? '15' : '12'),
         fontWeight: text.getAttribute('font-weight') || (index === 0 ? '600' : '400')
       }));
@@ -1043,7 +1043,7 @@
     function buildInternalTextCell(text, id, containerRect, innerRects, parentId = '1', origin = { x: 0, y: 0 }) {
       const bounds = textCellBounds(text, containerRect, innerRects);
       const fontSize = text.getAttribute('font-size') || '12';
-      const fill = text.getAttribute('fill') || '#3D3C38';
+      const fill = text.getAttribute('fill') || (fontStyleFromWeight(text) === '1' ? '#3D3C38' : '#5F5A54');
       const style = cellStyle([
         'text',
         'html=1',

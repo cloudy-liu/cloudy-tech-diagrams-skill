@@ -63,7 +63,8 @@ Page and text colors:
 | Soft Paper | `#F6F3EC` | Region fills and secondary panels |
 | Ink | `#141413` | Main title and primary labels |
 | Body Text | `#3D3C38` | Component labels |
-| Muted Text | `#6F6C65` | Sublabels, captions, edge labels |
+| Secondary Text | `#5F5A54` | Component sublabels and small text inside boxes |
+| Muted Text | `#6F6C65` | Captions, edge labels, legend labels, quiet metadata |
 | Line | `#9A9991` | Main arrows and dividers |
 | Soft Line | `#C9C3B8` | Panel borders and low-priority structure |
 
@@ -104,7 +105,7 @@ Avoid monospace text unless the diagram specifically labels code, commands, port
 ```svg
 <rect x="X" y="Y" width="W" height="H" rx="14" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
 <text x="CENTER_X" y="Y+28" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">API Service</text>
-<text x="CENTER_X" y="Y+48" fill="#6F6C65" font-size="12" text-anchor="middle">FastAPI :8000</text>
+<text x="CENTER_X" y="Y+48" fill="#5F5A54" font-size="12" text-anchor="middle">FastAPI :8000</text>
 ```
 
 **Region boundaries:** use a soft filled panel with a dashed warm-gray stroke.
@@ -139,6 +140,8 @@ All arrows use open chevron arrowheads. Never use filled triangular arrowheads.
 
 Draw soft region and security boundaries first, then arrows, then component nodes, then legends. This keeps arrows visible above panel fills while component boxes remain visually dominant.
 
+Avoid right-angle, orthogonal, or elbow connector routes in normal architecture and process-flow diagrams. Use a straight single-segment line only for nearby components on the same row or column. For long, cross-boundary, return, or non-trivial connector routes, draw a curved SVG path with cubic Bezier `C` commands so the browser rendering and Draw.io export preserve a smooth visual flow. Use orthogonal elbows only when a domain-specific grid, network hop, or step-ladder notation is explicitly required.
+
 | Flow Type | Stroke | Width | Pattern |
 | --- | --- | --- | --- |
 | Primary data flow | `#9A9991` | 1.6 | Solid |
@@ -158,6 +161,9 @@ Draw soft region and security boundaries first, then arrows, then component node
 - In stacked event flows, message bus pills must sit on the exact centerline of the connected components.
 - Keep the number of accent colors to four or fewer per diagram.
 - Keep legends outside all region and cluster boundaries.
+- When a visible scope note follows a legend, keep the scope note at least 18px below the lowest legend label baseline.
+- Scope note callouts use `fill="#F6F3EC"`, `stroke="#C9C3B8"`, `stroke-width="1"`, and `rx="12"`; treat this as a stroke-width 1px light border and do not thicken or darken it to solve spacing or visibility issues.
+- Keep scope note callouts near the bottom rhythm of the SVG sheet: leave 8-18px between the callout bottom and the SVG `viewBox` bottom, avoiding both clipping and excessive blank bottom space.
 
 ### Layout Structure
 
@@ -171,6 +177,8 @@ Use this HTML structure:
 The HTML page header is mandatory: keep the visible `<h1>` and subtitle as the browser-first visual hierarchy. Do not duplicate that page title or subtitle inside the default SVG sheet. If the exported Draw.io sheet must stand alone, add an explicit sheet-owned title or caption inside the SVG with semantic annotations; that is optional sheet content, not a replacement for the HTML header.
 
 When a diagram legend, scope note, or explanatory card is visible and meaningful diagram content, place it inside the exportable diagram sheet and annotate it so it exports as editable draw.io-native cells. Do not include fixed template summary badges or generic ASYNC/SLO/EDIT cards by default; cards belong in the SVG sheet only when they carry real diagram-specific context. Page chrome, toolbar, and unrelated footer metadata stay outside the sheet.
+
+Scope notes are compact callouts, not loose footer text. When both legend and scope note are present, keep the legend visually separate from the callout, and crop the SVG sheet close to the callout bottom rather than adding a large empty band.
 
 Do not create a marketing landing page. The first screen should be the diagram itself.
 
@@ -289,6 +297,7 @@ Before finalizing a generated diagram, verify diagram expression quality: the re
 - [ ] Main idea and primary reading direction are obvious within three seconds.
 - [ ] Text labels fit inside boxes, pills, headers, and legends without clipping or overlap.
 - [ ] Every connector can be read as a clear source-to-target relationship.
+- [ ] No normal flow connector uses right-angle or orthogonal elbows; long or cross-boundary routes use curved SVG path cubic Bezier `C` commands unless domain-specific grid notation is explicitly required.
 - [ ] Every arrowhead uses an open chevron and is visible in the rendered diagram.
 - [ ] Every arrowhead terminates at a target boundary or an explicitly labeled handoff point.
 - [ ] No connector points into unlabeled empty space.
@@ -296,6 +305,7 @@ Before finalizing a generated diagram, verify diagram expression quality: the re
 - [ ] If connectors are drawn before nodes, inspect the rendered output to ensure nodes did not cover arrowheads or make endpoints ambiguous.
 - [ ] Connectors do not cross through unrelated labels, legends, node titles, or dense component interiors.
 - [ ] Legend is outside every boundary box.
+- [ ] Scope note callouts, when present, keep a light `#C9C3B8` 1px border, sit at least 18px below legend labels, and leave only 8-18px before the SVG sheet bottom.
 - [ ] Export toolbar still works and is excluded from captures.
 - [ ] Draw.io export button is present by default and downloads a `.drawio` controlled report export with the HTML page header plus exportable SVG sheet.
 - [ ] Main SVG components, boundaries, and connectors use Draw.io semantic annotations where they should export as editable draw.io-native objects.

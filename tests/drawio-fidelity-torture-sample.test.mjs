@@ -14,6 +14,14 @@ function mainSvg(html) {
   return match[0];
 }
 
+function svgViewBox(svg) {
+  const match = svg.match(/<svg[^>]+viewBox="([^"]+)"/);
+  assert.ok(match, 'expected SVG viewBox');
+  const values = match[1].split(/\s+/).map(Number);
+  assert.equal(values.length, 4, 'expected four viewBox values');
+  return { x: values[0], y: values[1], width: values[2], height: values[3] };
+}
+
 test('Draw.io fidelity torture sample exists as a browser-first HTML diagram', () => {
   const html = sampleHtml();
 
@@ -32,7 +40,11 @@ test('Draw.io fidelity torture sample keeps page header out of the SVG sheet', (
   assert.doesNotMatch(svg, /data-drawio-id="sheet-caption"/);
   assert.doesNotMatch(svg, /torture-observability-card/);
   assert.doesNotMatch(svg, /native cells/);
-  assert.match(svg, /viewBox="0 70 1000 550"/);
+  const box = svgViewBox(svg);
+  assert.equal(box.x, 0);
+  assert.equal(box.y, 70);
+  assert.equal(box.width, 1000);
+  assert.ok(box.y + box.height >= 640, 'viewBox should include the scope callout instead of clipping the SVG sheet bottom');
   assert.match(svg, /data-drawio-role="legend"/);
   assert.match(svg, /data-drawio-role="legend-swatch"/);
   assert.match(svg, /data-drawio-role="legend-label"/);

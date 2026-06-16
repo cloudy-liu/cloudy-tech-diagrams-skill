@@ -66,6 +66,11 @@ function rectForDrawioId(svg, id) {
   return grouped[0].match(/<rect[^>]+>/)[0];
 }
 
+function tagsForRole(svg, tagName, role) {
+  return Array.from(svg.matchAll(new RegExp(`<${tagName}[^>]+data-drawio-role="${role}"[^>]*>`, 'g')))
+    .map((match) => match[0]);
+}
+
 const scopeCalloutFiles = [
   ...defaultPageHeaderFiles
 ];
@@ -109,6 +114,33 @@ for (const { file, title, subtitle, anchorId } of defaultPageHeaderFiles) {
     assert.doesNotMatch(svg, /Copy Image/);
     assert.doesNotMatch(svg, /class="footer"/);
     assert.doesNotMatch(svg, /Generated with/);
+  });
+}
+
+for (const { file } of scopeCalloutFiles) {
+  const html = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
+  const svg = mainSvg(html);
+
+  test(`${file} keeps scope callouts separated from legends without excessive bottom whitespace`, () => {
+    const box = viewBox(svg);
+    const scopeCallouts = tagsForRole(svg, 'rect', 'scope-note');
+    const legendLabels = tagsForRole(svg, 'text', 'legend-label');
+    const maxLegendBaseline = Math.max(...legendLabels.map((label) => numericAttr(label, 'y')));
+
+    assert.ok(scopeCallouts.length > 0, 'expected at least one scope callout');
+    assert.ok(legendLabels.length > 0, 'expected legend labels before scope callout');
+
+    for (const scopeCallout of scopeCallouts) {
+      const scopeY = numericAttr(scopeCallout, 'y');
+      const scopeBottom = scopeY + numericAttr(scopeCallout, 'height');
+      const bottomGap = box.y + box.height - scopeBottom;
+
+      assert.ok(scopeY - maxLegendBaseline >= 18, `${file} scope callout should not crowd legend labels`);
+      assert.ok(bottomGap >= 8, `${file} scope callout bottom border should not be clipped by the SVG viewBox`);
+      assert.ok(bottomGap <= 18, `${file} scope callout should not create excessive blank space before the SVG bottom`);
+      assert.equal(attrValue(scopeCallout, 'stroke'), '#C9C3B8');
+      assert.equal(attrValue(scopeCallout, 'stroke-width'), '1');
+    }
   });
 }
 
