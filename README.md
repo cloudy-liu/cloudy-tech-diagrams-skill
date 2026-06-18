@@ -10,14 +10,20 @@ Cloudy Tech Diagrams Skill 是一个给 AI agent 使用的通用技术图绘制 
 
 <table>
   <tr>
-    <td width="50%" valign="top"><img src="./examples/images/web-app.png" alt="Web app architecture" width="100%"></td>
-    <td width="50%" valign="top"><img src="./examples/images/microservices.png" alt="Microservices architecture" width="100%"></td>
+    <th width="50%">Microservices Architecture</th>
+    <th width="50%">Perfetto Project Architecture</th>
   </tr>
   <tr>
+    <td width="50%" valign="top"><img src="./examples/images/microservices.png" alt="Microservices architecture" width="100%"></td>
     <td width="50%" valign="top"><img src="./examples/images/perfetto-docs-architecture.png" alt="Perfetto project architecture" width="100%"></td>
-    <td width="50%" valign="top"><img src="./examples/images/export-drawio-ani.gif" alt="Draw.io export animation" width="100%"></td>
   </tr>
 </table>
+
+不光可以在 HTML 中展示高质量架构图，生成结果还内置 Draw.io 导出能力：可以从同一张可视化架构图导出可编辑的 `.drawio` 文件，继续在 diagrams.net / draw.io 中手工调整。
+
+<p>
+  <img src="./examples/images/export-drawio-ani.gif" alt="Draw.io export animation" width="100%">
+</p>
 
 ## 解决什么问题
 
