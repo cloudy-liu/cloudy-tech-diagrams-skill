@@ -2,50 +2,35 @@
 
 [English](README.en.md) | 简体中文
 
-Cloudy Tech Diagrams Skill 是一个给 AI agent 使用的通用技术图绘制 Skill。它把一套稳定的图面规则、HTML + SVG 模板、导出能力和验证清单交给 agent，让 Claude Code、Codex、Claude.ai、Cursor 以及类似 agent runtime 可以根据文字描述、代码库分析或文档资料生成可直接打开的技术图。
+# 解决什么问题
 
-使用 claude 风格温暖视觉风格，可快速融入到各种常规文档中。
+现在绘制架构图完全不需要自己动手了吧？这个 skill 可以帮你快速绘制出 类似 claude 风格暖色架构图（claude 官方博客配图的风格），暖色、清晰。
 
-## 效果
+绘图的 skill ，也非常多，但是，**你真正用的时候，会发现，改图特别麻烦**，这个 skill 绘制出来的图，可以**高保真的导出 drawio 格式的图**（因为我个人用的最多就是 drawio) ，这样，当你的 Agent 在细节上达不到你的要求时，你可以在自己导出 drawio 图，快随做局部微调！
 
-<table>
-  <tr>
-    <th width="50%">Microservices Architecture</th>
-    <th width="50%">Perfetto Project Architecture</th>
-  </tr>
-  <tr>
-    <td width="50%" valign="top"><img src="./examples/images/microservices.png" alt="Microservices architecture" width="100%"></td>
-    <td width="50%" valign="top"><img src="./examples/images/perfetto-docs-architecture.png" alt="Perfetto project architecture" width="100%"></td>
-  </tr>
-</table>
+## 示例
+
+### 微服务架构
+
+
+
+<p align="center">
+  <img src="./examples/images/microservices.png" alt="Microservices architecture" width="100%">
+</p>
+
+### Perfetto 项目架构
+
+<p align="center">
+  <img src="./examples/images/perfetto-docs-architecture.png" alt="Perfetto project architecture" width="100%">
+</p>
 
 不光可以在 HTML 中展示高质量架构图，生成结果还内置 Draw.io 导出能力：可以从同一张可视化架构图导出可编辑的 `.drawio` 文件，继续在 diagrams.net / draw.io 中手工调整。
 
-<p>
+### Draw.io 导出演示
+
+<p align="center">
   <img src="./examples/images/export-drawio-ani.gif" alt="Draw.io export animation" width="100%">
 </p>
-
-## 解决什么问题
-
-- 每次让 agent 画架构图都要重复说明风格、格式、导出方式和检查标准
-- 生成的图经常只像草稿：箭头落点不清楚、文字溢出、节点层级混乱、导出不稳定
-- Mermaid / Graphviz 很适合快速表达结构，但在视觉控制、文档嵌入和精细排版上不够灵活
-- 技术文档、方案评审和技术分享需要一份能打开、能导出到 Draw.io 继续手工调整，也能导出为 PNG/PDF 的图
-- 提供了 cloude 官网一致的视觉设计，有统一的视觉风格和质量底线
-
-## 适合画什么
-
-- 软件架构图
-- 系统设计图
-- 流程图和运行机制图
-- 云架构和部署视图
-- 安全边界和身份认证路径
-- 网络拓扑图
-- 数据流和事件流
-- 技术文档或技术分享里的解释图
-
-它不定位为通用海报、品牌视觉、落地页、dashboard、非技术插画或普通幻灯片工具。
-
 ## 快速开始
 
 快速开始分两步：先把 Skill 安装到 agent 能读取的位置，再在提示词里调用它。
@@ -87,36 +72,7 @@ Agent 会根据运行环境自动选择合适的安装位置（全局或项目�
 阅读这份文档，识别它的核心项目架构，然后使用 cloudy-tech-diagrams 生成一份可在浏览器打开的 HTML 架构图。图的重点放在项目架构，不要展开到过细的实现细节。
 ```
 
-生成结果通常是一份 `.html` 文件。直接用浏览器打开即可查看，并可使用 Export 菜单中的 Copy Image / Download PNG / Download PDF / Download Draw.io 动作导出。
-
-## 输出结果是什么
-
-每张图默认是一份自包含 HTML 文件：
-
-- 内嵌 CSS。
-- 使用内联 SVG 绘制图形。
-- 不依赖外部图片。
-- 只为 Copy Image、Download PNG、Download PDF 导出使用 CDN JavaScript。
-- 内置 Draw.io controlled report export：page header plus exportable SVG sheet。
-- 默认保留 Copy Image / Download PNG / Download PDF / Download Draw.io 导出菜单。
-- 可以直接在现代浏览器中打开。
-- 适合放进技术文档、方案评审材料、README、issue 或分享稿中继续使用。
-
-Draw.io Export Fidelity 是产品级契约，但坚持 HTML-first：浏览器中打开的 HTML 仍然是入口级体验，`.drawio` 文件是 controlled report export，也就是 page header plus exportable SVG sheet 的高保真可编辑延续。HTML 页头的可见 HTML `<h1>` 和 subtitle 是硬性视觉层级，并且默认作为 draw.io 原生文本导出到 SVG sheet 上方；默认不在 SVG sheet 里重复标题或副标题。只有当 SVG 内确实存在 sheet-owned title 或 caption 时，才显式标注导出。
-
-default Draw.io export 是 controlled report export：page header plus exportable SVG sheet，excluding toolbar, footer, and page-support cards。exportable diagram sheet 覆盖真正属于图本身的有意义视觉内容。只要 SVG 内存在有意义的可见图例或 scope note，就必须导出为可编辑的 draw.io 原生对象，除非显式 `data-drawio-ignore="true"` 并写明 audit reason。说明卡片只有在承载真实图上下文时才进入 SVG sheet；固定模板 summary badge 或泛用 ASYNC/SLO/EDIT 卡片不是默认内容。它追求 draw.io 原生对象的可编辑视觉等价，而不是任意 HTML/CSS 转换、精确像素克隆，也不是把整张图作为一张图片塞进 draw.io。
-
-
-## 设计和质量原则
-
-这个 Skill 的目标不是把图画得复杂，而是让图在技术文档里稳定可读。
-
-- 使用暖色纸张背景，而不是深色 dashboard 风格。
-- 使用克制的语义色区分 frontend、backend、data、cloud、security、event 等组件类型。
-- 使用开放式箭头，避免厚重的三角箭头。
-- 使用 HTML + SVG，方便 agent 直接控制布局、文字、线条和导出。
-- 生成前后都要检查图面表达：文字不溢出、箭头可见、连接线有明确起点和终点、图例不压在边界框里。
-- 通用 checklist 只约束图面表达质量，不约束具体领域模型是否正确。
+生成结果通常是一份 `.html` 文件。直接用浏览器打开即可查看，并可使用 Export 菜单中的 `Copy Image` / `Download PNG `/ `Download PDF` / `Download Draw.io `动作导出。
 
 ## 仓库结构
 
@@ -142,7 +98,7 @@ cloudy-tech-diagrams-skill/
 
 ## 致谢
 
-* Cloudy Tech Diagrams Skill 的灵感来源于 [Cocoon-AI/architecture-diagram-generator](https://github.com/Cocoon-AI/architecture-diagram-generator) 项目，对它做了扩展、客制化，感谢！
+* Cloudy -Tech-Diagrams-skill 的灵感来源于 [Cocoon-AI/architecture-diagram-generator](https://github.com/Cocoon-AI/architecture-diagram-generator) 项目，它是一个暗色模式的图风格，本 skill 对它做了优化、客制化。
 
 ## 许可证
 
