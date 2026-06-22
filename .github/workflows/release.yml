@@ -61,11 +61,20 @@ jobs:
           set -euo pipefail
 
           zip_path="dist/cloudy-tech-diagrams-skill-${VERSION}.zip"
+          notes_path=".github/release-notes/${VERSION}.md"
+
+          if [[ ! -f "$notes_path" ]]; then
+            echo "Release notes file is required: $notes_path"
+            echo "Write release notes in the maintained format before tagging."
+            exit 1
+          fi
 
           if gh release view "$VERSION" >/dev/null 2>&1; then
             gh release upload "$VERSION" "$zip_path" --clobber
+            gh release edit "$VERSION" \
+              --notes-file "$notes_path"
           else
             gh release create "$VERSION" "$zip_path" \
               --title "$VERSION" \
-              --generate-notes
+              --notes-file "$notes_path"
           fi

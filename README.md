@@ -32,6 +32,14 @@
   <img src="./examples/images/export-drawio-ani.gif" alt="Draw.io export animation" width="100%">
 </p>
 
+## Draw.io Export Fidelity
+
+Draw.io Export Fidelity 是 product-critical 的公开契约。这个 skill 仍然是 HTML-first：浏览器渲染的 HTML 是入口体验，Draw.io 导出是可继续编辑的高保真延伸，不是任意 HTML/CSS 转换、整页 DOM 转换、像素级克隆，也不是整图截图。
+
+exportable diagram sheet 指页面中的 annotated SVG sheet。HTML 页面标题区必须存在；default Draw.io export 是一份 `.drawio` controlled report export，范围是 page header plus exportable SVG sheet，不包含 toolbar、footer 和 page-support cards。SVG sheet 里不要重复页面标题或副标题，除非它是 sheet 自己的 title 或 caption。
+
+有业务含义的图例、scope note 和说明卡片应该进入 SVG sheet 并带上 Draw.io 语义标注；固定模板里的 summary badge、page chrome 和页面辅助信息不进入默认导出。目标是图表内容的可编辑视觉等价，而不是导出一张不可编辑的扁平图片。
+
 ## 快速开始
 
 快速开始分两步：先把 Skill 安装到 agent 能读取的位置，再在提示词里调用它。
@@ -73,7 +81,7 @@ Agent 会根据运行环境自动选择合适的安装位置（全局或项目�
 阅读这份文档，识别它的核心项目架构，然后使用 cloudy-tech-diagrams 生成一份可在浏览器打开的 HTML 架构图。图的重点放在项目架构，不要展开到过细的实现细节。
 ```
 
-生成结果通常是一份 `.html` 文件。直接用浏览器打开即可查看，并可使用 Export 菜单中的 `Copy Image` / `Download PNG `/ `Download PDF` / `Download Draw.io `动作导出。
+生成结果通常是一份 `.html` 文件。直接用浏览器打开即可查看，并可使用 Export 菜单动作导出：Copy Image / Download PNG / Download PDF / Download Draw.io。
 
 ## 仓库结构
 
@@ -104,3 +112,5 @@ cloudy-tech-diagrams-skill/
 ## 许可证
 
 MIT License。详见 [LICENSE](LICENSE)。
+
+欢迎提 Issue 或直接发 PR。感谢 [Linux.do](https://linux.do/) 社区推动。
