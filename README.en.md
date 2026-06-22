@@ -30,6 +30,16 @@ Not only can you view high-quality architecture diagrams in HTML, the generated 
   <img src="./examples/images/export-drawio-ani.gif" alt="Draw.io export animation" width="100%">
 </p>
 
+## Draw.io Export Fidelity
+
+Draw.io Export Fidelity is product-critical. The browser-rendered HTML remains the entry-level product experience, and Draw.io export is the high-fidelity editable continuation path for the visible report: page header plus the exportable diagram sheet. This is not an arbitrary HTML/CSS conversion, a full-page DOM conversion, an exact pixel clone, or a one-image export.
+
+The exportable diagram sheet is the annotated SVG sheet inside the page. The HTML page header is mandatory and stays part of the default Draw.io export; it contains the visible HTML `<h1>` and subtitle. The SVG sheet must not duplicate that page title or subtitle unless it is a sheet-owned title or caption. Visible diagram legends and scope notes belong inside the exportable diagram sheet when they carry diagram-specific meaning; fixed template summary badges and page chrome, toolbar, and unrelated footer metadata stay outside the sheet.
+
+By default, the Draw.io button downloads a `.drawio` controlled report export: page header plus the exportable SVG sheet, excluding toolbar, footer, and page-support cards. The goal is editable visual equivalence for the diagram content, not a flattened screenshot.
+
+For release validation, use the Draw.io Visual Regression Gate on pinned renderer versions after the structural export tests pass. The stable rendering path is Playwright Chromium for the HTML capture and diagrams.net Desktop CLI for Draw.io PNG export; the gate compares artifacts with `maxPixelMismatchRatio` thresholds and runs only when `DRAWIO_VISUAL_GATE=1` is set. Keep this as a release validation step, not unconditional CI, because renderer and font differences can otherwise make CI flaky.
+
 ## Quick Start
 
 Quick start has two steps: first install the Skill to a location where the agent can read it, then call it in your prompt.
@@ -71,7 +81,7 @@ To match a specific document or existing diagram, include the link, screenshot, 
 Read this documentation, identify the core project architecture, then use cloudy-tech-diagrams to generate an HTML diagram. Focus on architecture, not implementation details.
 ```
 
-The output is an `.html` file. Open it in any browser and use the Export menu to `Copy Image` / `Download PNG` / `Download PDF` / `Download Draw.io`.
+The output is an `.html` file. Open it in any browser and use the Export menu actions: Copy Image / Download PNG / Download PDF / Download Draw.io.
 
 ## Repository Structure
 
