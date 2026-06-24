@@ -22,23 +22,13 @@ Many diagramming tools exist, but **modifying the output is painful**. This skil
   <img src="./examples/images/perfetto-docs-architecture.png" alt="Perfetto project architecture" width="100%">
 </p>
 
-Not only can you view high-quality architecture diagrams in HTML, the generated output also includes built-in Draw.io export: you can export the same diagram as an editable `.drawio` file and continue fine-tuning in diagrams.net or Draw.io.
-
 ### Draw.io Export Demo
+
+When you want to manually tweak details or convert to a `.drawio` file for local editing, you can use the one-click export `download drawio` feature to directly export the drawio file and continue fine-tuning in diagrams.net / draw.io. Stay in control of every detail!
 
 <p align="center">
   <img src="./examples/images/export-drawio-ani.gif" alt="Draw.io export animation" width="100%">
 </p>
-
-## Draw.io Export Fidelity
-
-Draw.io Export Fidelity is product-critical. The browser-rendered HTML remains the entry-level product experience, and Draw.io export is the high-fidelity editable continuation path for the visible report: page header plus the exportable diagram sheet. This is not an arbitrary HTML/CSS conversion, a full-page DOM conversion, an exact pixel clone, or a one-image export.
-
-The exportable diagram sheet is the annotated SVG sheet inside the page. The HTML page header is mandatory and stays part of the default Draw.io export; it contains the visible HTML `<h1>` and subtitle. The SVG sheet must not duplicate that page title or subtitle unless it is a sheet-owned title or caption. Visible diagram legends and scope notes belong inside the exportable diagram sheet when they carry diagram-specific meaning; fixed template summary badges and page chrome, toolbar, and unrelated footer metadata stay outside the sheet.
-
-By default, the Draw.io button downloads a `.drawio` controlled report export: page header plus the exportable SVG sheet, excluding toolbar, footer, and page-support cards. The goal is editable visual equivalence for the diagram content, not a flattened screenshot.
-
-For release validation, use the Draw.io Visual Regression Gate on pinned renderer versions after the structural export tests pass. The stable rendering path is Playwright Chromium for the HTML capture and diagrams.net Desktop CLI for Draw.io PNG export; the gate compares artifacts with `maxPixelMismatchRatio` thresholds and runs only when `DRAWIO_VISUAL_GATE=1` is set. Keep this as a release validation step, not unconditional CI, because renderer and font differences can otherwise make CI flaky.
 
 ## Quick Start
 
