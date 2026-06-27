@@ -38,6 +38,8 @@ The default Draw.io export is a controlled report export: page header plus expor
 
 The exportable diagram sheet contains the diagram content users expect to keep editing: nodes, boundaries, connectors, labels, diagram legend, scope note, and meaningful summary content. Avoid fixed template summary badges. Decorative page chrome, toolbar, and unrelated footer metadata stay outside the Draw.io file.
 
+Draw.io Visual Regression Gate is the release validation check for export fidelity. It renders HTML with Playwright Chromium, renders the exported `.drawio` file with diagrams.net Desktop CLI, and compares the screenshots with configured thresholds such as maxPixelMismatchRatio. Normal CI keeps this as config validation to avoid flaky CI; full screenshot comparison is enabled explicitly with DRAWIO_VISUAL_GATE=1 for release validation.
+
 ## Quick Start
 
 Quick start has two steps: first install the Skill to a location where the agent can read it, then call it in your prompt.
