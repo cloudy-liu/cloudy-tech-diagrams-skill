@@ -25,7 +25,39 @@ Choose the diagram shape based on the user's description:
 - **Security view**: identity, policy, trust boundaries, secrets, network controls, and audit paths.
 - **Network topology**: zones, routers, firewalls, subnets, links, protocols, and ingress/egress.
 - **Runtime mechanics**: request lifecycle, event propagation, model/tool execution, background jobs, and state transitions.
+- **Runtime Mechanism Mode**: how a mechanism happens at runtime through triggers, participants, boundaries, carriers, transformations, state, and observable outputs.
 - **Technical presentation visual**: one focused explanatory diagram for a technical talk, doc, proposal, or incident review.
+
+Use the diagram modes for different questions:
+
+- **Architecture View** answers what parts exist and how they connect.
+- **Runtime Mechanism Mode** answers how a mechanism happens at runtime.
+- **Sequence Diagram** answers which time-ordered messages participants exchange.
+- **Data Flow** answers where data moves and how it transforms.
+
+## Runtime Mechanism Mode
+
+Use Runtime Mechanism Mode when the diagram explains how a technical mechanism behaves at runtime through causal relationships. It is for mechanisms such as request handling, background execution, model/tool orchestration, profiling, tracing, scheduling, policy evaluation, retry behavior, ingestion, synchronization, or any other runtime process where the reader needs to understand what causes what.
+
+Do not use Runtime Mechanism Mode merely to list system components; use Architecture View for that. Do not use it when strict message order is the main point; use Sequence Diagram for that. Do not use it when the main question is only where data moves; use Data Flow for that.
+
+Runtime Mechanism Mode is not a visual style and not a theme. Render it with the default warm editorial visual system unless the user explicitly asks for a different visual treatment. It is inspired by engineering design-doc diagrams, but it must not be bound to a fixed primitive such as shared memory, threads, buffers, caches, queues, sockets, files, traces, services, or agents. Those are examples only.
+
+Before drawing a runtime mechanism, extract these causal roles:
+
+| Role | Question | Typical Rendering |
+| --- | --- | --- |
+| Trigger | What starts or resumes the mechanism? | External/generic component or compact callout |
+| Participants | Who takes part in the mechanism? | Component boxes using semantic fills |
+| Boundaries | Which ownership, process, runtime, trust, or service scopes matter? | Soft dashed boundary panels |
+| Carriers | What carries the effect through the mechanism? | Message bus pills, labeled edges, artifacts, or data components |
+| Transformations | What changes, enriches, validates, routes, or coordinates the carrier? | Backend/compute or security components |
+| State / Stores | What state is read, written, cached, accumulated, or remembered? | Data/storage components or compact table-like groups |
+| Observable Outputs | What visible result, side effect, trace, metric, decision, or artifact is produced? | Output component, artifact box, or scope note |
+
+Runtime mechanism diagrams should show a causal path, not just a graph. Prefer real implementation names when the source material provides them, and use short edge labels for non-obvious cause, control, data, or state transitions. When a mechanism crosses a meaningful boundary, make the boundary crossing visible with a connector endpoint, label, or crossing marker.
+
+Use Draw.io semantic annotations for every meaningful participant, boundary, carrier, transformation, state/store, output, and causal connector that should remain editable. Use `data-drawio-role` values such as `trigger`, `participant`, `runtime-boundary`, `carrier`, `transformation`, `state-store`, `observable-output`, or `causal-flow` as role metadata; keep `data-drawio-type` limited to the supported stable export types.
 
 ## Design System
 
@@ -320,6 +352,11 @@ Apply these only when the corresponding visual pattern appears:
 - [ ] Region, cluster, cloud, or trust-boundary boxes have enough inner padding that labels and nodes do not touch the boundary stroke.
 - [ ] Security or trust-boundary diagrams make boundary crossings visually explicit with a connector endpoint, label, or crossing marker.
 - [ ] Process, runtime, and data-flow diagrams have a consistent step order and direction; loops, retries, and branches are labeled where they break the main direction.
+- [ ] Runtime Mechanism Mode diagrams expose a causal path from trigger through participants, carriers, transformations, state/stores, and observable outputs where those roles are relevant.
+- [ ] Runtime Mechanism Mode boundaries are labeled and only shown when they clarify ownership, process, runtime, trust, service, or responsibility scopes.
+- [ ] Runtime Mechanism Mode connectors distinguish cause, control, data, state update, or observation with short labels when the relationship is not obvious from placement.
+- [ ] Runtime Mechanism Mode state/stores and observable outputs are visibly distinct from active transformation steps.
+- [ ] Runtime Mechanism Mode elements that should be edited later use Draw.io semantic annotations with stable roles rather than relying on visual-only SVG structure.
 - [ ] Architecture and deployment diagrams keep containment visually unambiguous: a node is either clearly inside a boundary or clearly outside it, not sitting on the edge.
 - [ ] Dense diagrams use labels on long or non-obvious connectors so the viewer can tell what is moving, calling, or controlling.
 
