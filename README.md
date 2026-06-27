@@ -30,6 +30,14 @@
   <img src="./examples/images/export-drawio-ani.gif" alt="Draw.io export animation" width="100%">
 </p>
 
+## Draw.io Export Fidelity
+
+Draw.io Export Fidelity 是这个 skill 的核心产品契约。它保持 HTML-first：浏览器里的 HTML 图仍然是第一体验，`.drawio` 文件是用于本地细修的高保真可编辑延续路径。目标是 editable visual equivalence，也就是尽量用 draw.io 原生可编辑形状保持视觉等价，而不是把整页 HTML/CSS 任意转换、整页 DOM 转换、单张图片导出或栅格化。
+
+default Draw.io export 是 controlled report export：page header plus exportable SVG sheet，并且排除 toolbar、footer、page-support cards。HTML page header 是必需边界，visible HTML `<h1>` and subtitle 会和 exportable diagram sheet 一起进入导出结果。只有当 SVG sheet 脱离页面后仍需要独立上下文时，才添加 sheet-owned title or caption，并且不能重复页面标题或副标题。
+
+exportable diagram sheet 包含用户后续真正要编辑的图内容：节点、边界、连接线、标签、diagram legend、scope note，以及有实际含义的 summary 内容。不要放 fixed template summary badge。page chrome、toolbar 和无关 footer 元数据不进入 Draw.io 文件。
+
 ## 快速开始
 
 快速开始分两步：先把 Skill 安装到 agent 能读取的位置，再在提示词里调用它。
