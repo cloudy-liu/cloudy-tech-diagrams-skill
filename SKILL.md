@@ -59,6 +59,8 @@ Runtime mechanism diagrams should show a causal path, not just a graph. Prefer r
 
 Use Draw.io semantic annotations for every meaningful participant, boundary, carrier, transformation, state/store, output, and causal connector that should remain editable. Use `data-drawio-role` values such as `trigger`, `participant`, `runtime-boundary`, `carrier`, `transformation`, `state-store`, `observable-output`, or `causal-flow` as role metadata; keep `data-drawio-type` limited to the supported stable export types.
 
+When a runtime mechanism is complex or unfamiliar, use `references/runtime-mechanism-mode.md` for detailed layout patterns, role mappings, annotation examples, and anti-patterns.
+
 ## Design System
 
 ### Core Principles
