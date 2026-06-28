@@ -28,3 +28,46 @@ test('runtime mechanism reference defines reusable expression grammar', () => {
   assert.match(reference, /data-drawio-role="runtime-boundary"/);
   assert.match(reference, /not tied to shared memory, threads, buffers, or caches/i);
 });
+
+test('runtime mechanism guidance preserves editable table-like state stores', () => {
+  const combined = `${skill}\n${reference}`;
+
+  assert.match(combined, /table-like state stores/i);
+  assert.match(combined, /standalone `data-drawio-type="label"`/i);
+  assert.match(combined, /standalone `data-drawio-type="edge"`/i);
+  assert.match(combined, /cell.*divider.*editable/i);
+});
+
+test('runtime mechanism guidance avoids connector labels in crowded paths', () => {
+  const combined = `${skill}\n${reference}`;
+
+  assert.match(combined, /crowded connector paths/i);
+  assert.match(combined, /move the label to a callout/i);
+  assert.match(combined, /omit the visible label/i);
+});
+
+test('runtime mechanism guidance preserves stacked worker or participant layers', () => {
+  const combined = `${skill}\n${reference}`;
+
+  assert.match(combined, /stacked worker/i);
+  assert.match(combined, /stacked participant/i);
+  assert.match(combined, /standalone `data-drawio-type="shape"`/i);
+  assert.match(combined, /front layer.*semantic component/i);
+});
+
+test('runtime mechanism guidance preserves square repeated markers', () => {
+  const combined = `${skill}\n${reference}`;
+
+  assert.match(combined, /repeated marker/i);
+  assert.match(combined, /rect/i);
+  assert.match(combined, /rx=0/i);
+  assert.match(combined, /square/i);
+});
+
+test('runtime mechanism guidance keeps nested sub-regions as single primitives', () => {
+  const combined = `${skill}\n${reference}`;
+
+  assert.match(combined, /nested sub-regions/i);
+  assert.match(combined, /single primitive/i);
+  assert.match(combined, /overlay caps/i);
+});

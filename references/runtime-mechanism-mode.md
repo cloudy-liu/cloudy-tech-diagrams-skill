@@ -70,6 +70,10 @@ Producer -> Carrier -> Transformation -> Observable Output
 
 The carrier may be a request, event, file, stream, queue, buffer, memory region, API call, or any other transport. Do not require a specific primitive.
 
+## Connector Labels
+
+Use connector labels only when the relationship is not clear from layout, role, or endpoint names. In crowded connector paths, do not place visible text where it competes with arrowheads, node titles, boundary labels, or dense state. Shorten the label, move the label to a callout, or omit the visible label and let the connector geometry carry the relationship.
+
 ## Draw.io Annotations
 
 Use stable `data-drawio-type` values and put runtime meaning in `data-drawio-role`.
@@ -105,6 +109,14 @@ Recommended roles:
 | Observable output | `data-drawio-role="observable-output"` |
 | Causal connector | `data-drawio-role="causal-flow"` |
 
+For table-like state stores, keep the outer container as a `data-drawio-type="component"` with `data-drawio-role="state-store"`, then annotate every meaningful cell as a standalone `data-drawio-type="label"` and every meaningful divider as a standalone `data-drawio-type="edge"`. This keeps each cell and divider editable after Draw.io export and avoids collapsing dense table text into one inferred component label.
+
+For stacked worker or stacked participant visuals, annotate the background layers as standalone `data-drawio-type="shape"` primitives and keep the front layer as the semantic component. This preserves the visual cue that multiple runtime units exist without turning every repeated layer into a separate named participant.
+
+For small repeated markers that communicate continuation, sampled slots, or repeated units, preserve the intended geometry. Use `rect` with `rx=0` for square markers; use circles only when round markers are intentional.
+
+For nested sub-regions inside a component, keep one visible editable region as a single primitive. Do not add overlay caps, duplicate rectangles, or visible cover layers only to fake one-sided rounding; those become real objects in both browser SVG and Draw.io export. Split a nested sub-region into multiple primitives only when each part has separate meaning.
+
 ## Cloudy Visual Mapping
 
 - Triggers use external/generic fills or a compact callout.
@@ -123,6 +135,11 @@ Recommended roles:
 - State / Stores are visually distinct from active transformation steps.
 - Observable Outputs are visible and labeled.
 - Connector labels explain non-obvious cause, control, data, state update, or observation semantics.
+- Crowded connector paths do not use inline labels that collide with arrows, nodes, boundaries, or dense state.
+- Table-like state stores preserve meaningful cells and dividers as standalone editable Draw.io labels and edges.
+- Stacked worker or stacked participant visuals preserve background layers as standalone editable Draw.io shapes while the front layer remains the semantic component.
+- Repeated markers preserve intended geometry; square markers use `rect` with `rx=0`.
+- Nested sub-regions use a single primitive unless separate sub-parts carry separate meaning; do not use overlay caps to fake partial rounding.
 - Elements that users will edit later carry Draw.io semantic annotations.
 
 ## Anti-Patterns

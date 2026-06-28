@@ -560,7 +560,7 @@
         .replace(/'/g, '&apos;');
     }
 
-    const CLOUDY_DRAWIO_EXPORTER_VERSION = '2026.06.16.1';
+    const CLOUDY_DRAWIO_EXPORTER_VERSION = '2026.06.28.1';
 
     function directChildren(el, tagName) {
       return Array.from(el.children).filter((child) => child.tagName.toLowerCase() === tagName);
@@ -981,13 +981,14 @@
       const stroke = rect.getAttribute('stroke') || 'none';
       const strokeWidth = rect.getAttribute('stroke-width') || '1';
       const rx = attrNumber(rect, 'rx', 0);
+      const rounded = rx > 0;
       const style = cellStyle([
-        'rounded=1',
+        rounded ? 'rounded=1' : 'rounded=0',
         'whiteSpace=wrap',
         'html=1',
         'shadow=0',
-        'absoluteArcSize=1',
-        `arcSize=${Math.max(6, Math.round(rx))}`,
+        rounded ? 'absoluteArcSize=1' : '',
+        rounded ? `arcSize=${Math.max(6, Math.round(rx * 2))}` : '',
         `fillColor=${fill}`,
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
@@ -1149,7 +1150,7 @@
         'html=1',
         'shadow=0',
         tag === 'rect' ? 'absoluteArcSize=1' : '',
-        tag === 'rect' ? `arcSize=${Math.max(0, Math.round(rx))}` : '',
+        tag === 'rect' ? `arcSize=${Math.max(0, Math.round(rx * 2))}` : '',
         `fillColor=${fill}`,
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,
@@ -1177,7 +1178,7 @@
         'shadow=0',
         'fontFamily=Montserrat',
         'absoluteArcSize=1',
-        `arcSize=${Math.max(6, Math.round(rx))}`,
+        `arcSize=${Math.max(6, Math.round(rx * 2))}`,
         `fillColor=${fill}`,
         `strokeColor=${stroke}`,
         `strokeWidth=${strokeWidth}`,

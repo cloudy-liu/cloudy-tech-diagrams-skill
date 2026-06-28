@@ -57,7 +57,17 @@ Before drawing a runtime mechanism, extract these causal roles:
 
 Runtime mechanism diagrams should show a causal path, not just a graph. Prefer real implementation names when the source material provides them, and use short edge labels for non-obvious cause, control, data, or state transitions. When a mechanism crosses a meaningful boundary, make the boundary crossing visible with a connector endpoint, label, or crossing marker.
 
+In crowded connector paths, do not force inline edge labels through nodes, boundaries, arrowheads, or dense state. Shorten the label, move the label to a callout, or omit the visible label when placement would reduce readability.
+
 Use Draw.io semantic annotations for every meaningful participant, boundary, carrier, transformation, state/store, output, and causal connector that should remain editable. Use `data-drawio-role` values such as `trigger`, `participant`, `runtime-boundary`, `carrier`, `transformation`, `state-store`, `observable-output`, or `causal-flow` as role metadata; keep `data-drawio-type` limited to the supported stable export types.
+
+For table-like state stores, keep the outer box as the state/store component and annotate meaningful cells as standalone `data-drawio-type="label"` primitives and meaningful rules/dividers as standalone `data-drawio-type="edge"` primitives. This keeps each cell and divider editable in Draw.io instead of relying on component-internal text inference.
+
+For stacked worker or stacked participant visuals that communicate multiplicity, annotate the background layers as standalone `data-drawio-type="shape"` primitives and keep the front layer as the semantic component. Do not hide meaningful multiplicity in unannotated offset rectangles inside a component.
+
+For small repeated markers that communicate continuation, sampled slots, or repeated units, preserve the intended geometry. Use `rect` with `rx=0` for square markers; use circles only when round markers are intentional.
+
+For nested sub-regions inside a component, keep one visible editable region as a single primitive. Do not add overlay caps, duplicate rectangles, or visible cover layers only to fake one-sided rounding; those become real objects in both browser SVG and Draw.io export. Split a nested sub-region into multiple primitives only when each part has separate meaning.
 
 When a runtime mechanism is complex or unfamiliar, use `references/runtime-mechanism-mode.md` for detailed layout patterns, role mappings, annotation examples, and anti-patterns.
 
@@ -357,7 +367,12 @@ Apply these only when the corresponding visual pattern appears:
 - [ ] Runtime Mechanism Mode diagrams expose a causal path from trigger through participants, carriers, transformations, state/stores, and observable outputs where those roles are relevant.
 - [ ] Runtime Mechanism Mode boundaries are labeled and only shown when they clarify ownership, process, runtime, trust, service, or responsibility scopes.
 - [ ] Runtime Mechanism Mode connectors distinguish cause, control, data, state update, or observation with short labels when the relationship is not obvious from placement.
+- [ ] Runtime Mechanism Mode avoids inline labels on crowded connector paths; move the label to a callout or omit the visible label when it would overlap nodes, arrows, or dense state.
 - [ ] Runtime Mechanism Mode state/stores and observable outputs are visibly distinct from active transformation steps.
+- [ ] Runtime Mechanism Mode table-like state stores export meaningful cells and dividers as standalone editable Draw.io labels and edges.
+- [ ] Runtime Mechanism Mode stacked worker or stacked participant visuals export background layers as standalone editable Draw.io shapes while the front layer remains the semantic component.
+- [ ] Runtime Mechanism Mode repeated markers preserve intended geometry; square markers use `rect` with `rx=0`.
+- [ ] Runtime Mechanism Mode nested sub-regions use a single primitive unless separate sub-parts carry separate meaning; do not use overlay caps to fake partial rounding.
 - [ ] Runtime Mechanism Mode elements that should be edited later use Draw.io semantic annotations with stable roles rather than relying on visual-only SVG structure.
 - [ ] Architecture and deployment diagrams keep containment visually unambiguous: a node is either clearly inside a boundary or clearly outside it, not sitting on the edge.
 - [ ] Dense diagrams use labels on long or non-obvious connectors so the viewer can tell what is moving, calling, or controlling.

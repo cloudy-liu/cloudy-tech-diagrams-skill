@@ -38,6 +38,8 @@ The default Draw.io export is a controlled report export: page header plus expor
 
 The exportable diagram sheet contains the diagram content users expect to keep editing: nodes, boundaries, connectors, labels, diagram legend, scope note, and meaningful summary content. Avoid fixed template summary badges. Decorative page chrome, toolbar, and unrelated footer metadata stay outside the Draw.io file.
 
+Font fidelity is part of the same contract. Browser previews load Montserrat from Google Fonts, but Draw.io files do not embed fonts; they keep editable text cells with `fontFamily=Montserrat`. For matching local Draw.io rendering, install Montserrat on the machine that opens the `.drawio` file. Otherwise diagrams.net / draw.io will use font fallback, and the right-side text panel may still show Montserrat even though the actual rendered font is different.
+
 Draw.io Visual Regression Gate is the release validation check for export fidelity. It renders HTML with Playwright Chromium, renders the exported `.drawio` file with diagrams.net Desktop CLI, and compares the screenshots with configured thresholds such as maxPixelMismatchRatio. Normal CI keeps this as config validation to avoid flaky CI; full screenshot comparison is enabled explicitly with DRAWIO_VISUAL_GATE=1 for release validation.
 
 ## Quick Start

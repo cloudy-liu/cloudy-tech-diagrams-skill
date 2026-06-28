@@ -38,6 +38,8 @@ default Draw.io export 是 controlled report export：page header plus exportabl
 
 exportable diagram sheet 包含用户后续真正要编辑的图内容：节点、边界、连接线、标签、diagram legend、scope note，以及有实际含义的 summary 内容。不要放 fixed template summary badge。page chrome、toolbar 和无关 footer 元数据不进入 Draw.io 文件。
 
+字体高保真也是这个契约的一部分。浏览器预览会通过 Google Fonts 加载 Montserrat，但 Draw.io 文件不会嵌入字体；它只会在可编辑文本 cell 上保留 `fontFamily=Montserrat`。如果希望本地 Draw.io 渲染和浏览器预览一致，需要在打开 `.drawio` 文件的机器上安装 Montserrat。否则 diagrams.net / draw.io 会使用字体 fallback，右侧文本面板可能仍显示 Montserrat，但实际渲染字体已经不同。
+
 ## 快速开始
 
 快速开始分两步：先把 Skill 安装到 agent 能读取的位置，再在提示词里调用它。
