@@ -22,6 +22,14 @@
   <img src="./examples/images/perfetto-docs-architecture.png" alt="Perfetto project architecture" width="100%">
 </p>
 
+### 运行时机制图
+
+除了结构视图，skill 还能解释一个机制在运行时如何发生：触发、参与者、状态与可观察输出（示例为 Perfetto heapprofd 的采样与栈回溯机制，见 [examples/runtime-mechanism.html](./examples/runtime-mechanism.html)）。
+
+<p align="center">
+  <img src="./examples/images/runtime-mechanism.png" alt="Perfetto heapprofd runtime mechanism" width="100%">
+</p>
+
 ### Draw.io 导出演示
 
 当你想手动修改一些细节或者想转为 `drawio` 文件本地修改时，可以通过一键导出 `download drawio`功能，直接导出drawio 的文件，继续在 diagrams.net / draw.io 中手工调整。随时掌控细节！

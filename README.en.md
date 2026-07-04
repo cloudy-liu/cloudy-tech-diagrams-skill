@@ -22,6 +22,14 @@ Many diagramming tools exist, but **modifying the output is painful**. This skil
   <img src="./examples/images/perfetto-docs-architecture.png" alt="Perfetto project architecture" width="100%">
 </p>
 
+### Runtime Mechanism Diagram
+
+Beyond structural views, the skill can also explain how a mechanism behaves at runtime: trigger, participants, state, and observable outputs (shown here: the Perfetto heapprofd sampling and stack-unwinding mechanism, see [examples/runtime-mechanism.html](./examples/runtime-mechanism.html)).
+
+<p align="center">
+  <img src="./examples/images/runtime-mechanism.png" alt="Perfetto heapprofd runtime mechanism" width="100%">
+</p>
+
 ### Draw.io Export Demo
 
 When you want to manually tweak details or convert to a `.drawio` file for local editing, you can use the one-click export `download drawio` feature to directly export the drawio file and continue fine-tuning in diagrams.net / draw.io. Stay in control of every detail!

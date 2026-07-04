@@ -61,6 +61,17 @@ function gateConfigFixture() {
           htmlPng: 'dist/drawio-visual/perfetto-docs-architecture.html.png',
           drawioPng: 'dist/drawio-visual/perfetto-docs-architecture.drawio.png'
         }
+      },
+      {
+        id: 'runtime-mechanism',
+        html: 'examples/runtime-mechanism.html',
+        selector: '#report-container',
+        excludeSelectors: ['.toolbar', '.cards', '.footer'],
+        artifacts: {
+          drawioFile: 'dist/drawio-visual/runtime-mechanism.drawio',
+          htmlPng: 'dist/drawio-visual/runtime-mechanism.html.png',
+          drawioPng: 'dist/drawio-visual/runtime-mechanism.drawio.png'
+        }
       }
     ],
     knownLimitations: [
@@ -156,7 +167,7 @@ test('visual regression gate config selects a stable release rendering path', ()
   assert.ok(config.knownLimitations.some((item) => /font rendering/i.test(item)));
 
   const sampleIds = config.samples.map((sample) => sample.id);
-  assert.deepEqual(sampleIds, ['drawio-fidelity-torture', 'perfetto-docs-architecture']);
+  assert.deepEqual(sampleIds, ['drawio-fidelity-torture', 'perfetto-docs-architecture', 'runtime-mechanism']);
   for (const sample of config.samples) {
     assert.ok(existsSync(join(repoRoot, sample.html)), `${sample.html} should exist`);
     assert.equal(sample.selector, '#report-container');
@@ -186,7 +197,7 @@ test('visual regression tool validates configured acceptance samples without req
     const result = validateGateConfig(config, { repoRoot, requireArtifacts: false });
 
     assert.equal(result.ok, true);
-    assert.deepEqual(result.sampleIds, ['drawio-fidelity-torture', 'perfetto-docs-architecture']);
+    assert.deepEqual(result.sampleIds, ['drawio-fidelity-torture', 'perfetto-docs-architecture', 'runtime-mechanism']);
     assert.deepEqual(result.missingArtifacts, []);
     assert.equal(result.releaseGateEnv, 'DRAWIO_VISUAL_GATE=1');
   } finally {

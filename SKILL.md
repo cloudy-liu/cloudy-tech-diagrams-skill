@@ -21,6 +21,8 @@ Choose the diagram shape based on the user's description:
 
 - **Architecture view**: clients, edge, APIs, services, data stores, queues, and external integrations.
 - **Process flow**: ordered steps, decision points, handoffs, automation stages, approvals, and runbooks.
+- **Sequence diagram**: time-ordered messages between participants, lifelines, and request/response exchanges.
+- **Data flow**: where data moves and how it transforms across sources, processing steps, and sinks.
 - **Cloud or deployment view**: regions, networks, gateways, compute, storage, managed services, and boundaries.
 - **Security view**: identity, policy, trust boundaries, secrets, network controls, and audit paths.
 - **Network topology**: zones, routers, firewalls, subnets, links, protocols, and ingress/egress.
