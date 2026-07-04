@@ -7,6 +7,7 @@ const htmlFiles = [
   'examples/web-app.html',
   'examples/microservices.html',
   'examples/perfetto-docs-architecture.html',
+  'examples/runtime-mechanism.html',
   'examples/drawio-fidelity-torture.html'
 ];
 
@@ -106,6 +107,13 @@ function fakeNestedPrimitiveSvg() {
       stroke: '#B8B3AA',
       'stroke-width': '1'
     }),
+    new FakeElement('rect', {
+      x: '178',
+      y: '84',
+      width: '5',
+      height: '5',
+      fill: '#D87858'
+    }),
     new FakeElement('text', {
       x: '120',
       y: '95',
@@ -117,6 +125,12 @@ function fakeNestedPrimitiveSvg() {
   ]);
 }
 
+function drawioCell(drawio, id) {
+  const match = drawio.match(new RegExp(`<mxCell id="${id}"[\\s\\S]*?</mxCell>`));
+  assert.ok(match, `missing Draw.io cell ${id}`);
+  return match[0];
+}
+
 for (const file of htmlFiles) {
   const html = readFileSync(new URL(`../${file}`, import.meta.url), 'utf8');
 
@@ -126,6 +140,7 @@ for (const file of htmlFiles) {
 
     assert.match(drawio, /id="data-sources"/);
     assert.match(drawio, /id="data-sources-inner-rect-0"/);
+    assert.match(drawio, /id="data-sources-inner-rect-1"/);
     assert.match(drawio, /id="data-sources-inner-text-0"/);
     assert.match(drawio, /id="data-sources-inner-text-1"/);
     assert.match(drawio, /value="Linux ftrace"/);
@@ -133,6 +148,8 @@ for (const file of htmlFiles) {
     assert.match(drawio, /fontColor=#5F5A54/);
     assert.match(drawio, /fontSize=11/);
     assert.match(drawio, /fontStyle=1/);
+    assert.match(drawioCell(drawio, 'data-sources-inner-rect-1'), /rounded=0/);
+    assert.doesNotMatch(drawioCell(drawio, 'data-sources-inner-rect-1'), /arcSize=/);
     assert.doesNotMatch(drawio, /Data Sources[\s\S]*Linux ftrace[\s\S]*<\/div>/);
   });
 }

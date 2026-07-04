@@ -7,6 +7,7 @@ const htmlFiles = [
   'examples/web-app.html',
   'examples/microservices.html',
   'examples/perfetto-docs-architecture.html',
+  'examples/runtime-mechanism.html',
   'examples/drawio-fidelity-torture.html'
 ];
 

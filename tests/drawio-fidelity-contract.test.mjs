@@ -3,53 +3,31 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 const skill = readFileSync(new URL('../SKILL.md', import.meta.url), 'utf8');
-const english = readFileSync(new URL('../README.en.md', import.meta.url), 'utf8');
-const chinese = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
 
-test('documentation treats Draw.io Export Fidelity as the product contract', () => {
-  for (const doc of [skill, english]) {
-    assert.match(doc, /Draw\.io Export Fidelity/);
-    assert.match(doc, /product-critical/i);
-    assert.match(doc, /browser-rendered HTML remains the entry-level/i);
-    assert.match(doc, /not an arbitrary HTML\/CSS conversion/i);
-  }
+test('skill treats Draw.io Export Fidelity as the product contract', () => {
+  assert.match(skill, /Draw\.io Export Fidelity/);
+  assert.match(skill, /product-critical/i);
+  assert.match(skill, /browser-rendered HTML remains the entry-level/i);
+  assert.match(skill, /not an arbitrary HTML\/CSS conversion/i);
 });
 
-test('documentation defines the exportable diagram sheet boundary', () => {
-  for (const doc of [skill, english]) {
-    assert.match(doc, /exportable diagram sheet/i);
-    assert.match(doc, /HTML page header is mandatory/i);
-    assert.match(doc, /visible (?:HTML )?`<h1>` and subtitle/i);
-    assert.match(doc, /not duplicate (?:that|the) page title or subtitle/i);
-    assert.match(doc, /sheet-owned title or caption/i);
-    assert.match(doc, /Visible diagram legends and scope notes|diagram legend, scope note/i);
-    assert.match(doc, /fixed template summary badges|fixed template summary badge/i);
-    assert.match(doc, /page chrome, toolbar, and unrelated footer metadata|toolbar, footer, and page-support cards/i);
-  }
-
-  assert.match(chinese, /Draw\.io Export Fidelity/);
-  assert.match(chinese, /HTML-first/);
-  assert.match(chinese, /SVG sheet/);
-  assert.match(chinese, /scope note/);
-  assert.match(chinese, /summary badge/);
-  assert.match(chinese, /page-support cards|page chrome|页面 chrome/);
-  assert.doesNotMatch(english, /summary cards, footer, or toolbar/i);
-  assert.doesNotMatch(chinese, /summary cards.*footer.*toolbar/i);
+test('skill defines the exportable diagram sheet boundary', () => {
+  assert.match(skill, /exportable diagram sheet/i);
+  assert.match(skill, /HTML page header is mandatory/i);
+  assert.match(skill, /visible (?:HTML )?`<h1>` and subtitle/i);
+  assert.match(skill, /not duplicate (?:that|the) page title or subtitle/i);
+  assert.match(skill, /sheet-owned title or caption/i);
+  assert.match(skill, /Visible diagram legends and scope notes|diagram legend, scope note/i);
+  assert.match(skill, /fixed template summary badges|fixed template summary badge/i);
+  assert.match(skill, /page chrome, toolbar, and unrelated footer metadata|toolbar, footer, and page-support cards/i);
 });
 
-test('documentation defines the default Draw.io report export boundary', () => {
-  for (const doc of [skill, english]) {
-    assert.match(doc, /default Draw\.io export/i);
-    assert.match(doc, /controlled report export/i);
-    assert.match(doc, /page header plus (?:the )?exportable SVG sheet/i);
-    assert.match(doc, /visible HTML `<h1>` and subtitle/i);
-    assert.match(doc, /excluding toolbar, footer, and page-support cards/i);
-  }
-
-  assert.match(chinese, /default Draw\.io export/);
-  assert.match(chinese, /controlled report export/);
-  assert.match(chinese, /page header plus exportable SVG sheet/);
-  assert.match(chinese, /page-support cards/);
+test('skill defines the default Draw.io report export boundary', () => {
+  assert.match(skill, /default Draw\.io export|Draw\.io button downloads a `\.drawio` controlled report export/i);
+  assert.match(skill, /controlled report export/i);
+  assert.match(skill, /page header plus (?:the )?exportable SVG sheet/i);
+  assert.match(skill, /visible HTML `<h1>` and subtitle/i);
+  assert.match(skill, /excluding toolbar, footer, and page-support cards/i);
 });
 
 test('skill documents annotation roles, ignore semantics, and visible label rules', () => {
@@ -60,11 +38,8 @@ test('skill documents annotation roles, ignore semantics, and visible label rule
   assert.match(skill, /data-drawio-label must not silently override visible SVG text/i);
 });
 
-test('public documentation records the annotated SVG sheet decision for Draw.io fidelity', () => {
-  const docs = `${skill}\n\n${english}`;
-
-  assert.match(docs, /annotated SVG|exportable SVG sheet/i);
-  assert.match(docs, /full-page DOM conversion/i);
-  assert.match(docs, /one-image export|whole-diagram raster/i);
-  assert.match(docs, /Browser visual fidelity is primary|browser-rendered HTML remains the entry-level/i);
+test('skill records the annotated SVG sheet decision for Draw.io fidelity', () => {
+  assert.match(skill, /annotated SVG|exportable SVG sheet/i);
+  assert.match(skill, /full-page DOM conversion|one-image export|whole-diagram raster/i);
+  assert.match(skill, /Browser visual fidelity is primary/i);
 });

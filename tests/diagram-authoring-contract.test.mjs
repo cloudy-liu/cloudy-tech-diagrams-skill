@@ -25,3 +25,19 @@ test('skill defines scope note spacing and light border contract', () => {
   assert.match(skill, /#C9C3B8/);
   assert.match(skill, /stroke-width.*1px|1px.*stroke-width/);
 });
+
+test('skill defines Runtime Mechanism Mode as runtime causality, not a theme', () => {
+  assert.match(skill, /Runtime Mechanism Mode/);
+  assert.match(skill, /how a mechanism happens at runtime/i);
+  assert.match(skill, /not a visual style|not a theme/i);
+  assert.match(skill, /Trigger/);
+  assert.match(skill, /Participants/);
+  assert.match(skill, /Boundaries/);
+  assert.match(skill, /Carriers/);
+  assert.match(skill, /Transformations/);
+  assert.match(skill, /State \/ Stores/);
+  assert.match(skill, /Observable Outputs/);
+  assert.match(skill, /Architecture View[\s\S]*what parts exist/i);
+  assert.match(skill, /Sequence Diagram[\s\S]*time-ordered messages/i);
+  assert.match(skill, /Data Flow[\s\S]*where data moves/i);
+});

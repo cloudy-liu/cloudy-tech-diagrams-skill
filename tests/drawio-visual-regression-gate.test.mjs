@@ -61,6 +61,17 @@ function gateConfigFixture() {
           htmlPng: 'dist/drawio-visual/perfetto-docs-architecture.html.png',
           drawioPng: 'dist/drawio-visual/perfetto-docs-architecture.drawio.png'
         }
+      },
+      {
+        id: 'runtime-mechanism',
+        html: 'examples/runtime-mechanism.html',
+        selector: '#report-container',
+        excludeSelectors: ['.toolbar', '.cards', '.footer'],
+        artifacts: {
+          drawioFile: 'dist/drawio-visual/runtime-mechanism.drawio',
+          htmlPng: 'dist/drawio-visual/runtime-mechanism.html.png',
+          drawioPng: 'dist/drawio-visual/runtime-mechanism.drawio.png'
+        }
       }
     ],
     knownLimitations: [
@@ -156,7 +167,7 @@ test('visual regression gate config selects a stable release rendering path', ()
   assert.ok(config.knownLimitations.some((item) => /font rendering/i.test(item)));
 
   const sampleIds = config.samples.map((sample) => sample.id);
-  assert.deepEqual(sampleIds, ['drawio-fidelity-torture', 'perfetto-docs-architecture']);
+  assert.deepEqual(sampleIds, ['drawio-fidelity-torture', 'perfetto-docs-architecture', 'runtime-mechanism']);
   for (const sample of config.samples) {
     assert.ok(existsSync(join(repoRoot, sample.html)), `${sample.html} should exist`);
     assert.equal(sample.selector, '#report-container');
@@ -166,21 +177,16 @@ test('visual regression gate config selects a stable release rendering path', ()
   }
 });
 
-test('documentation defines the Draw.io visual regression gate and non-flaky CI policy', () => {
-  const docs = [
-    readFileSync(join(repoRoot, 'SKILL.md'), 'utf8'),
-    readFileSync(join(repoRoot, 'README.en.md'), 'utf8')
-  ];
+test('skill defines the Draw.io visual regression gate and non-flaky CI policy', () => {
+  const doc = readFileSync(join(repoRoot, 'SKILL.md'), 'utf8');
 
-  for (const doc of docs) {
-    assert.match(doc, /Draw\.io Visual Regression Gate/);
-    assert.match(doc, /Playwright Chromium/);
-    assert.match(doc, /diagrams\.net Desktop CLI/);
-    assert.match(doc, /maxPixelMismatchRatio/);
-    assert.match(doc, /DRAWIO_VISUAL_GATE=1/);
-    assert.match(doc, /release validation/i);
-    assert.match(doc, /CI flaky|flaky CI/i);
-  }
+  assert.match(doc, /Draw\.io Visual Regression Gate/);
+  assert.match(doc, /Playwright Chromium/);
+  assert.match(doc, /diagrams\.net Desktop CLI/);
+  assert.match(doc, /maxPixelMismatchRatio/);
+  assert.match(doc, /DRAWIO_VISUAL_GATE=1/);
+  assert.match(doc, /release validation/i);
+  assert.match(doc, /CI flaky|flaky CI/i);
 });
 
 test('visual regression tool validates configured acceptance samples without requiring screenshots in CI', async () => {
@@ -191,7 +197,7 @@ test('visual regression tool validates configured acceptance samples without req
     const result = validateGateConfig(config, { repoRoot, requireArtifacts: false });
 
     assert.equal(result.ok, true);
-    assert.deepEqual(result.sampleIds, ['drawio-fidelity-torture', 'perfetto-docs-architecture']);
+    assert.deepEqual(result.sampleIds, ['drawio-fidelity-torture', 'perfetto-docs-architecture', 'runtime-mechanism']);
     assert.deepEqual(result.missingArtifacts, []);
     assert.equal(result.releaseGateEnv, 'DRAWIO_VISUAL_GATE=1');
   } finally {

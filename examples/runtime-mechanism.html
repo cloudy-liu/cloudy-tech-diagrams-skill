@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Application Architecture</title>
+  <title>Perfetto heapprofd Runtime Mechanism</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js" integrity="sha384-en/ztfPSRkGfME4KIm05joYXynqzUgbsG5nMrj/xEFAHXkeZfO3yMK8QQ+mP7p1/" crossorigin="anonymous"></script>
@@ -34,7 +34,11 @@
       --font-laper: Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, "Noto Sans SC", "PingFang SC", sans-serif;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     ::selection {
       background: #E6D7B4;
@@ -50,9 +54,16 @@
       letter-spacing: 0;
     }
 
-    .container { max-width: 1180px; margin: 0 auto; }
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
 
-    .header { position: relative; margin-bottom: 24px; text-align: center; }
+    .header {
+      position: relative;
+      margin-bottom: 24px;
+      text-align: center;
+    }
 
     .header h1 {
       color: var(--ink);
@@ -63,7 +74,7 @@
     }
 
     .subtitle {
-      max-width: 760px;
+      max-width: 720px;
       margin: 10px auto 0;
       color: var(--muted);
       font-size: 15px;
@@ -96,7 +107,10 @@
       box-shadow: 0 12px 30px rgba(20, 20, 19, 0.10);
       text-align: left;
     }
-    .toolbar.expanded .toolbar-actions { display: flex; }
+
+    .toolbar.expanded .toolbar-actions {
+      display: flex;
+    }
 
     .toolbar.toolbar-flip .toolbar-actions {
       right: calc(100% + 8px);
@@ -115,7 +129,10 @@
       cursor: pointer;
     }
 
-    .toolbar-toggle { padding: 9px 13px; }
+    .toolbar-toggle {
+      padding: 9px 13px;
+    }
+
     .toolbar-actions button {
       width: 100%;
       padding: 9px 10px;
@@ -162,8 +179,19 @@
       background: var(--paper);
     }
 
-    .card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-    .card-dot { width: 9px; height: 9px; border-radius: 50%; }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .card-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
     .card-dot.frontend { background: var(--frontend-stroke); }
     .card-dot.backend { background: var(--backend-stroke); }
     .card-dot.data { background: var(--data-stroke); }
@@ -171,31 +199,83 @@
     .card-dot.security { background: var(--security-stroke); }
     .card-dot.event { background: var(--event-stroke); }
 
-    .card h3 { color: var(--text); font-size: 14px; font-weight: 700; letter-spacing: 0; }
-    .card ul { list-style: none; color: var(--muted); font-size: 13px; line-height: 1.55; }
-    .card li { margin-bottom: 4px; }
-    .footer { margin-top: 18px; color: var(--muted); font-size: 12px; text-align: center; }
+    .card h3 {
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .card ul {
+      list-style: none;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .card li {
+      margin-bottom: 4px;
+    }
+
+    .footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
 
     @media (max-width: 760px) {
-      body { padding: 18px; }
-      .header h1 { font-size: 30px; padding-right: 84px; text-align: left; }
-      .toolbar { top: 0; right: 0; }
-      .toolbar-actions { position: fixed; top: auto; right: 18px; bottom: 18px; left: 18px; width: auto; }
-      .toolbar.toolbar-flip .toolbar-actions { right: 18px; left: 18px; }
-      .diagram-container { padding: 16px; border-radius: 22px; }
+      body {
+        padding: 18px;
+      }
+
+      .header h1 {
+        font-size: 30px;
+        padding-right: 84px;
+        text-align: left;
+      }
+
+      .toolbar {
+        top: 0;
+        right: 0;
+      }
+
+      .toolbar-actions {
+        position: fixed;
+        top: auto;
+        right: 18px;
+        bottom: 18px;
+        left: 18px;
+        width: auto;
+      }
+
+      .toolbar.toolbar-flip .toolbar-actions {
+        right: 18px;
+        left: 18px;
+      }
+
+      .diagram-container {
+        padding: 16px;
+        border-radius: 22px;
+      }
     }
 
     @media print {
-      body { background: var(--canvas); padding: 16px; }
-      .toolbar { display: none !important; }
-    }
+      body {
+        background: var(--canvas);
+        padding: 16px;
+      }
 
+      .toolbar {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container" id="report-container">
     <header class="header">
-      <h1>Web Application Architecture</h1>
+      <h1>Perfetto heapprofd Runtime Mechanism</h1>
       <div class="toolbar">
         <button class="toolbar-toggle" type="button" onclick="toggleExportMenu(this)" title="Export options" aria-label="Export options" aria-expanded="false">Export</button>
         <div class="toolbar-actions" role="menu" aria-label="Export options">
@@ -205,103 +285,263 @@
           <button type="button" role="menuitem" onclick="downloadDrawio(this)">Download Draw.io</button>
         </div>
       </div>
-      <p class="subtitle">React + Node.js + PostgreSQL stack with a small cache layer</p>
+      <p class="subtitle">A Cloudy-style redraw of the Perfetto heapprofd design diagram: sampled malloc stacks move through shared memory, remote unwinding, bookkeeping, and trace output.</p>
     </header>
 
     <main class="diagram-container">
-      <svg viewBox="0 70 1000 550" role="img" aria-labelledby="diagram-title diagram-desc">
-        <title id="diagram-title">Web Application Architecture</title>
-        <desc id="diagram-desc">Warm editorial diagram for a three-tier web application.</desc>
+      <svg viewBox="0 0 1100 700" role="img" aria-labelledby="diagram-title diagram-desc">
+        <title id="diagram-title">Perfetto heapprofd runtime mechanism</title>
+        <desc id="diagram-desc">Runtime Mechanism Mode example redrawing the Perfetto heapprofd architecture: profiled Android processes write sampled stacks through shared memory to heapprofd, which unwinds stacks, updates bookkeeping, and dumps heap data into a Perfetto trace.</desc>
+
         <defs>
           <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
             <path d="M 1 1 L 7 3 L 1 5" fill="none" stroke="#9A9991" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </marker>
         </defs>
-        <rect width="1000" height="620" rx="18" fill="#FAF9F5" data-drawio-ignore="true" data-drawio-ignore-reason="paper background is represented by the draw.io page"/>
 
-        <rect data-drawio-type="boundary" data-drawio-id="application-boundary" data-drawio-label="Application Boundary" data-drawio-label-color="#6F6C65" data-drawio-label-size="13" data-drawio-label-weight="600" x="210" y="95" width="740" height="365" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
-        <text x="232" y="126" fill="#6F6C65" font-size="13" font-weight="600">Application Boundary</text>
+        <!-- Authoring rule: avoid right-angle elbows for normal flow connectors; use a curved SVG path with cubic Bezier C commands for long or cross-boundary routes. -->
 
-        <line data-drawio-type="edge" data-drawio-id="users-to-frontend" data-drawio-label="HTTPS" x1="150" y1="282" x2="238" y2="282" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
-        <text x="194" y="267" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">HTTPS</text>
-        <line data-drawio-type="edge" data-drawio-id="frontend-to-api" data-drawio-label="REST" x1="390" y1="282" x2="468" y2="282" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
-        <text x="429" y="267" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">REST</text>
-        <line data-drawio-type="edge" data-drawio-id="api-to-postgres" data-drawio-label="SQL" x1="630" y1="282" x2="708" y2="230" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
-        <text x="666" y="240" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">SQL</text>
-        <path data-drawio-type="edge" data-drawio-id="api-to-redis" data-drawio-label="cache" d="M 630 310 C 675 375, 710 390, 760 390" fill="none" stroke="#76B985" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
-        <text x="690" y="366" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">cache</text>
+        <rect width="1100" height="700" rx="18" fill="#FAF9F5" data-drawio-ignore="true" data-drawio-ignore-reason="paper background is represented by the draw.io page"/>
 
-        <rect data-drawio-type="component" data-drawio-id="users" x="40" y="232" width="110" height="100" rx="14" fill="#EDEAE3" stroke="#9A9991" stroke-width="2"/>
-        <text x="95" y="273" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Users</text>
-        <text x="95" y="296" fill="#5F5A54" font-size="12" text-anchor="middle">Browser</text>
+        <!-- Boundaries are drawn before arrows so soft panel fills do not hide flows. -->
+        <g data-drawio-type="boundary" data-drawio-role="runtime-boundary" data-drawio-id="profiled-processes">
+          <rect x="34" y="96" width="258" height="398" rx="24" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
+          <text x="58" y="128" fill="#6F6C65" font-size="13" font-weight="700">Profiled Android processes</text>
+        </g>
 
-        <rect data-drawio-type="component" data-drawio-id="frontend" x="240" y="210" width="150" height="145" rx="16" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
-        <text x="315" y="255" fill="#3D3C38" font-size="16" font-weight="600" text-anchor="middle">Frontend</text>
-        <text x="315" y="278" fill="#5F5A54" font-size="12" text-anchor="middle">React + TypeScript</text>
-        <text x="315" y="299" fill="#5F5A54" font-size="12" text-anchor="middle">Tailwind UI</text>
-        <text x="315" y="326" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">:3000</text>
+        <g data-drawio-type="boundary" data-drawio-role="runtime-boundary" data-drawio-id="heapprofd-daemon">
+          <rect x="470" y="72" width="594" height="508" rx="26" fill="#F6F3EC" stroke="#B8B3AA" stroke-width="1.5" stroke-dasharray="8 6"/>
+          <text x="496" y="104" fill="#6F6C65" font-size="13" font-weight="700">heapprofd daemon</text>
+        </g>
 
-        <rect data-drawio-type="component" data-drawio-id="api-server" x="470" y="210" width="160" height="145" rx="16" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
-        <text x="550" y="255" fill="#3D3C38" font-size="16" font-weight="600" text-anchor="middle">API Server</text>
-        <text x="550" y="278" fill="#5F5A54" font-size="12" text-anchor="middle">Node.js + Express</text>
-        <text x="550" y="299" fill="#5F5A54" font-size="12" text-anchor="middle">JWT sessions</text>
-        <text x="550" y="326" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">:8080</text>
+        <g data-drawio-type="boundary" data-drawio-role="runtime-boundary" data-drawio-id="libunwindstack-region">
+          <rect x="792" y="214" width="226" height="154" rx="20" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="1.5"/>
+          <text x="812" y="244" fill="#3D3C38" font-size="15" font-weight="700">libunwindstack</text>
+          <text x="812" y="265" fill="#5F5A54" font-size="11">remote unwind support</text>
+        </g>
 
-        <rect data-drawio-type="component" data-drawio-id="postgresql" x="710" y="162" width="140" height="115" rx="16" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="2"/>
-        <text x="780" y="205" fill="#3D3C38" font-size="16" font-weight="600" text-anchor="middle">PostgreSQL</text>
-        <text x="780" y="229" fill="#5F5A54" font-size="12" text-anchor="middle">Primary data</text>
-        <text x="780" y="252" fill="#5F5A54" font-size="11" font-weight="600" text-anchor="middle">:5432</text>
+        <!-- Arrows are drawn before nodes so nodes stay visually dominant. -->
+        <g data-drawio-type="edge" data-drawio-role="causal-flow" data-drawio-id="trigger-to-processes" data-drawio-source="trace-trigger" data-drawio-target="profiled-processes">
+          <path d="M 174 62 C 170 78 166 86 162 96" fill="none" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+        </g>
 
-        <rect data-drawio-type="component" data-drawio-id="redis" x="760" y="350" width="120" height="78" rx="16" fill="#E6D7B4" stroke="#BFA777" stroke-width="2"/>
-        <text x="820" y="382" fill="#3D3C38" font-size="15" font-weight="600" text-anchor="middle">Redis</text>
-        <text x="820" y="404" fill="#5F5A54" font-size="12" text-anchor="middle">Cache</text>
+        <g data-drawio-type="edge" data-drawio-role="causal-flow" data-drawio-id="processes-to-shared-memory" data-drawio-source="profiled-processes" data-drawio-target="shared-memory" data-drawio-label="stacks">
+          <line x1="292" y1="296" x2="350" y2="296" fill="none" stroke="#9A9991" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+          <text x="321" y="278" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">stacks</text>
+        </g>
 
-        <text data-drawio-type="label" data-drawio-role="legend" data-drawio-id="legend-heading" data-drawio-width="88" data-drawio-height="18" x="245" y="530" fill="#3D3C38" font-size="13" font-weight="700">Legend</text>
-        <rect data-drawio-type="shape" data-drawio-role="legend-swatch" data-drawio-id="legend-frontend-swatch" x="245" y="546" width="18" height="11" rx="3" fill="#E0E0F0" stroke="#8585DD" stroke-width="1"/><text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-frontend-label" data-drawio-width="72" data-drawio-height="16" x="271" y="555" fill="#6F6C65" font-size="11">Frontend</text>
-        <rect data-drawio-type="shape" data-drawio-role="legend-swatch" data-drawio-id="legend-backend-swatch" x="355" y="546" width="18" height="11" rx="3" fill="#D8E8D8" stroke="#76B985" stroke-width="1"/><text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-backend-label" data-drawio-width="70" data-drawio-height="16" x="381" y="555" fill="#6F6C65" font-size="11">Backend</text>
-        <rect data-drawio-type="shape" data-drawio-role="legend-swatch" data-drawio-id="legend-data-swatch" x="465" y="546" width="18" height="11" rx="3" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="1"/><text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-data-label" data-drawio-width="48" data-drawio-height="16" x="491" y="555" fill="#6F6C65" font-size="11">Data</text>
-        <rect data-drawio-type="shape" data-drawio-role="scope-note" data-drawio-id="sheet-scope-callout" x="225" y="574" width="610" height="28" rx="12" fill="#F6F3EC" stroke="#C9C3B8" stroke-width="1"/>
-        <text data-drawio-type="label" data-drawio-role="scope-note" data-drawio-id="sheet-scope-note" data-drawio-width="570" data-drawio-height="18" x="245" y="593" fill="#6F6C65" font-size="11" font-weight="500">Scope: application runtime view; deployment topology and CI/CD are out of scope.</text>
+        <g data-drawio-type="edge" data-drawio-role="causal-flow" data-drawio-id="shared-memory-to-buffer" data-drawio-source="shared-memory" data-drawio-target="raw-stacks-buffer" data-drawio-label="receives">
+          <path d="M 440 196 C 462 154 482 144 516 144" fill="none" stroke="#9A9991" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+          <text x="466" y="154" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">receives</text>
+        </g>
+
+        <g data-drawio-type="edge" data-drawio-role="causal-flow" data-drawio-id="buffer-to-unwind" data-drawio-source="raw-stacks-buffer" data-drawio-target="unwind-threads" data-drawio-label="dispatch samples">
+          <path d="M 700 170 C 700 198 688 220 666 248" fill="none" stroke="#9A9991" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+          <text x="724" y="208" fill="#6F6C65" font-size="11" font-weight="500">dispatch samples</text>
+        </g>
+
+        <g data-drawio-type="edge" data-drawio-role="causal-flow" data-drawio-id="unwind-to-libunwindstack" data-drawio-source="unwind-threads" data-drawio-target="libunwindstack-region">
+          <path d="M 706 292 C 738 292 756 292 792 292" fill="none" stroke="#9A9991" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+        </g>
+
+        <g data-drawio-type="edge" data-drawio-role="causal-flow" data-drawio-id="libunwindstack-to-mmaps" data-drawio-source="libunwindstack-region" data-drawio-target="mmaps-cache" data-drawio-label="reads maps">
+          <path d="M 842 274 C 842 292 842 300 842 316" fill="none" stroke="#6A9BCC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+          <text x="858" y="299" fill="#6F6C65" font-size="10" font-weight="500">reads maps</text>
+        </g>
+
+        <g data-drawio-type="edge" data-drawio-role="causal-flow" data-drawio-id="libunwindstack-to-elf" data-drawio-source="libunwindstack-region" data-drawio-target="elf-cache" data-drawio-label="reads ELF">
+          <path d="M 930 274 C 930 292 930 300 930 316" fill="none" stroke="#6A9BCC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+          <text x="944" y="299" fill="#6F6C65" font-size="10" font-weight="500">reads ELF</text>
+        </g>
+
+        <g data-drawio-type="edge" data-drawio-role="causal-flow" data-drawio-id="unwind-to-bookkeeping" data-drawio-source="unwind-threads" data-drawio-target="bookkeeping-table" data-drawio-label="resolved stacks">
+          <path d="M 612 338 C 612 370 630 386 654 412" fill="none" stroke="#9A9991" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+          <text x="600" y="376" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">resolved stacks</text>
+        </g>
+
+        <g data-drawio-type="edge" data-drawio-role="causal-flow" data-drawio-id="bookkeeping-to-symbols" data-drawio-source="bookkeeping-table" data-drawio-target="symbol-records">
+          <path d="M 822 460 C 842 460 852 460 872 460" fill="none" stroke="#BFA777" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+        </g>
+
+        <g data-drawio-type="edge" data-drawio-role="causal-flow" data-drawio-id="bookkeeping-to-trace" data-drawio-source="bookkeeping-table" data-drawio-target="perfetto-trace" data-drawio-label="heap dumps">
+          <path d="M 740 526 C 775 584 834 608 884 612" fill="none" stroke="#9A9991" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrowhead)"/>
+          <text x="804" y="580" fill="#6F6C65" font-size="11" font-weight="500" text-anchor="middle">heap dumps</text>
+        </g>
+
+        <g data-drawio-type="component" data-drawio-role="trigger" data-drawio-id="trace-trigger">
+          <rect x="62" y="24" width="214" height="54" rx="14" fill="#EDEAE3" stroke="#9A9991" stroke-width="2"/>
+          <text x="169" y="46" fill="#3D3C38" font-size="14" font-weight="700" text-anchor="middle">Tracing enabled</text>
+          <text x="169" y="64" fill="#5F5A54" font-size="11" text-anchor="middle">system property or signal</text>
+        </g>
+
+        <g data-drawio-type="component" data-drawio-role="participant" data-drawio-id="client-system-server">
+          <rect x="60" y="152" width="220" height="54" rx="12" fill="#D8E8D8" stroke="#76B985" stroke-width="1.8"/>
+          <rect x="188" y="152" width="92" height="54" fill="#E6D7B4" stroke="#BFA777" stroke-width="1.2"/>
+          <text x="80" y="184" fill="#3D3C38" font-size="12" font-weight="600">system_server</text>
+          <text x="234" y="184" fill="#3D3C38" font-size="12" font-weight="600" text-anchor="middle">hprofd.so</text>
+          <rect x="268" y="158" width="5" height="5" fill="#D87858"/>
+          <rect x="268" y="172" width="5" height="5" fill="#D87858"/>
+          <rect x="268" y="186" width="5" height="5" fill="#D87858"/>
+        </g>
+
+        <g data-drawio-type="component" data-drawio-role="participant" data-drawio-id="client-surface-flinger">
+          <rect x="60" y="224" width="220" height="54" rx="12" fill="#D8E8D8" stroke="#76B985" stroke-width="1.8"/>
+          <rect x="188" y="224" width="92" height="54" fill="#E6D7B4" stroke="#BFA777" stroke-width="1.2"/>
+          <text x="80" y="256" fill="#3D3C38" font-size="12" font-weight="600">surface_flinger</text>
+          <text x="234" y="256" fill="#3D3C38" font-size="12" font-weight="600" text-anchor="middle">hprofd.so</text>
+          <rect x="268" y="230" width="5" height="5" fill="#D87858"/>
+          <rect x="268" y="244" width="5" height="5" fill="#D87858"/>
+          <rect x="268" y="258" width="5" height="5" fill="#D87858"/>
+        </g>
+
+        <g data-drawio-type="component" data-drawio-role="participant" data-drawio-id="client-mediaserver">
+          <rect x="60" y="296" width="220" height="54" rx="12" fill="#D8E8D8" stroke="#76B985" stroke-width="1.8"/>
+          <rect x="188" y="296" width="92" height="54" fill="#E6D7B4" stroke="#BFA777" stroke-width="1.2"/>
+          <text x="80" y="328" fill="#3D3C38" font-size="12" font-weight="600">mediaserver</text>
+          <text x="234" y="328" fill="#3D3C38" font-size="12" font-weight="600" text-anchor="middle">hprofd.so</text>
+          <rect x="268" y="302" width="5" height="5" fill="#D87858"/>
+          <rect x="268" y="316" width="5" height="5" fill="#D87858"/>
+          <rect x="268" y="330" width="5" height="5" fill="#D87858"/>
+        </g>
+
+        <g data-drawio-type="component" data-drawio-role="participant" data-drawio-id="client-gms">
+          <rect x="60" y="368" width="220" height="54" rx="12" fill="#D8E8D8" stroke="#76B985" stroke-width="1.8"/>
+          <rect x="188" y="368" width="92" height="54" fill="#E6D7B4" stroke="#BFA777" stroke-width="1.2"/>
+          <text x="80" y="400" fill="#3D3C38" font-size="12" font-weight="600">com.google.gms</text>
+          <text x="234" y="400" fill="#3D3C38" font-size="12" font-weight="600" text-anchor="middle">hprofd.so</text>
+          <rect x="268" y="374" width="5" height="5" fill="#D87858"/>
+          <rect x="268" y="388" width="5" height="5" fill="#D87858"/>
+          <rect x="268" y="402" width="5" height="5" fill="#D87858"/>
+        </g>
+
+        <g data-drawio-type="component" data-drawio-role="carrier" data-drawio-id="shared-memory">
+          <rect x="350" y="96" width="90" height="398" rx="22" fill="#E0E0F0" stroke="#8585DD" stroke-width="2"/>
+          <text x="395" y="270" fill="#3D3C38" font-size="19" font-weight="700" text-anchor="middle">Shared</text>
+          <text x="395" y="296" fill="#3D3C38" font-size="19" font-weight="700" text-anchor="middle">Mem</text>
+          <text x="395" y="324" fill="#5F5A54" font-size="11" font-weight="500" text-anchor="middle">sample carrier</text>
+        </g>
+
+        <g data-drawio-type="component" data-drawio-role="state-store" data-drawio-id="raw-stacks-buffer">
+          <rect x="516" y="114" width="498" height="56" rx="14" fill="#F0DED7" stroke="#D87858" stroke-width="2"/>
+          <text x="765" y="148" fill="#3D3C38" font-size="18" font-weight="700" text-anchor="middle">Raw stacks buffer</text>
+        </g>
+
+        <g data-drawio-type="shape" data-drawio-role="stack-layer" data-drawio-id="unwind-thread-layer-back">
+          <rect x="526" y="248" width="180" height="90" rx="16" fill="#E5F1E5" stroke="#76B985" stroke-width="1.2"/>
+        </g>
+
+        <g data-drawio-type="shape" data-drawio-role="stack-layer" data-drawio-id="unwind-thread-layer-mid">
+          <rect x="514" y="258" width="180" height="90" rx="16" fill="#DCECDD" stroke="#76B985" stroke-width="1.2"/>
+        </g>
+
+        <g data-drawio-type="component" data-drawio-role="transformation" data-drawio-id="unwind-threads">
+          <rect x="502" y="268" width="180" height="90" rx="16" fill="#D8E8D8" stroke="#76B985" stroke-width="2"/>
+          <text x="592" y="309" fill="#3D3C38" font-size="16" font-weight="700" text-anchor="middle">Unwind thread(s)</text>
+          <text x="592" y="331" fill="#5F5A54" font-size="11" text-anchor="middle">async stack processing</text>
+        </g>
+
+        <g data-drawio-type="component" data-drawio-role="state-store" data-drawio-id="mmaps-cache">
+          <rect x="812" y="316" width="96" height="32" rx="8" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="1.6"/>
+          <text x="860" y="337" fill="#3D3C38" font-size="12" font-weight="700" text-anchor="middle">mmaps cache</text>
+        </g>
+
+        <g data-drawio-type="component" data-drawio-role="state-store" data-drawio-id="elf-cache">
+          <rect x="922" y="316" width="78" height="32" rx="8" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="1.6"/>
+          <text x="961" y="337" fill="#3D3C38" font-size="12" font-weight="700" text-anchor="middle">ELF cache</text>
+        </g>
+
+        <g data-drawio-type="component" data-drawio-role="state-store" data-drawio-id="bookkeeping-table">
+          <rect x="654" y="412" width="168" height="114" rx="12" fill="#FFF6C8" stroke="#BFA777" stroke-width="1.8"/>
+          <text data-drawio-type="label" data-drawio-role="table-cell" data-drawio-id="bookkeeping-title" data-drawio-width="128" data-drawio-height="18" x="738" y="435" fill="#3D3C38" font-size="14" font-weight="700" text-anchor="middle">Bookkeeping</text>
+          <line data-drawio-type="edge" data-drawio-role="table-line" data-drawio-id="bookkeeping-title-rule" x1="672" y1="448" x2="804" y2="448" stroke="#BFA777" stroke-width="1"/>
+          <line data-drawio-type="edge" data-drawio-role="table-line" data-drawio-id="bookkeeping-col-pid" x1="698" y1="448" x2="698" y2="512" stroke="#BFA777" stroke-width="1"/>
+          <line data-drawio-type="edge" data-drawio-role="table-line" data-drawio-id="bookkeeping-col-tid" x1="730" y1="448" x2="730" y2="512" stroke="#BFA777" stroke-width="1"/>
+          <line data-drawio-type="edge" data-drawio-role="table-line" data-drawio-id="bookkeeping-col-addr" x1="770" y1="448" x2="770" y2="512" stroke="#BFA777" stroke-width="1"/>
+          <line data-drawio-type="edge" data-drawio-role="table-line" data-drawio-id="bookkeeping-header-rule" x1="672" y1="470" x2="804" y2="470" stroke="#BFA777" stroke-width="0.8"/>
+          <line data-drawio-type="edge" data-drawio-role="table-line" data-drawio-id="bookkeeping-row1-rule" x1="672" y1="492" x2="804" y2="492" stroke="#BFA777" stroke-width="0.8"/>
+          <text data-drawio-type="label" data-drawio-role="table-cell" data-drawio-id="bookkeeping-pid-header" data-drawio-width="26" data-drawio-height="14" x="685" y="464" fill="#5F5A54" font-size="10" text-anchor="middle">PID</text>
+          <text data-drawio-type="label" data-drawio-role="table-cell" data-drawio-id="bookkeeping-tid-header" data-drawio-width="32" data-drawio-height="14" x="714" y="464" fill="#5F5A54" font-size="10" text-anchor="middle">TID</text>
+          <text data-drawio-type="label" data-drawio-role="table-cell" data-drawio-id="bookkeeping-addr-header" data-drawio-width="40" data-drawio-height="14" x="750" y="464" fill="#5F5A54" font-size="10" text-anchor="middle">ADDR</text>
+          <text data-drawio-type="label" data-drawio-role="table-cell" data-drawio-id="bookkeeping-size-header" data-drawio-width="34" data-drawio-height="14" x="786" y="464" fill="#5F5A54" font-size="10" text-anchor="middle">S</text>
+          <text data-drawio-type="label" data-drawio-role="table-cell" data-drawio-id="bookkeeping-row1-pid" data-drawio-width="26" data-drawio-height="14" x="685" y="486" fill="#3D3C38" font-size="10" text-anchor="middle">10</text>
+          <text data-drawio-type="label" data-drawio-role="table-cell" data-drawio-id="bookkeeping-row1-tid" data-drawio-width="32" data-drawio-height="14" x="714" y="486" fill="#3D3C38" font-size="10" text-anchor="middle">21</text>
+          <text data-drawio-type="label" data-drawio-role="table-cell" data-drawio-id="bookkeeping-row1-addr" data-drawio-width="40" data-drawio-height="14" x="750" y="486" fill="#3D3C38" font-size="10" text-anchor="middle">0x123</text>
+          <text data-drawio-type="label" data-drawio-role="table-cell" data-drawio-id="bookkeeping-row1-size" data-drawio-width="34" data-drawio-height="14" x="786" y="486" fill="#3D3C38" font-size="10" text-anchor="middle">*</text>
+          <text data-drawio-type="label" data-drawio-role="table-cell" data-drawio-id="bookkeeping-row2-pid" data-drawio-width="26" data-drawio-height="14" x="685" y="508" fill="#3D3C38" font-size="10" text-anchor="middle">11</text>
+          <text data-drawio-type="label" data-drawio-role="table-cell" data-drawio-id="bookkeeping-row2-tid" data-drawio-width="32" data-drawio-height="14" x="714" y="508" fill="#3D3C38" font-size="10" text-anchor="middle">23</text>
+          <text data-drawio-type="label" data-drawio-role="table-cell" data-drawio-id="bookkeeping-row2-addr" data-drawio-width="40" data-drawio-height="14" x="750" y="508" fill="#3D3C38" font-size="10" text-anchor="middle">0x789</text>
+          <text data-drawio-type="label" data-drawio-role="table-cell" data-drawio-id="bookkeeping-row2-size" data-drawio-width="34" data-drawio-height="14" x="786" y="508" fill="#3D3C38" font-size="10" text-anchor="middle">*</text>
+        </g>
+
+        <g data-drawio-type="component" data-drawio-role="state-store" data-drawio-id="symbol-records">
+          <rect x="872" y="424" width="152" height="90" rx="12" fill="#F3E4DA" stroke="#C88E6A" stroke-width="1.6"/>
+          <text x="948" y="448" fill="#3D3C38" font-size="13" font-weight="700" text-anchor="middle">libart.so</text>
+          <text x="948" y="470" fill="#5F5A54" font-size="11" text-anchor="middle">RuntimeStart</text>
+          <text x="948" y="488" fill="#5F5A54" font-size="11" text-anchor="middle">ArtMethodInvoke</text>
+          <text x="948" y="506" fill="#5F5A54" font-size="11" text-anchor="middle">boot-framework.oat</text>
+        </g>
+
+        <g data-drawio-type="component" data-drawio-role="observable-output" data-drawio-id="perfetto-trace">
+          <rect x="884" y="592" width="164" height="54" rx="14" fill="#FAF9F5" stroke="#B8B3AA" stroke-width="2" stroke-dasharray="7 5"/>
+          <text x="966" y="625" fill="#3D3C38" font-size="15" font-weight="700" text-anchor="middle">perfetto trace</text>
+        </g>
+
+        <!-- Legend, placed outside the region boundary. -->
+        <text data-drawio-type="label" data-drawio-role="legend" data-drawio-id="legend-heading" data-drawio-width="88" data-drawio-height="18" x="58" y="584" fill="#3D3C38" font-size="13" font-weight="700">Causal Roles</text>
+        <rect data-drawio-type="shape" data-drawio-role="legend-swatch" data-drawio-id="legend-trigger-swatch" x="58" y="602" width="18" height="11" rx="3" fill="#EDEAE3" stroke="#9A9991" stroke-width="1"/>
+        <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-trigger-label" data-drawio-width="58" data-drawio-height="16" x="84" y="611" fill="#6F6C65" font-size="11">Trigger</text>
+        <rect data-drawio-type="shape" data-drawio-role="legend-swatch" data-drawio-id="legend-carrier-swatch" x="165" y="602" width="18" height="11" rx="3" fill="#E0E0F0" stroke="#8585DD" stroke-width="1"/>
+        <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-carrier-label" data-drawio-width="70" data-drawio-height="16" x="191" y="611" fill="#6F6C65" font-size="11">Carrier</text>
+        <rect data-drawio-type="shape" data-drawio-role="legend-swatch" data-drawio-id="legend-transform-swatch" x="270" y="602" width="18" height="11" rx="3" fill="#D8E8D8" stroke="#76B985" stroke-width="1"/>
+        <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-transform-label" data-drawio-width="96" data-drawio-height="16" x="296" y="611" fill="#6F6C65" font-size="11">Transformation</text>
+        <rect data-drawio-type="shape" data-drawio-role="legend-swatch" data-drawio-id="legend-store-swatch" x="426" y="602" width="18" height="11" rx="3" fill="#E4EEF4" stroke="#6A9BCC" stroke-width="1"/>
+        <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-store-label" data-drawio-width="86" data-drawio-height="16" x="452" y="611" fill="#6F6C65" font-size="11">State / Store</text>
+        <line data-drawio-type="edge" data-drawio-role="legend-flow" data-drawio-id="legend-causal-flow-line" x1="582" y1="608" x2="612" y2="608" stroke="#9A9991" stroke-width="1.6" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <text data-drawio-type="label" data-drawio-role="legend-label" data-drawio-id="legend-causal-flow-label" data-drawio-width="96" data-drawio-height="16" x="622" y="611" fill="#6F6C65" font-size="11">Causal flow</text>
+        <rect data-drawio-type="shape" data-drawio-role="scope-note" data-drawio-id="runtime-scope-callout" x="58" y="638" width="760" height="28" rx="12" fill="#F6F3EC" stroke="#C9C3B8" stroke-width="1"/>
+        <text data-drawio-type="label" data-drawio-role="scope-note" data-drawio-id="runtime-scope-note" data-drawio-width="720" data-drawio-height="18" x="74" y="657" fill="#6F6C65" font-size="11" font-weight="500">Scope: Cloudy redraw of Perfetto Architecture.png; SVG shapes stay annotated for high-fidelity editable Draw.io export.</text>
       </svg>
     </main>
 
     <section class="cards">
       <article class="card">
         <div class="card-header">
-          <div class="card-dot frontend"></div>
-          <h3>Frontend Stack</h3>
+          <div class="card-dot cloud"></div>
+          <h3>Sampling Trigger</h3>
         </div>
         <ul>
-          <li>React 18 with TypeScript</li>
-          <li>Tailwind UI shell</li>
-          <li>Browser-delivered static assets</li>
+          <li>Tracing is enabled by property or signal</li>
+          <li>hprofd.so samples a percentage of malloc calls</li>
+          <li>Client work stays minimal inside the app process</li>
         </ul>
       </article>
+
       <article class="card">
         <div class="card-header">
           <div class="card-dot backend"></div>
-          <h3>Backend Stack</h3>
+          <h3>Remote Unwinding</h3>
         </div>
         <ul>
-          <li>Node.js API service</li>
-          <li>JWT-backed sessions</li>
-          <li>REST contract to the frontend</li>
+          <li>Sampled raw stacks cross through Shared Mem</li>
+          <li>heapprofd dispatches work to Unwind thread(s)</li>
+          <li>libunwindstack uses mmaps and ELF caches</li>
         </ul>
       </article>
+
       <article class="card">
         <div class="card-header">
           <div class="card-dot data"></div>
-          <h3>Data Layer</h3>
+          <h3>Bookkeeping to Trace</h3>
         </div>
         <ul>
-          <li>PostgreSQL primary store</li>
-          <li>Redis for hot reads</li>
-          <li>Clear ownership through API boundary</li>
+          <li>Bookkeeping tracks live allocation tables</li>
+          <li>Symbol records retain frame context such as libart.so</li>
+          <li>heap dumps become observable perfetto trace output</li>
         </ul>
       </article>
     </section>
 
-    <p class="footer">Web Application Architecture - Three-tier design</p>
+    <p class="footer">Runtime Mechanism Mode - Perfetto heapprofd design redrawn in the Cloudy visual system</p>
   </div>
 
   <script>
@@ -377,7 +617,7 @@
       try {
         const canvas = await captureReport();
         const link = document.createElement('a');
-        link.download = document.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.png';
+        link.download = 'diagram.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
         btn.textContent = 'Done';
@@ -397,13 +637,14 @@
         const orientation = canvas.width > canvas.height ? 'landscape' : 'portrait';
         const pdf = new jsPDF({ orientation, unit: 'px', format: [canvas.width, canvas.height], hotfixes: ['px_scaling'] });
         pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-        pdf.save(document.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '.pdf');
+        pdf.save('diagram.pdf');
         btn.textContent = 'Done';
       } catch (e) {
         btn.textContent = 'Failed';
       }
       setTimeout(() => btn.textContent = orig, 2000);
     }
+
     function xmlEscape(value) {
       return String(value ?? '')
         .replace(/&/g, '&amp;')

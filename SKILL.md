@@ -21,11 +21,30 @@ Choose the diagram shape based on the user's description:
 
 - **Architecture view**: clients, edge, APIs, services, data stores, queues, and external integrations.
 - **Process flow**: ordered steps, decision points, handoffs, automation stages, approvals, and runbooks.
+- **Sequence diagram**: time-ordered messages between participants, lifelines, and request/response exchanges.
+- **Data flow**: where data moves and how it transforms across sources, processing steps, and sinks.
 - **Cloud or deployment view**: regions, networks, gateways, compute, storage, managed services, and boundaries.
 - **Security view**: identity, policy, trust boundaries, secrets, network controls, and audit paths.
 - **Network topology**: zones, routers, firewalls, subnets, links, protocols, and ingress/egress.
-- **Runtime mechanics**: request lifecycle, event propagation, model/tool execution, background jobs, and state transitions.
+- **Runtime Mechanism Mode**: how a mechanism happens at runtime — request lifecycles, event propagation, model/tool execution, background jobs, and state transitions.
 - **Technical presentation visual**: one focused explanatory diagram for a technical talk, doc, proposal, or incident review.
+
+## Runtime Mechanism Mode
+
+Use Runtime Mechanism Mode when the diagram explains how a technical mechanism behaves at runtime through causal relationships — request handling, background execution, model/tool orchestration, profiling, scheduling, retries, or any runtime process where the reader needs to understand what causes what.
+
+Route between modes by the question the user is asking:
+
+- **Architecture View** answers what parts exist and how they connect; a plain component inventory belongs there.
+- **Runtime Mechanism Mode** answers how a mechanism happens at runtime.
+- **Sequence Diagram** answers which time-ordered messages participants exchange; strict message order belongs there.
+- **Data Flow** answers where data moves and how it transforms; pure data movement belongs there.
+
+Runtime Mechanism Mode is not a visual style and not a theme. Render it with the default warm editorial visual system unless the user explicitly asks for a different visual treatment.
+
+Before drawing, extract the causal roles — Trigger, Participants, Boundaries, Carriers, Transformations, State / Stores, and Observable Outputs — and show a causal path, not just a component graph. Prefer real implementation names when the source material provides them, and make meaningful boundary crossings visible. Annotate every role and causal connector that should stay editable with `data-drawio-role` values such as `trigger`, `participant`, `runtime-boundary`, `carrier`, `transformation`, `state-store`, `observable-output`, or `causal-flow`; keep `data-drawio-type` limited to the supported stable export types.
+
+Read `references/runtime-mechanism-mode.md` before drawing a runtime mechanism; it holds the role extraction questions, layout patterns, annotation examples, and export micro-rules.
 
 ## Design System
 
@@ -320,6 +339,14 @@ Apply these only when the corresponding visual pattern appears:
 - [ ] Region, cluster, cloud, or trust-boundary boxes have enough inner padding that labels and nodes do not touch the boundary stroke.
 - [ ] Security or trust-boundary diagrams make boundary crossings visually explicit with a connector endpoint, label, or crossing marker.
 - [ ] Process, runtime, and data-flow diagrams have a consistent step order and direction; loops, retries, and branches are labeled where they break the main direction.
+- [ ] Runtime Mechanism Mode diagrams expose a causal path from trigger through participants, carriers, transformations, state/stores, and observable outputs where those roles are relevant.
+- [ ] Runtime Mechanism Mode boundaries are labeled and only shown when they clarify ownership, process, runtime, trust, service, or responsibility scopes.
+- [ ] Runtime Mechanism Mode state/stores and observable outputs are visibly distinct from active transformation steps.
+- [ ] Connectors distinguish cause, control, data, state update, or observation with short labels when the relationship is not obvious from placement; on crowded paths the label is shortened, moved to a callout, or omitted rather than overlapping nodes, arrowheads, boundaries, or dense state.
+- [ ] Table-like panels export meaningful cells as standalone editable Draw.io labels and meaningful dividers as standalone editable Draw.io edges.
+- [ ] Stacked visuals that communicate multiplicity export background layers as standalone editable Draw.io shapes while the front layer remains the semantic component.
+- [ ] Small repeated markers preserve intended geometry: square markers use `rect` with `rx=0`; circles appear only when round markers are intentional.
+- [ ] Nested sub-regions inside a component stay one primitive unless sub-parts carry separate meaning; no overlay caps or cover layers to fake partial rounding.
 - [ ] Architecture and deployment diagrams keep containment visually unambiguous: a node is either clearly inside a boundary or clearly outside it, not sitting on the edge.
 - [ ] Dense diagrams use labels on long or non-obvious connectors so the viewer can tell what is moving, calling, or controlling.
 

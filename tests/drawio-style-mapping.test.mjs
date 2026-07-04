@@ -156,12 +156,13 @@ for (const file of htmlFiles) {
     assert.match(drawio, /id="calibrated-boundary"[\s\S]*?fillColor=#F6F3EC/);
     assert.match(drawio, /id="calibrated-boundary"[\s\S]*?strokeColor=#B8B3AA/);
     assert.match(drawio, /id="calibrated-boundary"[\s\S]*?strokeWidth=1.5/);
-    assert.match(drawio, /id="calibrated-boundary"[\s\S]*?arcSize=24/);
+    assert.match(drawio, /id="calibrated-boundary"[\s\S]*?arcSize=48/);
     assert.match(drawio, /id="calibrated-boundary"[\s\S]*?fixDash=1/);
     assert.match(drawio, /id="calibrated-boundary"[\s\S]*?dashPattern=5.33 4/);
     assert.doesNotMatch(drawio, /id="calibrated-boundary"[\s\S]*?dashPattern=8 6/);
 
     assert.match(drawio, /id="calibrated-swatch"[\s\S]*?rounded=1/);
+    assert.match(drawio, /id="calibrated-swatch"[\s\S]*?arcSize=16/);
     assert.match(drawio, /id="calibrated-swatch"[\s\S]*?fillColor=#F3E4DA/);
     assert.match(drawio, /id="calibrated-swatch"[\s\S]*?strokeColor=#C88E6A/);
     assert.match(drawio, /id="calibrated-swatch"[\s\S]*?strokeWidth=2/);
