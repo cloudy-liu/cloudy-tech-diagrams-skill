@@ -26,21 +26,11 @@ Many diagramming tools exist, but **modifying the output is painful**. This skil
 
 When you want to manually tweak details or convert to a `.drawio` file for local editing, you can use the one-click export `download drawio` feature to directly export the drawio file and continue fine-tuning in diagrams.net / draw.io. Stay in control of every detail!
 
+> Tip: Draw.io files do not embed fonts. Install Montserrat locally to match the browser preview; otherwise diagrams.net / draw.io falls back to another font.
+
 <p align="center">
   <img src="./examples/images/export-drawio-ani.gif" alt="Draw.io export animation" width="100%">
 </p>
-
-## Draw.io Export Fidelity
-
-Draw.io Export Fidelity is product-critical. The browser-rendered HTML remains the entry-level experience, and the Draw.io file is the high-fidelity editable continuation path for local refinement. The goal is editable visual equivalence with native draw.io shapes, not an arbitrary HTML/CSS conversion, full-page DOM conversion, one-image export, or whole-diagram raster export.
-
-The default Draw.io export is a controlled report export: page header plus exportable SVG sheet, excluding toolbar, footer, and page-support cards. The HTML page header is mandatory, so the visible HTML `<h1>` and subtitle travel with the exportable diagram sheet. A sheet-owned title or caption should appear only when the exported sheet needs standalone context, and it should not duplicate the page title or subtitle.
-
-The exportable diagram sheet contains the diagram content users expect to keep editing: nodes, boundaries, connectors, labels, diagram legend, scope note, and meaningful summary content. Avoid fixed template summary badges. Decorative page chrome, toolbar, and unrelated footer metadata stay outside the Draw.io file.
-
-Font fidelity is part of the same contract. Browser previews load Montserrat from Google Fonts, but Draw.io files do not embed fonts; they keep editable text cells with `fontFamily=Montserrat`. For matching local Draw.io rendering, install Montserrat on the machine that opens the `.drawio` file. Otherwise diagrams.net / draw.io will use font fallback, and the right-side text panel may still show Montserrat even though the actual rendered font is different.
-
-Draw.io Visual Regression Gate is the release validation check for export fidelity. It renders HTML with Playwright Chromium, renders the exported `.drawio` file with diagrams.net Desktop CLI, and compares the screenshots with configured thresholds such as maxPixelMismatchRatio. Normal CI keeps this as config validation to avoid flaky CI; full screenshot comparison is enabled explicitly with DRAWIO_VISUAL_GATE=1 for release validation.
 
 ## Quick Start
 

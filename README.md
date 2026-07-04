@@ -26,21 +26,11 @@
 
 当你想手动修改一些细节或者想转为 `drawio` 文件本地修改时，可以通过一键导出 `download drawio`功能，直接导出drawio 的文件，继续在 diagrams.net / draw.io 中手工调整。随时掌控细节！
 
+> 提示：Draw.io 文件不会嵌入字体。想让本地渲染和浏览器预览一致，请在本机安装 Montserrat；否则 diagrams.net / draw.io 会使用字体 fallback。
+
 <p align="center">
   <img src="./examples/images/export-drawio-ani.gif" alt="Draw.io export animation" width="100%">
 </p>
-
-## Draw.io Export Fidelity
-
-Draw.io Export Fidelity 是这个 skill 的核心产品契约。它保持 HTML-first：浏览器里的 HTML 图仍然是第一体验，`.drawio` 文件是用于本地细修的高保真可编辑延续路径。目标是 editable visual equivalence，也就是尽量用 draw.io 原生可编辑形状保持视觉等价，而不是把整页 HTML/CSS 任意转换、整页 DOM 转换、单张图片导出或栅格化。
-
-default Draw.io export 是 controlled report export：page header plus exportable SVG sheet，并且排除 toolbar、footer、page-support cards。HTML page header 是必需边界，visible HTML `<h1>` and subtitle 会和 exportable diagram sheet 一起进入导出结果。只有当 SVG sheet 脱离页面后仍需要独立上下文时，才添加 sheet-owned title or caption，并且不能重复页面标题或副标题。
-
-exportable diagram sheet 包含用户后续真正要编辑的图内容：节点、边界、连接线、标签、diagram legend、scope note，以及有实际含义的 summary 内容。不要放 fixed template summary badge。page chrome、toolbar 和无关 footer 元数据不进入 Draw.io 文件。
-
-字体高保真也是这个契约的一部分。浏览器预览会通过 Google Fonts 加载 Montserrat，但 Draw.io 文件不会嵌入字体；它只会在可编辑文本 cell 上保留 `fontFamily=Montserrat`。如果希望本地 Draw.io 渲染和浏览器预览一致，需要在打开 `.drawio` 文件的机器上安装 Montserrat。否则 diagrams.net / draw.io 会使用字体 fallback，右侧文本面板可能仍显示 Montserrat，但实际渲染字体已经不同。
-
-Draw.io Visual Regression Gate 是导出保真度的发布校验（release validation）检查：用 Playwright Chromium 渲染 HTML，用 diagrams.net Desktop CLI 渲染导出的 `.drawio` 文件，再按配置阈值（如 maxPixelMismatchRatio）比对两张截图。普通 CI 只校验配置以避免 flaky CI；完整截图比对需要显式设置 `DRAWIO_VISUAL_GATE=1`，仅用于发布验证。
 
 ## 快速开始
 
