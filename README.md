@@ -40,6 +40,8 @@ exportable diagram sheet 包含用户后续真正要编辑的图内容：节点�
 
 字体高保真也是这个契约的一部分。浏览器预览会通过 Google Fonts 加载 Montserrat，但 Draw.io 文件不会嵌入字体；它只会在可编辑文本 cell 上保留 `fontFamily=Montserrat`。如果希望本地 Draw.io 渲染和浏览器预览一致，需要在打开 `.drawio` 文件的机器上安装 Montserrat。否则 diagrams.net / draw.io 会使用字体 fallback，右侧文本面板可能仍显示 Montserrat，但实际渲染字体已经不同。
 
+Draw.io Visual Regression Gate 是导出保真度的发布校验（release validation）检查：用 Playwright Chromium 渲染 HTML，用 diagrams.net Desktop CLI 渲染导出的 `.drawio` 文件，再按配置阈值（如 maxPixelMismatchRatio）比对两张截图。普通 CI 只校验配置以避免 flaky CI；完整截图比对需要显式设置 `DRAWIO_VISUAL_GATE=1`，仅用于发布验证。
+
 ## 快速开始
 
 快速开始分两步：先把 Skill 安装到 agent 能读取的位置，再在提示词里调用它。

@@ -2,7 +2,7 @@
 
 Use this reference when a diagram needs to explain runtime causality: how a mechanism starts, moves through participants and boundaries, changes state, and produces an observable result.
 
-Runtime Mechanism Mode is a diagram expression mode, not a visual theme. Render it in the default Cloudy warm editorial style unless the user explicitly asks for another visual treatment. It is inspired by engineering design-doc mechanism diagrams, but it is not tied to shared memory, threads, buffers, or caches. Those are examples of possible runtime objects, not requirements.
+Runtime Mechanism Mode is inspired by engineering design-doc mechanism diagrams, but it is not tied to shared memory, threads, buffers, or caches; those are examples of possible runtime objects, not requirements.
 
 ## Core Question
 
@@ -12,11 +12,9 @@ Runtime Mechanism Mode answers:
 How does this mechanism happen at runtime, and what causes what?
 ```
 
-Do not use this mode only to list components. Use an Architecture View for that. Do not use it when strict message order is the primary concern. Use a Sequence Diagram for that. Do not use it when only data movement and transformation matter. Use Data Flow for that.
-
 ## Causal Roles
 
-Before drawing, extract the roles below. A diagram does not need every role, but missing roles should be a deliberate choice.
+Before drawing, extract the roles below. A diagram does not need every role, but missing roles should be a deliberate choice. Do not draw every implementation detail when the causal path only needs a subset.
 
 | Role | Extraction Question | Cloudy Rendering |
 | --- | --- | --- |
@@ -126,26 +124,3 @@ For nested sub-regions inside a component, keep one visible editable region as a
 - Transformations use compute, backend, security, or process colors based on their work.
 - State / Stores use data/storage colors or compact table-like grouped primitives.
 - Observable Outputs should be distinct from active transformations and may use neutral artifact boxes, data colors, or scope notes.
-
-## Quality Checks
-
-- The diagram has a readable causal path, not only a component graph.
-- Every shown boundary clarifies a real scope.
-- Boundary crossings are visible and unambiguous.
-- State / Stores are visually distinct from active transformation steps.
-- Observable Outputs are visible and labeled.
-- Connector labels explain non-obvious cause, control, data, state update, or observation semantics.
-- Crowded connector paths do not use inline labels that collide with arrows, nodes, boundaries, or dense state.
-- Table-like state stores preserve meaningful cells and dividers as standalone editable Draw.io labels and edges.
-- Stacked worker or stacked participant visuals preserve background layers as standalone editable Draw.io shapes while the front layer remains the semantic component.
-- Repeated markers preserve intended geometry; square markers use `rect` with `rx=0`.
-- Nested sub-regions use a single primitive unless separate sub-parts carry separate meaning; do not use overlay caps to fake partial rounding.
-- Elements that users will edit later carry Draw.io semantic annotations.
-
-## Anti-Patterns
-
-- Do not create a Perfetto theme.
-- Do not copy old-school engineering block styling as the default visual system.
-- Do not require shared memory, threads, buffers, or caches.
-- Do not draw every implementation detail when the causal path only needs a subset.
-- Do not use Runtime Mechanism Mode when a standard Architecture View, Sequence Diagram, or Data Flow diagram would answer the user's question more directly.
