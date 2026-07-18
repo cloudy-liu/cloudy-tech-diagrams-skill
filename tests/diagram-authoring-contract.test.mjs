@@ -5,6 +5,41 @@ import test from 'node:test';
 const skill = readFileSync(new URL('../SKILL.md', import.meta.url), 'utf8');
 const template = readFileSync(new URL('../assets/template.html', import.meta.url), 'utf8');
 
+test('skill exposes an ordered authoring spine with explicit completion criteria', () => {
+  const stageHeadings = [
+    '### 1. Ground the Source',
+    '### 2. Route the Diagram',
+    '### 3. Build the Semantic Model',
+    '### 4. Implement from the Template',
+    '### 5. Render and Repair',
+    '### 6. Verify Exports',
+  ];
+
+  const stageOffsets = stageHeadings.map((heading) => skill.indexOf(heading));
+  assert.ok(stageOffsets.every((offset) => offset >= 0), 'all authoring stages must exist');
+  assert.deepEqual(stageOffsets, [...stageOffsets].sort((a, b) => a - b));
+
+  const authoringProcessEnd = skill.indexOf('\n## Diagram Types', stageOffsets.at(-1));
+  const stages = stageOffsets.map((offset, index) => {
+    const stageEnd = stageOffsets[index + 1] ?? authoringProcessEnd;
+    return skill.slice(offset, stageEnd);
+  });
+
+  for (const stage of stages) {
+    const completionCriteria = stage.match(/\*\*Complete when:\*\*/g) ?? [];
+    assert.equal(completionCriteria.length, 1);
+  }
+
+  assert.match(
+    stages[0],
+    /every user-provided component and relationship[\s\S]*represented[\s\S]*intentionally omitted[\s\S]*marked uncertain/i
+  );
+  assert.match(stages[1], /Diagram Expression Mode/);
+  assert.match(stages[2], /every connector[\s\S]*source[\s\S]*target[\s\S]*meaning/i);
+  assert.match(stages[4], /render(?:ed|ing)? checks were not run/i);
+  assert.match(stages[5], /export checks were not run/i);
+});
+
 test('authoring rules reject right-angle elbows for normal connector flows', () => {
   assert.match(skill, /right-angle|orthogonal|elbow/i);
   assert.match(skill, /cubic B[eé]zier|curved SVG path/i);
