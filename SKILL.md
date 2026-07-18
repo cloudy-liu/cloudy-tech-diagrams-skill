@@ -15,6 +15,46 @@ Copy and customize `assets/template.html`, then replace the sample SVG component
 
 The output is instruction-driven. Build the diagram directly in HTML and SVG; do not depend on external diagram renderers, image generators, Mermaid, Graphviz, or canvas libraries unless the user explicitly asks for a different format.
 
+## Authoring Process
+
+Follow these stages in order. Finish each stage's completion criterion before moving to the next one; the criteria keep the same process reliable across agents with different reasoning strength.
+
+### 1. Ground the Source
+
+Read the user's request and every source they supplied. Build a content inventory before choosing coordinates: components, actors, boundaries, state or stores, flows, constraints, observable outputs, and unresolved assumptions. Treat unsupported details as explicit assumptions rather than established facts.
+
+**Complete when:** Every user-provided component and relationship is represented in the content inventory, intentionally omitted with a reason, or marked uncertain. Every planned diagram claim is grounded in a source or labeled as an assumption.
+
+### 2. Route the Diagram
+
+Identify the reader's primary question, then select one primary diagram family from the catalog below and its applicable Diagram Expression Mode. The family identifies the kind of explanation; the mode identifies the elements, layout, connectors, and checks used to express it. Choose a reading direction that matches the explanation. Use secondary visual patterns only when they support the primary question instead of competing with it.
+
+**Complete when:** One primary reader question, one primary diagram family, one applicable Diagram Expression Mode, and one reading direction are explicit. Every planned boundary and secondary pattern supports that choice.
+
+### 3. Build the Semantic Model
+
+Describe the diagram before drawing it: nodes, containers, boundaries, state, stores, outputs, and connectors. Give every connector a source, target, and meaning such as request, event, control, state update, observation, or response. Resolve ambiguous endpoints before assigning SVG coordinates.
+
+**Complete when:** Every visible semantic element has a role, and every connector has an explicit source, target, and meaning. The model contains a complete primary reading path from its entry point to its outcome.
+
+### 4. Implement from the Template
+
+Apply the semantic model through the [Implementation Model](#implementation-model). Follow the [Design System](#design-system), [Draw.io Editable Export](#drawio-editable-export), [Export Toolbar](#export-toolbar), and [Output](#output) contracts below while replacing the template's sample diagram content.
+
+**Complete when:** The resulting document satisfies each linked contract, and every meaningful visible diagram element passes the Draw.io coverage audit or carries an explicit audited ignore reason.
+
+### 5. Render and Repair
+
+Open the HTML at the target viewport when rendering tooling is available. Inspect the rendered sheet rather than trusting coordinates alone, then repair clipping, overlap, layering, unclear reading order, ambiguous connector endpoints, and text that does not fit. Repeat until the applicable Quality Checklist rules pass.
+
+**Complete when:** All available rendered checks pass at the target viewport. When browser or rendering tooling is unavailable, complete the source-level checks and state that rendered checks were not run, including which visual risks remain unverified.
+
+### 6. Verify Exports
+
+Exercise the available export actions after the rendered sheet is stable. Confirm that captures exclude the toolbar and that Draw.io export produces editable native cells for meaningful content while preserving the controlled report boundary.
+
+**Complete when:** All available export checks pass and the Draw.io coverage contract is satisfied. When an export action cannot be exercised in the current environment, state that export checks were not run for that action and give the constraint.
+
 ## Diagram Types
 
 Choose the diagram shape based on the user's description:
