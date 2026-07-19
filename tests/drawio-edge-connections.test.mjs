@@ -138,13 +138,16 @@ function fakeEdgeConnectionSvg({ connect = false } = {}) {
   ]);
 }
 
-test('skill documents stable Draw.io edge source and target annotations', () => {
-  const skill = readFileSync(new URL('../SKILL.md', import.meta.url), 'utf8');
+test('Draw.io authoring reference documents stable edge source and target annotations', () => {
+  const contract = readFileSync(
+    new URL('../references/drawio-authoring.md', import.meta.url),
+    'utf8'
+  );
 
-  assert.match(skill, /data-drawio-source/);
-  assert.match(skill, /data-drawio-target/);
-  assert.match(skill, /data-drawio-connect/);
-  assert.match(skill, /fixed visual geometry/);
+  assert.match(contract, /data-drawio-source/);
+  assert.match(contract, /data-drawio-target/);
+  assert.match(contract, /data-drawio-connect/);
+  assert.match(contract, /fixed visual geometry/);
 });
 
 for (const file of htmlFiles) {

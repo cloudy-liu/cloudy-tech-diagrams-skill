@@ -177,8 +177,8 @@ test('visual regression gate config selects a stable release rendering path', ()
   }
 });
 
-test('skill defines the Draw.io visual regression gate and non-flaky CI policy', () => {
-  const doc = readFileSync(join(repoRoot, 'SKILL.md'), 'utf8');
+test('maintenance guide defines the Draw.io visual regression gate and CI policy', () => {
+  const doc = readFileSync(join(repoRoot, 'MAINTAINING.md'), 'utf8');
 
   assert.match(doc, /Draw\.io Visual Regression Gate/);
   assert.match(doc, /Playwright Chromium/);
@@ -186,7 +186,7 @@ test('skill defines the Draw.io visual regression gate and non-flaky CI policy',
   assert.match(doc, /maxPixelMismatchRatio/);
   assert.match(doc, /DRAWIO_VISUAL_GATE=1/);
   assert.match(doc, /release validation/i);
-  assert.match(doc, /CI flaky|flaky CI/i);
+  assert.match(doc, /ordinary CI[\s\S]*without requiring external screenshots/i);
 });
 
 test('visual regression tool validates configured acceptance samples without requiring screenshots in CI', async () => {
