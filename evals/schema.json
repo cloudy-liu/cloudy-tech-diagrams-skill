@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudy-liu.github.io/cloudy-tech-diagrams-skill/evals/schema.json",
+  "title": "Cloudy Tech Diagrams skill evaluation corpus",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["skill_name", "version", "objective_profiles", "prompt_manifest", "evals"],
+  "properties": {
+    "skill_name": { "const": "cloudy-tech-diagrams" },
+    "version": { "type": "integer", "minimum": 1 },
+    "objective_profiles": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/objectiveProfile"
+      }
+    },
+    "prompt_manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "sha256"],
+      "properties": {
+        "version": { "type": "integer", "minimum": 1 },
+        "sha256": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "evals": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/evaluation" }
+    }
+  },
+  "$defs": {
+    "objectiveProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assertion_categories", "expectations", "human_review_categories"],
+      "properties": {
+        "assertion_categories": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "expectations": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "human_review_categories": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "scope",
+        "should_invoke_skill",
+        "diagram_family",
+        "prompt",
+        "expected_output",
+        "files",
+        "objective_profile",
+        "expectations",
+        "human_review"
+      ],
+      "properties": {
+        "id": { "type": "integer", "minimum": 1 },
+        "name": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "scope": { "enum": ["technical-diagram", "out-of-scope"] },
+        "should_invoke_skill": { "type": "boolean" },
+        "diagram_family": { "type": ["string", "null"] },
+        "expected_route": { "type": "string", "minLength": 1 },
+        "prompt": { "type": "string", "minLength": 80 },
+        "expected_output": { "type": "string", "minLength": 40 },
+        "files": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "objective_profile": { "type": "string", "minLength": 1 },
+        "expectations": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "human_review": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "scope": { "const": "out-of-scope" } }
+          },
+          "then": {
+            "required": ["expected_route"],
+            "properties": {
+              "should_invoke_skill": { "const": false },
+              "diagram_family": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "scope": { "const": "technical-diagram" } }
+          },
+          "then": {
+            "properties": {
+              "should_invoke_skill": { "const": true },
+              "diagram_family": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

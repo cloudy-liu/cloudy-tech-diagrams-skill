@@ -1,0 +1,283 @@
+{
+  "skill_name": "cloudy-tech-diagrams",
+  "version": 1,
+  "objective_profiles": {
+    "technical-diagram-default": {
+      "assertion_categories": [
+        "artifact-structure",
+        "export-controls",
+        "semantic-annotations",
+        "connector-semantics",
+        "source-coverage",
+        "unexecuted-check-reporting"
+      ],
+      "expectations": [
+        "The output is one browser-ready .html artifact with one primary inline SVG sheet.",
+        "The artifact preserves Copy Image, Download PNG, Download PDF, and Download Draw.io controls.",
+        "Meaningful diagram content uses Draw.io semantic annotations or an explicit ignore reason.",
+        "Every visible connector has a source, target, and relationship meaning.",
+        "The response reports which rendered or export checks were not run when the environment cannot execute them."
+      ],
+      "human_review_categories": [
+        "layout-quality",
+        "information-selection",
+        "visual-clarity"
+      ]
+    },
+    "technical-diagram-optional-artifact": {
+      "assertion_categories": [
+        "artifact-structure",
+        "export-controls",
+        "semantic-annotations",
+        "connector-semantics",
+        "source-coverage",
+        "unexecuted-check-reporting"
+      ],
+      "expectations": [
+        "A clarification-only response may pass without creating diagram.html when it exposes unresolved assumptions and asks for the minimum missing information.",
+        "If diagram.html is created, it is one browser-ready .html artifact with one primary inline SVG sheet.",
+        "If diagram.html is created, it preserves Copy Image, Download PNG, Download PDF, and Download Draw.io controls.",
+        "If diagram.html is created, meaningful diagram content uses Draw.io semantic annotations or an explicit ignore reason.",
+        "If diagram.html is created, every visible connector has a source, target, and relationship meaning or is marked unresolved.",
+        "The response reports which applicable rendered or export checks were not run when the environment cannot execute them."
+      ],
+      "human_review_categories": [
+        "layout-quality",
+        "information-selection",
+        "visual-clarity"
+      ]
+    },
+    "routing-near-miss": {
+      "assertion_categories": ["non-trigger-routing"],
+      "expectations": [
+        "The response does not create a Cloudy Tech Diagrams technical architecture artifact.",
+        "The response routes the request to the more appropriate adjacent workflow."
+      ],
+      "human_review_categories": ["routing-quality"]
+    }
+  },
+  "prompt_manifest": {
+    "version": 1,
+    "sha256": {
+      "simple-architecture": "0ffa91a2ea4905e08aaa6b7fef27ec59e6325cf560744434202715027778739e",
+      "event-heavy-flow": "f404aa450d30a5aece73858ac7bbf9a3163ee468caa8620c95d6a110f52217f4",
+      "dense-cross-boundary-deployment": "64e489a3d2d76c9ec067af31179975b56c33b349707b60e5738b734d6a6f18a9",
+      "runtime-mechanism": "fb401ecc5baa52d32d308c4a74a36ebbf6066a321e7d44014131086952fc3042",
+      "source-driven-authoring": "d8db7e1b853bf1f8a9f4ac4b605c49c1744514757c01b0faa7e16a81ae2ab7de",
+      "incomplete-input": "c55c668cae1a20bf982f7e5b804a9b3efdef0a7e088bffc1cee0d36e73fa3e69",
+      "mixed-chinese-english-labels": "e6215289c1115668edb8dca5565e0be9ede58ba3894de4cf7b30f8a1af17268c",
+      "near-miss-dashboard": "f1bd048c566124af7d0d9ea4455689070ab362c6c61e982a69ed5e83aeca4bc6",
+      "near-miss-landing-page": "635b3feaada54f5df1a432854ef992c3a320f28b80e84ce43eed054e210e6044",
+      "near-miss-generic-deck": "1131738fd63be2c98486bdb2b04a8739aa520259d02c100ca5fdd72af58f0f08",
+      "near-miss-non-technical-illustration": "067d383cf994929e0063edb963d585a961c3a8b000370ed0e6f906a99de02b91"
+    }
+  },
+  "evals": [
+    {
+      "id": 1,
+      "name": "simple-architecture",
+      "scope": "technical-diagram",
+      "should_invoke_skill": true,
+      "diagram_family": "Architecture View",
+      "prompt": "Create a Cloudy Tech Diagram for a small web application. Show a browser client calling an API service, the API reading from a PostgreSQL database, and the API storing uploaded files in an object-storage bucket. Use one left-to-right reading path, label each relationship, save one browser-ready HTML artifact as diagram.html, and preserve the built-in export actions.",
+      "expected_output": "One standalone diagram.html that explains the four components and their relationships as a coherent architecture view.",
+      "files": [],
+      "objective_profile": "technical-diagram-default",
+      "expectations": [
+        "The browser diagram accounts for the browser, API, PostgreSQL, and object-storage components plus browser-to-API, API-to-database, and API-to-bucket relationships."
+      ],
+      "human_review": [
+        "Visual clarity: Is the architecture question and left-to-right reading path immediately clear?",
+        "Layout quality: Are component choices, spacing, typography, and visual hierarchy coherent?",
+        "Information selection: Does the diagram communicate enough detail without unnecessary decoration?"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "event-heavy-flow",
+      "scope": "technical-diagram",
+      "should_invoke_skill": true,
+      "diagram_family": "Process Flow",
+      "prompt": "Create diagram.html for an event-heavy order workflow. A checkout API publishes OrderPlaced to a message bus; inventory and payment consumers process it independently; payment retries transient failures; a coordinator emits OrderConfirmed or OrderRejected; notifications subscribe to the final event. Show the event pills on the flow centerlines, distinguish request, event, retry, and final outcome relationships, and keep the HTML-first Draw.io export contract.",
+      "expected_output": "One self-contained HTML process diagram showing the event bus, independent consumers, retry branch, and final outcomes with readable connector semantics.",
+      "files": [],
+      "objective_profile": "technical-diagram-default",
+      "expectations": [
+        "The diagram accounts for OrderPlaced, inventory, payment, transient retry, OrderConfirmed, OrderRejected, notifications, and their requested relationships."
+      ],
+      "human_review": [
+        "Visual clarity: Are event order, independent consumers, and retry behavior readable without tracing tangled lines?",
+        "Layout quality: Are event pills and connector labels placed without overlap or ambiguity?",
+        "Information selection: Does the composition prioritize the workflow rather than decorative infrastructure?"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "dense-cross-boundary-deployment",
+      "scope": "technical-diagram",
+      "should_invoke_skill": true,
+      "diagram_family": "Cloud or Deployment View",
+      "prompt": "Create diagram.html for a dense deployment view of a multi-region service. Show users entering a CDN and WAF, public and private subnets, an API gateway, services in two availability zones, a managed database, a cache, and a cross-region replication path. Make trust, network, and service boundaries explicit; make every boundary crossing visible; keep long cross-boundary routes curved and readable; preserve editable Draw.io export.",
+      "expected_output": "One standalone deployment diagram with explicit region, network, trust, and service containment plus readable cross-boundary connections.",
+      "files": [],
+      "objective_profile": "technical-diagram-default",
+      "expectations": [
+        "The diagram accounts for the CDN, WAF, public and private subnets, gateway, both availability zones, database, cache, replication path, and every requested boundary crossing."
+      ],
+      "human_review": [
+        "Visual clarity: Can a reader distinguish containment from connection in the dense layout?",
+        "Layout quality: Are boundaries padded, crossings visible, and long routes legible?",
+        "Information selection: Does the diagram remain scannable at the target viewport?"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "runtime-mechanism",
+      "scope": "technical-diagram",
+      "should_invoke_skill": true,
+      "diagram_family": "Runtime Mechanism Mode",
+      "prompt": "Create diagram.html explaining how a profiling request becomes an observable report at runtime. Show the trigger, coordinator, worker group, shared state or store, carrier between processes, transformations, runtime boundary, and observable output. Use Runtime Mechanism Mode, make the causal path explicit, preserve meaningful table-like state and stacked worker primitives as editable Draw.io cells, and keep the browser-first export behavior.",
+      "expected_output": "One runtime mechanism diagram that answers what causes what from profiling trigger to report, with deliberate causal roles and editable primitives.",
+      "files": [],
+      "objective_profile": "technical-diagram-default",
+      "expectations": [
+        "The diagram represents or intentionally omits with a reason the applicable trigger, participant, boundary, carrier, transformation, state/store, and observable-output roles."
+      ],
+      "human_review": [
+        "Information selection: Does the diagram explain causality rather than merely list architecture components?",
+        "Layout quality: Are runtime roles, state, worker layers, and boundary crossings visually distinct?",
+        "Visual clarity: Is the trigger-to-output path easy to follow?"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "source-driven-authoring",
+      "scope": "technical-diagram",
+      "should_invoke_skill": true,
+      "diagram_family": "Architecture View",
+      "prompt": "Use the following source notes to create diagram.html: Mobile App calls API Gateway. API Gateway routes to Auth Service and Order Service. Order Service writes Orders DB and publishes OrderCreated to Fulfillment Queue. Fulfillment Worker reads the queue and writes Shipment DB. Do not invent payment, analytics, or extra infrastructure. Mark any unresolved assumption visibly and preserve the HTML and Draw.io contracts.",
+      "expected_output": "One source-grounded HTML diagram containing every supplied component and relationship, with no invented systems and visible handling of uncertainty.",
+      "files": [],
+      "objective_profile": "technical-diagram-default",
+      "expectations": [
+        "The diagram accounts for Mobile App, API Gateway, Auth Service, Order Service, Orders DB, OrderCreated, Fulfillment Queue, Fulfillment Worker, Shipment DB, and every supplied relationship without inventing payment or analytics."
+      ],
+      "human_review": [
+        "Information selection: Does the diagram faithfully distinguish supplied facts from assumptions?",
+        "Visual clarity: Are all source relationships present and is unsupported infrastructure absent?",
+        "Layout quality: Is the resulting layout coherent despite the source being provided as prose?"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "incomplete-input",
+      "scope": "technical-diagram",
+      "should_invoke_skill": true,
+      "diagram_family": "Architecture View",
+      "prompt": "Make a technical diagram for our platform. It has a frontend, some backend services, a database, and maybe a queue. Keep it simple and show how data flows. I do not have more details yet. Create diagram.html only if the unresolved assumptions are made visible and explain what is still needed.",
+      "expected_output": "A cautious response that either asks targeted clarifying questions or creates a clearly provisional diagram with visible assumptions and an explicit uncertainty record.",
+      "files": [],
+      "objective_profile": "technical-diagram-optional-artifact",
+      "expectations": [
+        "The response does not present unsupported architecture details as established facts.",
+        "The response lists unresolved assumptions and the minimum clarifying information needed to finalize the diagram."
+      ],
+      "human_review": [
+        "Information selection: Are the assumptions and questions proportionate to the missing information?",
+        "Visual clarity: Does the response avoid false precision while still moving the task forward?",
+        "Layout quality: If a provisional diagram exists, is its provisional status visually obvious?"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "mixed-chinese-english-labels",
+      "scope": "technical-diagram",
+      "should_invoke_skill": true,
+      "diagram_family": "Data Flow",
+      "prompt": "Create diagram.html for a bilingual data pipeline. Show 用户端 / User Client sending 请求 / Request to API 服务 / API Service, which validates 数据 / Data, writes to 数据库 / Database, and emits 事件 / Event to a 消息队列 / Message Queue. Keep Chinese and English labels paired and readable, use one primary flow direction, and preserve the normal HTML and Draw.io export controls.",
+      "expected_output": "One self-contained bilingual data-flow diagram with paired Chinese and English labels that remain readable in the browser and editable export.",
+      "files": [],
+      "objective_profile": "technical-diagram-default",
+      "expectations": [
+        "The diagram accounts for 用户端 / User Client, 请求 / Request, API 服务 / API Service, 数据 / Data, 数据库 / Database, 事件 / Event, 消息队列 / Message Queue, and their requested relationships."
+      ],
+      "human_review": [
+        "Layout quality: Are Chinese and English labels legible, correctly paired, and free of clipping?",
+        "Visual clarity: Is the data transformation path clear in both languages?",
+        "Information selection: Does the visual system remain consistent rather than changing style for bilingual text?"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "near-miss-dashboard",
+      "scope": "out-of-scope",
+      "should_invoke_skill": false,
+      "diagram_family": null,
+      "expected_route": "dashboard-or-frontend-design",
+      "prompt": "Build a polished executive KPI dashboard with sales charts, filters, trend cards, and a dark branded theme for our quarterly business review. It is a product analytics UI, not a technical system diagram.",
+      "expected_output": "The agent should not claim Cloudy Tech Diagrams as the right workflow and should route the request to a dashboard or frontend design workflow.",
+      "files": [],
+      "objective_profile": "routing-near-miss",
+      "expectations": [
+        "The response identifies the request as better served by a dashboard or frontend design workflow."
+      ],
+      "human_review": [
+        "Did the response avoid over-triggering the technical diagram skill while remaining helpful?"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "near-miss-landing-page",
+      "scope": "out-of-scope",
+      "should_invoke_skill": false,
+      "diagram_family": null,
+      "expected_route": "landing-page-or-frontend-design",
+      "prompt": "Design a marketing landing page for a new developer product with a hero section, pricing cards, testimonials, and conversion-focused calls to action. Use a bold visual identity and persuasive copy; no system architecture diagram is needed.",
+      "expected_output": "The agent should route this to a landing-page or frontend-design workflow and should not produce a Cloudy Tech Diagrams technical diagram.",
+      "files": [],
+      "objective_profile": "routing-near-miss",
+      "expectations": [
+        "The response identifies the request as better served by a landing-page or frontend design workflow."
+      ],
+      "human_review": [
+        "Did the response avoid claiming the technical diagram skill while giving a useful routing answer?"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "near-miss-generic-deck",
+      "scope": "out-of-scope",
+      "should_invoke_skill": false,
+      "diagram_family": null,
+      "expected_route": "presentation-or-slide-design",
+      "prompt": "Create a general company all-hands slide deck with an agenda, team wins, customer quotes, quarterly goals, and a closing thank-you slide. The deck needs polished storytelling and presentation design, but it does not need a technical architecture or process diagram.",
+      "expected_output": "The agent should route this to a presentation or slide-design workflow and should not produce a Cloudy Tech Diagrams technical diagram.",
+      "files": [],
+      "objective_profile": "routing-near-miss",
+      "expectations": [
+        "The response identifies the request as better served by a presentation or slide-design workflow."
+      ],
+      "human_review": [
+        "Did the response distinguish a generic deck from a focused technical presentation visual?"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "near-miss-non-technical-illustration",
+      "scope": "out-of-scope",
+      "should_invoke_skill": false,
+      "diagram_family": null,
+      "expected_route": "illustration-or-image-generation",
+      "prompt": "Make a whimsical editorial illustration of a city waking up at sunrise, with cyclists, cafes, trees, and warm light. It should be an expressive non-technical image for a magazine article, with no systems, data flows, or architecture content.",
+      "expected_output": "The agent should route this to an illustration or image-generation workflow and should not produce a Cloudy Tech Diagrams technical diagram.",
+      "files": [],
+      "objective_profile": "routing-near-miss",
+      "expectations": [
+        "The response identifies the request as better served by an illustration or image-generation workflow."
+      ],
+      "human_review": [
+        "Did the response distinguish non-technical illustration from technical diagram work?"
+      ]
+    }
+  ]
+}
