@@ -107,13 +107,7 @@ Recommended roles:
 | Observable output | `data-drawio-role="observable-output"` |
 | Causal connector | `data-drawio-role="causal-flow"` |
 
-For table-like state stores, keep the outer container as a `data-drawio-type="component"` with `data-drawio-role="state-store"`, then annotate every meaningful cell as a standalone `data-drawio-type="label"` and every meaningful divider as a standalone `data-drawio-type="edge"`. This keeps each cell and divider editable after Draw.io export and avoids collapsing dense table text into one inferred component label.
-
-For stacked worker or stacked participant visuals, annotate the background layers as standalone `data-drawio-type="shape"` primitives and keep the front layer as the semantic component. This preserves the visual cue that multiple runtime units exist without turning every repeated layer into a separate named participant.
-
-For small repeated markers that communicate continuation, sampled slots, or repeated units, preserve the intended geometry. Use `rect` with `rx=0` for square markers; use circles only when round markers are intentional.
-
-For nested sub-regions inside a component, keep one visible editable region as a single primitive. Do not add overlay caps, duplicate rectangles, or visible cover layers only to fake one-sided rounding; those become real objects in both browser SVG and Draw.io export. Split a nested sub-region into multiple primitives only when each part has separate meaning.
+Before implementing runtime-specific editable primitives, read `drawio-authoring.md#component-granularity` because it owns the generic table, multiplicity, marker, and nested-primitive export mechanics. Complete this step only when every applicable runtime primitive is represented or intentionally omitted with a reason.
 
 ## Cloudy Visual Mapping
 

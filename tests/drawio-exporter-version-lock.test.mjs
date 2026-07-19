@@ -171,9 +171,9 @@ test('Draw.io exporter offsets native cells by the SVG viewBox origin', () => {
   assert.match(drawio, /id="cropped-scope-label"[\s\S]*?<mxGeometry x="235" y="510" width="560" height="18"/);
 });
 
-test('skill tells maintainers to refresh the full exporter block when updating diagrams', () => {
-  const skill = readFileSync(new URL('../SKILL.md', import.meta.url), 'utf8');
+test('maintenance guide tells maintainers to refresh the full exporter block', () => {
+  const maintaining = readFileSync(new URL('../MAINTAINING.md', import.meta.url), 'utf8');
 
-  assert.match(skill, /CLOUDY_DRAWIO_EXPORTER_VERSION/);
-  assert.match(skill, /refresh the full exporter block/);
+  assert.match(maintaining, /CLOUDY_DRAWIO_EXPORTER_VERSION/);
+  assert.match(maintaining, /refresh the full exporter block/);
 });

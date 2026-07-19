@@ -88,10 +88,14 @@ The output is an `.html` file. Open it in any browser and use the Export menu ac
 ```text
 cloudy-tech-diagrams-skill/
 ├── SKILL.md
+├── MAINTAINING.md
 ├── assets/
 │   └── template.html
 ├── references/
 │   ├── style-references.md
+│   ├── drawio-authoring.md
+│   ├── quality-gate.md
+│   ├── runtime-mechanism-mode.md
 │   └── images/
 ├── examples/
 │   ├── web-app.html
@@ -103,7 +107,7 @@ cloudy-tech-diagrams-skill/
 └── LICENSE
 ```
 
-`SKILL.md` is the core instruction file the agent reads. `assets/template.html` is the starting template for diagram generation. `references/` stores style references. `examples/` contains sample outputs for the GitHub README and maintenance — not included in minimal releases.
+`SKILL.md` keeps the ordered authoring process and universal contracts visible. `assets/template.html` is the executable starting point, while `references/` owns phase- and mode-specific authoring rules loaded through explicit pointers. `MAINTAINING.md` keeps release and exporter procedures outside ordinary skill runtime. `examples/` contains sample outputs for the GitHub README and maintenance — not included in minimal releases.
 
 ## Credits
 

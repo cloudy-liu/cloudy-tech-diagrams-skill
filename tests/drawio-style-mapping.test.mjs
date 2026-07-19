@@ -137,13 +137,16 @@ function fakeStyleMappingSvg() {
   ]);
 }
 
-test('skill documents calibrated Draw.io style approximations', () => {
-  const skill = readFileSync(new URL('../SKILL.md', import.meta.url), 'utf8');
+test('Draw.io authoring reference documents calibrated style approximations', () => {
+  const contract = readFileSync(
+    new URL('../references/drawio-authoring.md', import.meta.url),
+    'utf8'
+  );
 
-  assert.match(skill, /dashPattern/);
-  assert.match(skill, /stroke-dasharray/);
-  assert.match(skill, /stroke-width/);
-  assert.match(skill, /editable draw\.io-native approximation/);
+  assert.match(contract, /dashPattern/);
+  assert.match(contract, /stroke-dasharray/);
+  assert.match(contract, /stroke-width/);
+  assert.match(contract, /editable draw\.io-native approximation/);
 });
 
 for (const file of htmlFiles) {

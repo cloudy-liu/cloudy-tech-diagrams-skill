@@ -88,10 +88,14 @@ Agent 会根据运行环境自动选择合适的安装位置（全局或项目�
 ```text
 cloudy-tech-diagrams-skill/
 ├── SKILL.md
+├── MAINTAINING.md
 ├── assets/
 │   └── template.html
 ├── references/
 │   ├── style-references.md
+│   ├── drawio-authoring.md
+│   ├── quality-gate.md
+│   ├── runtime-mechanism-mode.md
 │   └── images/
 ├── examples/
 │   ├── web-app.html
@@ -103,7 +107,7 @@ cloudy-tech-diagrams-skill/
 └── LICENSE
 ```
 
-`SKILL.md` 是 agent 读取的核心指令。`assets/template.html` 是生成图表时复制和改写的起点。`references/` 保存风格参考资料。`examples/` 是 GitHub README 和维护用的示例输出，不会进入最小 Release 包。
+`SKILL.md` 保留顺序明确的创作流程与通用合同。`assets/template.html` 是可执行的生成起点，`references/` 通过精确指针提供阶段和模式专用规则。`MAINTAINING.md` 将发布与 exporter 维护流程移出普通 skill 运行上下文。`examples/` 是 GitHub README 和维护用的示例输出，不会进入最小 Release 包。
 
 ## 致谢
 
